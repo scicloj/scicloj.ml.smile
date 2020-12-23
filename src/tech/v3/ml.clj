@@ -8,7 +8,9 @@
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.ml.loss :as loss]
             [tech.v3.ml.gridsearch :as ml-gs]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [pppmap.core :as ppp]
+            )
   (:import [java.util UUID]))
 
 
@@ -215,10 +217,14 @@ see tech.v3.dataset.modelling/set-inference-target")
   ([dataset options {:keys [n-k-folds
                             n-gridsearch
                             n-result-models
-                            loss-fn]
+                            loss-fn
+                            ppp-grain-size
+                            ]
                      :or {n-k-folds 5
                           n-gridsearch 75
-                          n-result-models 5}
+                          n-result-models 5
+                          ppp-grain-size 10
+                          }
                      :as gridsearch-options}]
    (let [loss-fn (or loss-fn (default-loss-fn dataset))
          options (merge (hyperparameters (:model-type options)) options)
@@ -228,7 +234,8 @@ see tech.v3.dataset.modelling/set-inference-target")
              (log/warn "Did not find any gridsearch axis in options map"))
          ds-seq (ds-mod/k-fold-datasets dataset n-k-folds gridsearch-options)]
      (->> gs-seq
-          (pmap #(do-k-fold % loss-fn target-colname ds-seq))
+          (ppp/ppmap-with-progress "grid-search" ppp-grain-size
+                                   #(do-k-fold % loss-fn target-colname ds-seq))
           (sort-by :avg-loss)
           (take n-result-models))))
   ([dataset options]
