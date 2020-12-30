@@ -42,7 +42,7 @@
           prediction))
        [3 3 3 3 3 4 4 3 3 3])))
 
-(deftest test-discrete-nb-multinomialq
+(deftest test-discrete-nb-multinomial
   (is (=
        (:Score
         (let [reviews (get-reviews)
