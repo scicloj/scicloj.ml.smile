@@ -15,7 +15,11 @@ of how to use this library."
                  ]
 
   :profiles
-  {:codox
+  {:dev {
+         :jvm-opts ["-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory"]
+         :resource-paths ["test/resources"]}
+
+  :codox
    {:dependencies [[codox-theme-rdash "0.1.2"]]
     :plugins [[lein-codox "0.10.7"]]
     :codox {:project {:name "tech.ml"}
