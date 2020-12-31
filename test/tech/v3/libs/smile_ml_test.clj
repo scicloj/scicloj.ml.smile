@@ -7,7 +7,7 @@
             [clojure.test :refer [deftest is]]))
 
 ;;shut that shit up.
-(ds-utils/set-slf4j-log-level :warn)
+;; (ds-utils/set-slf4j-log-level :warn)
 
 
 (def smile-regression-models
