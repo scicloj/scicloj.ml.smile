@@ -52,3 +52,21 @@
                            :vocab-size 1000
                            })]
     (is (=  1 (get-in model [:options :a])))))
+
+
+(ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
+
+
+[[:select-columns [:Text :Score]]
+ [:update-column :Score #(map dec %)]
+ [:ds-mod/set-inference-target :Score]
+ [:nlp/count-vectorize :Text :bow :nlp/default-text->bow {:stopwords(ml-gs/categorical [nil :default :google :comprehensive]) }]
+ [:nb/bow->SparseArray :bow :bow-sparse {:vocab-size (ml-gs/linear 100 10000)}]
+ [:ml/train {:model-type   :discrete-naive-bayes
+             :discrete-naive-bayes-model :multinomial
+             :sparse-column :bow-sparse
+             }]
+
+ ]
+
+(ds/take-nth )
