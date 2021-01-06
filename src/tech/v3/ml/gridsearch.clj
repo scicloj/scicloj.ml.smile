@@ -155,4 +155,34 @@ user> (ml-gs/sobol-gridsearch opt-map)
 (comment
   (def opt-map  {:a (categorical [:a :b :c])
                  :b (linear 0.01 1 10)})
+
+  (count
+   (sobol-gridsearch opt-map)
+
+
+   )
+
+  (count
+   (sobol-gridsearch {:a (categorical [1 2 3])
+                      :b (categorical [1 2 3])
+                      :c (categorical [1 2 3])}))
+
+  (map->axis {:a (categorical [1 2 3])
+                      :b (categorical [1 2 3])
+                      :c (linear 0 10)})
+
+  (count
+   (sobol-gridsearch {:a (linear 1 100 1000)
+                      :b (linear 0 1 25)
+                      :c (categorical [:a :b :c])
+                      }))
+
+  (sobol-gridsearch {:a {:b (categorical [1 2])}})
+
+  (sobol-gridsearch  [:fn
+                      :a (categorical [1 2])]
+
+                     )
+
+  (sobol-gridsearch :a)
   )
