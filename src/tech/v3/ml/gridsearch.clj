@@ -136,6 +136,8 @@ user> (ml-gs/sobol-gridsearch opt-map)
 ```
   "
   ([opt-map start-idx]
+   (def opt-map opt-map)
+   (def start-idx start-idx)
    (let [axis (map->axis opt-map)]
      (if (seq axis)
        (let [lspace-projections (mapv :lspace-proj axis)
@@ -168,8 +170,8 @@ user> (ml-gs/sobol-gridsearch opt-map)
                       :c (categorical [1 2 3])}))
 
   (map->axis {:a (categorical [1 2 3])
-                      :b (categorical [1 2 3])
-                      :c (linear 0 10)})
+              :b (categorical [1 2 3])
+              :c (linear 0 10)})
 
   (count
    (sobol-gridsearch {:a (linear 1 100 1000)
@@ -185,4 +187,12 @@ user> (ml-gs/sobol-gridsearch opt-map)
                      )
 
   (sobol-gridsearch :a)
+
+
+  (sobol-gridsearch {:a {:b  (categorical [nil :default :google :comprehensive])
+                         :c :e
+                         }
+                     :c (linear 0 1)
+                     }
+                    )
   )
