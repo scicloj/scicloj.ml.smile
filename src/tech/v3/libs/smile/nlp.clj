@@ -1,6 +1,7 @@
 (ns tech.v3.libs.smile.nlp
   (:require [clojure.string :as str]
             [pppmap.core :as ppp]
+           [tfidf.tfidf :as tfidf]
             [tech.v3.dataset :as ds])
   (:import smile.nlp.normalizer.SimpleNormalizer
            smile.nlp.stemmer.PorterStemmer
@@ -22,6 +23,8 @@
         (str/lower-case)
         (#(.normalize normalizer %))
         (#(.stem stemmer %)))))
+
+
 
 (defn default-text->bow [text options]
   "Converts text to token counts (a map token -> count).
@@ -47,6 +50,28 @@
              frequencies
              )]
     (apply dissoc freqs processed-stop-words)))
+
+(defn default-tokenize [text options]
+  "Converts text to token counts (a map token -> count).
+   Takes an option `stopwords` being either a keyword naming a
+   default Smile dictionary (:default :google :comprehensive :mysql)
+   or a seq of stop words."
+  (let [normalizer (SimpleNormalizer/getInstance)
+        stemmer (PorterStemmer.)
+        tokenizer (SimpleTokenizer. )
+        sentence-splitter (SimpleSentenceSplitter/getInstance)
+        tokens
+        (->> text
+             (.normalize normalizer)
+             (.split sentence-splitter)
+             (map #(.split tokenizer %))
+             (map seq)
+             flatten
+             (remove nil?)
+             (map #(word-process stemmer normalizer % ))
+             )]
+    tokens
+    ))
 
 
 (defn ->vocabulary-top-n [bows n]
@@ -83,6 +108,24 @@
    )
   )
 
+(defn tfidf-vectorize
+  ([ds text-col bow-col text->bow-fn options]
+   "Converts text column `text-col` to bag-of-words representation
+   in the form of a frequency-count map"
+   (ds/add-or-update-column
+    ds
+    (ds/new-column
+     bow-col
+     (ppp/ppmap-with-progress
+      "text->tfidf"
+      1000
+      #(default-tokenize % options)
+      (get ds text-col)))))
+  ([ds text-col bow-col text->bow-fn]
+   (tfidf-vectorize ds text-col bow-col text->bow-fn {})
+   )
+  )
+
 
 (defn bow->something-sparse [ds bow-col indices-col vocab-size bow->sparse-fn]
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
@@ -101,3 +144,20 @@
        1000
        #(bow->sparse-fn % vocab->index-map)
        (get ds bow-col))))))
+
+
+(comment
+
+  (defn get-dataset []
+    (->
+     (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
+     (ds/select-columns [:Text :Score])
+     (ds/update-column :Score #(map dec %))))
+
+  (def data
+    (->
+     (get-dataset)
+     (tfidf-vectorize  :Text :tokens default-tokenize)))
+  (tfidf/tfidf (:tokens data))
+  )
+(default-tokenize "this is clojure" {})
