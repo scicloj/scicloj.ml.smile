@@ -19,9 +19,15 @@
   "Training function of sparse logistic regression model.
    The column of name `(options :sparse-column)` of `feature-ds` needs to contain the text as SparseArrays
    over the vocabulary."
-  (let [train-array (into-array SparseArray
-                                (get feature-ds (:sparse-column options)))
-        train-dataset (SparseDataset/of (seq train-array))
+  (let [train-sparse-arrays (->> (get feature-ds (:sparse-column options))
+             (into-array SparseArray)
+             seq)
+        train-dataset (SparseDataset/of train-sparse-arrays
+                                        (-> feature-ds
+                                            meta
+                                            :count-vectorize-vocabulary
+                                            :vocab
+                                            count))
         score (get target-ds (first (ds-mod/inference-target-column-names target-ds)))]
     (SparseLogisticRegression/fit train-dataset
                                   (dt/->int-array score)
@@ -42,7 +48,6 @@
   predict
   {})
 
-
 (comment
 
   (defn get-reviews []
@@ -51,14 +56,14 @@
      (ds/select-columns [:Text :Score])
      (ds/update-column :Score #(map dec %))
      (nlp/count-vectorize :Text :bow nlp/default-text->bow)
-     (nb/bow->SparseArray :bow :bow-sparse 100)
+     (nb/bow->SparseArray :bow :bow-sparse #(nlp/->vocabulary-top-n % 20000))
      (ds-mod/set-inference-target :Score)))
 
+  (def reviews (get-reviews))
 
   (def trained-model
-    (ml/train reviews {:model-type :sparse-logistic-regression
+    (ml/train reviews {:model-type :smile.classification/sparse-logistic-regression
                        :sparse-column :bow-sparse}))
 
-  (ml/predict reviews trained-model)
+  (ml/predict reviews trained-model))
 
-  )
