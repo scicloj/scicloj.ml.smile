@@ -6,9 +6,9 @@
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.tensor :as dtt]
-            [tech.v3.ml.gridsearch :as ml-gs]
-            [tech.v3.ml.model :as model]
-            [tech.v3.ml :as ml]
+            [scicloj.metamorph.ml.model :as model]
+            [scicloj.metamorph.ml.gridsearch :as ml-gs]
+            [scicloj.metamorph.ml :as ml]
             [tech.v3.libs.smile.protocols :as smile-proto]
             [tech.v3.libs.smile.data :as smile-data]
             [tech.v3.datatype.errors :as errors]
@@ -354,7 +354,7 @@ See tech.v3.dataset/categorical->number.
   (do
     (require '[tech.v3.dataset.column-filters :as cf])
     (require '[tech.v3.dataset.modelling :as ds-mod])
-    (require '[tech.v3.ml.loss :as loss])
+    (require '[scicloj.metamorph.ml.loss :as loss])
     (def src-ds (ds/->dataset "test/data/iris.csv"))
     (def ds (->  src-ds
                  (ds/categorical->number cf/categorical)
@@ -365,5 +365,26 @@ See tech.v3.dataset/categorical->number.
     (def test-ds (:test-ds split-data))
     (def model (ml/train train-ds {:model-type :smile.classification/gradient-tree-boost}))
     (def prediction (ml/predict test-ds model)))
+
+  )
+
+(comment
+  (require '[tech.v3.dataset.metamorph :as ds-mm])
+  (require '[scicloj.metamorph.ml  :as mm-ml])
+  (require '[scicloj.metamorph.ml.metamorph  :as mm-ml-mm])
+
+  (def src-ds (ds/->dataset "test/data/iris.csv"))
+
+  (def predicted-ctx
+    (-> {:metamorph/data src-ds
+         :metamorph/mode :fit
+         :metamorph/id :the-model
+         }
+        ((ds-mm/categorical->number cf/categorical))
+        ((ds-mm/set-inference-target "species"))
+        ((mm-ml-mm/model {:model-type :smile.classification/gradient-tree-boost}))))
+
+
+
 
   )

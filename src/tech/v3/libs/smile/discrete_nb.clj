@@ -3,7 +3,7 @@
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.libs.smile.nlp :as nlp]
             [tech.v3.datatype.errors :as errors]
-            [tech.v3.ml :as ml])
+            [scicloj.metamorph.ml :as ml])
   (:import [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
            smile.util.SparseArray))
 

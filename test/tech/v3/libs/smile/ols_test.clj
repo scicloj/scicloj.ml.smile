@@ -3,8 +3,8 @@
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.libs.smile.regression]
             [tech.v3.libs.smile.nlp :as nlp]
-            [tech.v3.ml :as ml]
-            [tech.v3.ml.gridsearch :as ml-gs]
+            [scicloj.metamorph.ml :as ml]
+            [scicloj.metamorph.ml.gridsearch :as ml-gs]
             [clojure.test :refer (deftest is)]))
 
 (def interest-rate  [2.75 2.5 2.5 2.5 2.5 2.5 2.5 2.25 2.25 2.25 2 2 2 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75])

@@ -1,11 +1,11 @@
 (ns tech.v3.ml.metamorph-test
-  (:require [tech.v3.ml.metamorph :as sut]
+  (:require [scicloj.metamorph.ml.metamorph :as sut]
             [clojure.test :refer [deftest is]]
             [tech.v3.dataset.column-filters :as cf]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset :as ds]
-            [tech.v3.ml.loss :as loss]
-            [tech.v3.libs.smile.classification]))
+            [scicloj.metamorph.ml.loss :as loss]
+            [scicloj.metamorph.ml.classification]))
 
 
 (deftest test-model

@@ -6,7 +6,7 @@
    [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.libs.smile.discrete-nb :as nb]
    [tech.v3.libs.smile.nlp :as nlp]
-   [tech.v3.ml :as ml])
+   [scicloj.metamorph.ml :as ml])
   (:import [smile.classification SVM]
            [smile.data SparseDataset]
            [smile.util SparseArray]))

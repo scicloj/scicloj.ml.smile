@@ -1,4 +1,4 @@
-(defproject techascent/tech.ml "5.02-SNAPSHOT"
+(defproject techascent/tech.ml.smile "5.02-SNAPSHOT"
   :description "Basic machine learning toolkit.  `tech.v3.ml` is the root
 namespace and provides train/predict pathways based on datasets and
 an options map.  Please see the xgboost article for a quick runthough
@@ -7,15 +7,11 @@ of how to use this library."
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.10.2"]
-                 [techascent/tech.ml.dataset "5.01"]
-                 [ml.dmlc/xgboost4j_2.12 "1.3.1"]
-                 [ml.dmlc/xgboost4j-spark_2.12 "1.3.1"]
-                 [org.bytedeco/openblas "0.3.10-1.5.4"]
-                 [org.apache.hadoop/hadoop-common "3.3.0"
-                  :exclusions [org.apache.commons/commons-math3
-                               org.slf4j/slf4j-log4j12]]
+                 [scicloj/tablecloth "5.05"]
+                 [scicloj/metamorph.ml "0.2.0-alpha1"]
+                [org.bytedeco/openblas "0.3.10-1.5.4"]
                  [org.bytedeco/openblas-platform "0.3.10-1.5.4"]
-                 [pppmap/pppmap "0.2.1"]]
+                 ]
 
 
   :profiles

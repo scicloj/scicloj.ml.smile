@@ -3,7 +3,7 @@
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.libs.smile.nlp :as nlp]
-            [tech.v3.ml :as ml]
+            [scicloj.metamorph.ml :as ml]
             [tech.v3.datatype.errors :as errors]
             )
   (:import smile.classification.Maxent))
@@ -93,50 +93,3 @@
   maxent-train-binomial
   maxent-predict
   {})
-
-
-
-(comment
-
-  ;; train + predict
-  (def reviews
-    (->
-     (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
-     (ds/select-columns [:Text :Score])
-     (nlp/count-vectorize :Text :bow nlp/default-text->bow)
-     (bow->sparse-array :bow :bow-sparse 1000)
-     (ds-mod/set-inference-target :Score)
-     ))
-
-  (def trained-model (ml/train reviews {:model-type :maxent-multinomial
-                                        :sparse-column :bow-sparse
-                                        }))
-  ;; should predict on new data
-  (ml/predict reviews trained-model))
-
-
-(comment
-  ;;  grid search
-  (def models
-    (ml/train-auto-gridsearch
-     reviews
-     {:model-type :maxent-multinomial
-      :sparse-column :bow-sparse
-      :lambda {:tech.v3.ml.gridsearch/type :linear
-               :start 0.001
-               :end 100.0
-               :n-steps 30
-               :result-space :float64
-               }
-      :tol  {:tech.v3.ml.gridsearch/type :linear
-             :start 1.0E-9
-             :end 0.1
-             :n-steps 20
-             :result-space :float64
-             }
-      :max-iter {:tech.v3.ml.gridsearch/type :linear
-                 :start 100.0
-                 :end 10000.0
-                 :n-steps 20
-                 :result-space :int64 }
-      })))

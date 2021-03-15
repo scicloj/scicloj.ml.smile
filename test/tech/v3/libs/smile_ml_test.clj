@@ -1,6 +1,6 @@
 (ns tech.v3.libs.smile-ml-test
-  (:require [tech.v3.ml.verify :as verify]
-            [tech.v3.ml :as ml]
+  (:require [scicloj.metamorph.ml.verify :as verify]
+            [scicloj.metamorph.ml :as ml]
             [tech.v3.libs.smile.regression]
             [tech.v3.libs.smile.classification]
             [tech.v3.dataset :as ds]
@@ -8,7 +8,9 @@
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.datatype :as dtype]
             [tech.v3.dataset.column-filters :as cf]
+            ;; [tablecloth.api :as]
             [clojure.test :refer [deftest is]]))
+
 
 ;;shut that shit up.
 (ds-utils/set-slf4j-log-level :warn)
@@ -36,15 +38,6 @@
 
 
 
-(deftest smile-regression-autogridsearch-test
-    (doseq [regression-model smile-regression-models]
-      (verify/auto-gridsearch-regression {:model-type regression-model} 0.5)))
-
-
-(deftest smile-classification-autogridsearch-test
-    (doseq [classify-model smile-classification-models]
-      (verify/auto-gridsearch-classification {:model-type classify-model} 0.5)))
-
 
 (deftest test-require-categorical-target
   (let [titanic (-> (ds/->dataset "test/data/titanic.csv")
@@ -56,9 +49,8 @@
         train-ds (:train-ds split-data)
         test-ds (:test-ds split-data)
         ]
-    (def test-ds test-ds)
      (is (thrown? Exception
                    (ml/train train-ds {:model-type :smile.classification/random-forest})
                    ))
 
-    ))
+     ))

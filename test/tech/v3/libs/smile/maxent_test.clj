@@ -4,7 +4,7 @@
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.libs.smile.maxent :as maxent]
             [tech.v3.libs.smile.nlp :as nlp]
-            [tech.v3.ml :as ml]))
+            [scicloj.metamorph.ml :as ml]))
 
 
 (defn get-reviews []

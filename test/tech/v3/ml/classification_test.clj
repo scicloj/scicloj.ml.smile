@@ -1,5 +1,5 @@
 (ns tech.v3.ml.classification-test
-  (:require [tech.v3.ml.classification :refer :all]
+  (:require [scicloj.metamorph.ml.classification :refer :all]
             [clojure.test :refer :all]))
 
 

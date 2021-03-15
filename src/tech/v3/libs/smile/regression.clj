@@ -1,12 +1,12 @@
 (ns tech.v3.libs.smile.regression
   "Namespace to require to enable a set of smile regression models"
-  (:require [tech.v3.ml :as ml]
-            [tech.v3.ml.model :as model]
+  (:require [scicloj.metamorph.ml :as ml]
+            [scicloj.metamorph.ml.model :as model]
             [tech.v3.dataset :as ds]
             [tech.v3.tensor :as dtt]
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.datatype :as dtype]
-            [tech.v3.ml.gridsearch :as ml-gs]
+            [scicloj.metamorph.ml.gridsearch :as ml-gs]
             [tech.v3.libs.smile.data :as smile-data]
             [tech.v3.libs.smile.protocols :as smile-proto])
   (:import [smile.regression

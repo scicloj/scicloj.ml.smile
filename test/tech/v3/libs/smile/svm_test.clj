@@ -3,8 +3,8 @@
             [tech.v3.dataset.column-filters :as cf]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset :as ds]
-            [tech.v3.ml.loss :as loss]
-            [tech.v3.ml :as ml]
+            [scicloj.metamorph.ml.loss :as loss]
+            [scicloj.metamorph.ml :as ml]
             [clojure.test :refer [deftest is] :as t])
   (:import [smile.math MathEx]))
 
@@ -29,6 +29,17 @@
    "target"
    ])
 
+(defn train-split [ds options-map]
+  (let [
+        _ (def ds ds)
+        _ (def options-map options-map)
+        split (ds-mod/train-test-split ds options-map)
+        _ (def split split)
+        target-colname (first (ds/column-names (cf/target (:test-ds split))))
+        fitted-model (ml/train (:train-ds split) options-map)
+        predictions (ml/predict (:test-ds split) fitted-model)]
+    (loss/classification-loss ((:test-ds split) target-colname) (predictions target-colname))))
+
 (def test-svn
   (let [src-ds (ds/->dataset "test/data/breast_cancer.csv.gz", {:header-row? false :n-initial-skip-rows 1 })
         ds (->  src-ds
@@ -46,9 +57,8 @@
 
         _ (MathEx/setSeed 1234)
         loss
-        (:loss
-         (ml/train-split ds {:model-type :smile.classification/svm
-                             :randomize-dataset? false}
-                         loss/classification-loss))]
+        (train-split ds {:model-type :smile.classification/svm
+                         :randomize-dataset? false}
+                     )]
 
     (is (= loss  0.13450292397660824 ))))

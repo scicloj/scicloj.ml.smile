@@ -1,11 +1,10 @@
 (ns tech.v3.libs.smile.sparse-svm-test
   (:require [clojure.test :refer :all]
             [tech.v3.dataset :as ds]
-
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.libs.smile.discrete-nb :as nb]
             [tech.v3.libs.smile.nlp :as nlp]
-            [tech.v3.ml :as ml]
+            [scicloj.metamorph.ml :as ml]
             [tech.v3.libs.smile.sparse-svm]))
 
 (defn get-reviews []
