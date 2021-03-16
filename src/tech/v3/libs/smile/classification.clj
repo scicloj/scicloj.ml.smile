@@ -12,6 +12,13 @@
             [tech.v3.libs.smile.protocols :as smile-proto]
             [tech.v3.libs.smile.data :as smile-data]
             [tech.v3.datatype.errors :as errors]
+            [tech.v3.libs.smile.discrete-nb]
+            [tech.v3.libs.smile.maxent]
+            [tech.v3.libs.smile.sparse-logreg]
+            [tech.v3.libs.smile.sparse-svm]
+            [tech.v3.libs.smile.svm]
+
+
             )
   (:import [smile.classification SoftClassifier AdaBoost LogisticRegression
             DecisionTree RandomForest KNN GradientTreeBoost]
