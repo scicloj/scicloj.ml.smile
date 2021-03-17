@@ -55,7 +55,7 @@
 
 
 (ml/define-model!
-  :discrete-naive-bayes
+  :smile.classification/discrete-naive-bayes
   train
   predict
   {})

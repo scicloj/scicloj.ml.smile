@@ -83,13 +83,13 @@
 
 
 (ml/define-model!
-  :maxent-multinomial
+  :smile.classification/maxent-multinomial
   maxent-train-multinomial
   maxent-predict
   {})
 
 (ml/define-model!
-  :maxent-binomial
+  :smile.classification/maxent-binomial
   maxent-train-binomial
   maxent-predict
   {})

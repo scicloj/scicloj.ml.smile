@@ -29,9 +29,10 @@
 
 
 
-(defn default-tokenize [text options]
+(defn default-tokenize
   "Tokenizes text.
   The usage of a stemmer can be configured by options :stemmer "
+  [text options]
   (let [normalizer (SimpleNormalizer/getInstance)
         stemmer-type (get options :stemmer :porter)
         tokenizer (SimpleTokenizer. )
@@ -52,7 +53,7 @@
              )]
     tokens))
 
-(defn default-text->bow [text options]
+(defn default-text->bow
   "Converts text to token counts (a map token -> count).
    Takes options:
    `stopwords` being either a keyword naming a
@@ -60,6 +61,7 @@
    or a seq of stop words.
    `stemmer` being either :none or :porter for selecting the porter stemmer.
 "
+  [text options]
   (let [normalizer (SimpleNormalizer/getInstance)
         stemmer (PorterStemmer.)
         stopwords-option (:stopwords options)
@@ -73,9 +75,9 @@
 
 
 (defn count-vectorize
-  ([ds text-col bow-col text->bow-fn options]
-   "Converts text column `text-col` to bag-of-words representation
+  "Converts text column `text-col` to bag-of-words representation
    in the form of a frequency-count map"
+  ([ds text-col bow-col text->bow-fn options]
    (ds/add-or-update-column
     ds
     (ds/new-column
@@ -101,8 +103,9 @@
          keys)]
     vocabulary))
 
-(defn create-vocab-all [bow ]
+(defn create-vocab-all
   "Uses all tokens as the vocabulary"
+  [bow ]
   (keys
    (apply merge bow))
   )
@@ -110,9 +113,10 @@
 
 
 
-(defn bow->sparse-and-vocab [ds bow-col indices-col create-vocab-fn bow->sparse-fn]
+(defn bow->sparse-and-vocab
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
    The exact transformation to the sparse representtaion is given by `bow->sparse-fn`"
+  [ds bow-col indices-col create-vocab-fn bow->sparse-fn]
   (let [vocabulary-list (create-vocab-fn (get ds bow-col))
         vocab->index-map (zipmap vocabulary-list  (range))
         vocabulary {:vocab vocabulary-list
@@ -134,23 +138,16 @@
      :vocab vocabulary}
     ))
 
-(defn bow->something-sparse [ds bow-col indices-col create-vocab-fn bow->sparse-fn]
+(defn bow->something-sparse
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
    The exact transformation to the sparse representtaion is given by `bow->sparse-fn`"
+  [ds bow-col indices-col create-vocab-fn bow->sparse-fn]
   (let [{:keys [ds vocabulary]}
         (bow->sparse-and-vocab ds bow-col indices-col create-vocab-fn bow->sparse-fn)]
 
 
     (vary-meta ds assoc
-               :count-vectorize-vocabulary vocabulary)
-    )
-
-  )
-
-
-
-
-
+               :count-vectorize-vocabulary vocabulary)))
 
 (defn tf-map [bows]
   (loop [m {} bows bows]
@@ -180,9 +177,10 @@
   (* (tf term bow)  (idf tf-map term bows) ))
 
 
-(defn bow->tfidf [ds bow-column tfidf-column]
+(defn bow->tfidf
   "Calculates the tfidf score from bag-of-words (as token frequency maps)
    in column `bow-column` and stores them in a new column `tfid-column` as maps of token->tfidf-score."
+  [ds bow-column tfidf-column]
   (let [bows (get ds bow-column)
         tf-map (tf-map bows)
         tfidf-column (ds/new-column tfidf-column
@@ -209,9 +207,10 @@
     sparse-array))
 
 
-(defn bow->sparse-indices [bow vocab->index-map]
+(defn bow->sparse-indices
   "Converts the token-frequencies to the sparse vectors
    needed by Maxent"
+  [bow vocab->index-map]
   (->>
    (merge-with
     (fn [index count]

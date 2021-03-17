@@ -354,7 +354,11 @@ See tech.v3.dataset/categorical->number.
 (doseq [[reg-kwd reg-def] classifier-metadata]
   (ml/define-model! (keyword "smile.classification" (name reg-kwd))
     train predict {:thaw-fn thaw
-                   :hyperparameters (:gridsearch-options reg-def)}))
+                   :hyperparameters (:gridsearch-options reg-def)
+                   :options (:options reg-def)
+                   })
+
+  )
 
 
 (comment

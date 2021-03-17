@@ -314,7 +314,9 @@
                    :explain-fn (case reg-kwd
                                  :ordinary-least-square explain-ols
                                  explain)
-                   :hyperparameters (:gridsearch-options reg-def)}))
+                   :hyperparameters (:gridsearch-options reg-def)
+                   :options (:options reg-def)
+                   }))
 
 
 (comment
