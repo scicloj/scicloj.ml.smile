@@ -149,6 +149,9 @@
    ;;                  :default 1e-4}]}
    :gradient-tree-boost
    {:class-name "GradientTreeBoost"
+    :documentation {:javadoc "http://haifengl.github.io/api/java/smile/classification/GradientTreeBoost.html"
+                    :user-guide "https://haifengl.github.io/classification.html#gbm"
+                    }
     :name :gradient-tree-boost
     :options [{:name :ntrees
                :type :int32
@@ -356,7 +359,7 @@ See tech.v3.dataset/categorical->number.
     train predict {:thaw-fn thaw
                    :hyperparameters (:gridsearch-options reg-def)
                    :options (:options reg-def)
-                   })
+                   :documentation (:documentation reg-def)})
 
   )
 

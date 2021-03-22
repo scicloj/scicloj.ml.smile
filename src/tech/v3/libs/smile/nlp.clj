@@ -77,7 +77,10 @@
 (defn count-vectorize
   "Converts text column `text-col` to bag-of-words representation
    in the form of a frequency-count map"
-  ([ds text-col bow-col text->bow-fn options]
+  ([ds text-col bow-col {:keys [text->bow-fn]
+                         :or {text->bow-fn default-text->bow}
+                         :as options
+                         }]
    (ds/add-or-update-column
     ds
     (ds/new-column
@@ -87,8 +90,8 @@
       1000
       #(text->bow-fn % options)
       (get ds text-col)))))
-  ([ds text-col bow-col text->bow-fn]
-   (count-vectorize ds text-col bow-col text->bow-fn {})
+  ([ds text-col bow-col]
+   (count-vectorize ds text-col bow-col {:text->bow-fn  default-text->bow })
    )
   )
 
@@ -116,7 +119,7 @@
 (defn bow->sparse-and-vocab
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
    The exact transformation to the sparse representtaion is given by `bow->sparse-fn`"
-  [ds bow-col indices-col create-vocab-fn bow->sparse-fn]
+  [ds bow-col indices-col bow->sparse-fn {:keys [create-vocab-fn] :or {create-vocab-fn create-vocab-all}}  ]
   (let [vocabulary-list (create-vocab-fn (get ds bow-col))
         vocab->index-map (zipmap vocabulary-list  (range))
         vocabulary {:vocab vocabulary-list
@@ -141,13 +144,10 @@
 (defn bow->something-sparse
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
    The exact transformation to the sparse representtaion is given by `bow->sparse-fn`"
-  [ds bow-col indices-col create-vocab-fn bow->sparse-fn]
+  [ds bow-col indices-col bow->sparse-fn options]
   (let [{:keys [ds vocabulary]}
-        (bow->sparse-and-vocab ds bow-col indices-col create-vocab-fn bow->sparse-fn)]
-
-
-    (vary-meta ds assoc
-               :count-vectorize-vocabulary vocabulary)))
+        (bow->sparse-and-vocab ds bow-col indices-col bow->sparse-fn options)]
+    ds))
 
 (defn tf-map [bows]
   (loop [m {} bows bows]

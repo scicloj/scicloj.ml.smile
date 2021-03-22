@@ -32,9 +32,10 @@
    agains the vocabulary."
   (let [train-array (into-array ^"[[Ljava.lang.Integer"
                                 (get feature-ds (:sparse-column options)))
+        _ (def train-array train-array)
         train-score-array (into-array Integer/TYPE
                                       (get target-ds (first (ds-mod/inference-target-column-names target-ds))))
-        p (int  (:p options))
+        p (int  (or  (:p options) 0) )
         _ (errors/when-not-error (pos? p) "p needs to be specified in options and greater 0")
         options (merge maxent-default-parameters options)]
     (case maxent-type

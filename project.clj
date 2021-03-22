@@ -8,8 +8,8 @@ of how to use this library."
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.10.2"]
                  [scicloj/tablecloth "5.05"]
-                 [scicloj/metamorph.ml "0.2.0-alpha1"]
-                [org.bytedeco/openblas "0.3.10-1.5.4"]
+                 [scicloj/metamorph.ml "0.3.0-alpha1"]
+                 [org.bytedeco/openblas "0.3.10-1.5.4"]
                  [org.bytedeco/openblas-platform "0.3.10-1.5.4"]
                  ]
 
@@ -20,11 +20,7 @@ of how to use this library."
     :plugins [[lein-codox "0.10.7"]]
     :codox {:project {:name "tech.ml"}
             :metadata {:doc/format :markdown}
-            :namespaces [tech.v3.ml
-                         tech.v3.ml.metrics
-                         tech.v3.ml.loss
-                         tech.v3.ml.gridsearch
-                         tech.v3.libs.xgboost
+            :namespaces [
                          tech.v3.libs.smile.classification
                          tech.v3.libs.smile.regression]
             :themes [:rdash]

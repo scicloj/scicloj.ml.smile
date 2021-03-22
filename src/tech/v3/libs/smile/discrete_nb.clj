@@ -9,10 +9,10 @@
 
 
 
-(defn bow->SparseArray [ds bow-col indices-col create-vocab-fn]
+(defn bow->SparseArray [ds bow-col indices-col options]
   "Converts a bag-of-word column `bow-col` to sparse indices column `indices-col`,
    as needed by the discrete naive bayes model. `vocab size` is the size of vocabluary used, sorted by token frequency "
-  (nlp/bow->something-sparse ds bow-col indices-col create-vocab-fn nlp/freqs->SparseArray))
+  (nlp/bow->something-sparse ds bow-col indices-col nlp/freqs->SparseArray options))
 
 
 
