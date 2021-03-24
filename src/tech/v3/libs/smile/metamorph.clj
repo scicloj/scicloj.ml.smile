@@ -42,14 +42,39 @@
 
 
   [bow-col indices-col bow->sparse-fn options]
-  (fn [ctx]
-    (let [{:keys [ds vocab]} (nlp/bow->sparse-and-vocab (:metamorph/data ctx)
-                                                        bow-col indices-col
-                                                        bow->sparse-fn
-                                                        options)]
-      (assoc ctx :metamorph/data ds
-             ::count-vectorize-vocabulary vocab
-             ))))
+  (def bow-col bow-col)
+  (def indices-col indices-col)
+  (def bow->sparse-fn bow->sparse-fn)
+  (def options options)
+
+  (fn [{:metamorph/keys [mode data] :as ctx}]
+    (def data data)
+    (def mode mode)
+    (case mode
+      :fit
+      (let [
+            {:keys [ds vocab]}
+            (nlp/bow->sparse-and-vocab data
+                                       bow-col indices-col
+                                       bow->sparse-fn
+                                       options)
+             _ (def ds ds)
+             _ (def vocab vocab)
+            ]
+        (assoc ctx :metamorph/data ds
+               ::count-vectorize-vocabulary vocab
+               ))
+      :transform
+      (do
+        (def ctx ctx)
+        (def data data)
+        (let [{:keys [ds vocab]}
+              (nlp/bow->sparse data bow-col indices-col bow->sparse-fn (::count-vectorize-vocabulary ctx))]
+          (assoc ctx :metamorph/data ds))
+        )
+
+
+      )))
 
 (defn bow->sparse-array
   "Converts a bag-of-word column `bow-col` to sparse indices column `indices-col`,

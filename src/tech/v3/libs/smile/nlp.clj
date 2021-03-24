@@ -33,6 +33,8 @@
   "Tokenizes text.
   The usage of a stemmer can be configured by options :stemmer "
   [text options]
+  (def text text)
+  (def options options)
   (let [normalizer (SimpleNormalizer/getInstance)
         stemmer-type (get options :stemmer :porter)
         tokenizer (SimpleTokenizer. )
@@ -81,6 +83,10 @@
                          :or {text->bow-fn default-text->bow}
                          :as options
                          }]
+   (def ds ds)
+   (def text-col text-col)
+   (def bow-col bow-col)
+   (def options options)
    (ds/add-or-update-column
     ds
     (ds/new-column
@@ -126,6 +132,23 @@
                     :vocab->index-map vocab->index-map
                     :index->vocab-map (clojure.set/map-invert vocab->index-map)
                     }
+        vocab->index-map (:vocab->index-map vocabulary)
+        ds
+        (ds/add-or-update-column
+         ds
+         (ds/new-column
+          indices-col
+          (ppp/ppmap-with-progress
+           "bow->sparse"
+           1000
+           #(bow->sparse-fn % vocab->index-map)
+           (get ds bow-col))))]
+    {:ds ds
+     :vocab vocabulary}
+    ))
+
+(defn bow->sparse [ds bow-col indices-col bow->sparse-fn vocabulary]
+  (let [
         vocab->index-map (:vocab->index-map vocabulary)
         ds
         (ds/add-or-update-column

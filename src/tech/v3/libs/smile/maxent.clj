@@ -77,10 +77,13 @@
   (let [predict-array
         (into-array ^"[[Ljava.lang.Integer"
                     (get feature-ds :bow-sparse))
-        target-colum (first (:target-columns model))]
-    (ds/->dataset {
+        target-colum (first (:target-columns model))
+        predictions (seq  (.predict (:model-data model) predict-array))
+        ]
+    (ds/->dataset {predictions
                    target-colum
-                   (seq  (.predict (:model-data model) predict-array))})))
+                   })))
+
 
 
 (ml/define-model!

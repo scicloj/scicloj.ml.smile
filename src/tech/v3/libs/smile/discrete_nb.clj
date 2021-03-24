@@ -3,7 +3,11 @@
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.libs.smile.nlp :as nlp]
             [tech.v3.datatype.errors :as errors]
-            [scicloj.metamorph.ml :as ml])
+            [scicloj.metamorph.ml :as ml]
+            [scicloj.metamorph.ml.model :as model]
+            [tech.v3.tensor :as dtt]
+
+            )
   (:import [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
            smile.util.SparseArray))
 
@@ -47,11 +51,46 @@
                thawed-model
                model]
   "Predict function for discrete naive bayes"
-  (let [sparse-arrays (get feature-ds  (get-in model [:options :sparse-column]))
+  (def model model)
+  (def feature-ds feature-ds)
+  (def thawed-model thawed-model)
+
+  (let [
+        sparse-col (get-in model [:options :sparse-column])
+        sparse-arrays (get feature-ds  sparse-col)
+        _ (errors/when-not-error sparse-arrays (str "Sparse arrays not found in column " sparse-col))
+        _ (def sparse-arrays sparse-arrays)
         target-colum (first (:target-columns model))
-        predictions (map #(.predict thawed-model %) sparse-arrays)
-        ]
-    (ds/->dataset {target-colum predictions})) )
+        n-labels (-> model :target-categorical-maps target-colum :lookup-table count)
+        _ (errors/when-not-error (pos-int? n-labels) (str  "No labels found for target column" target-colum ))
+        _ (def n-labels n-labels)
+        posteriori (double-array n-labels )
+
+        predictions (map
+                     #(let [posteriori (double-array n-labels )
+                            _ (.predict thawed-model % posteriori)
+
+                            ]
+                        posteriori
+                        )
+
+                     sparse-arrays)]
+    (def predictions predictions)
+    (def target-colum target-colum)
+    (model/finalize-classification
+     (dtt/->tensor predictions)
+     (ds/row-count feature-ds)
+     target-colum
+     (-> model :target-categorical-maps)
+     )
+
+    ))
+
+
+
+
+
+
 
 
 (ml/define-model!

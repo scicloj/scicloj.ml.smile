@@ -6,43 +6,43 @@
             [tech.v3.libs.smile.discrete-nb :as nb]
             [tech.v3.libs.smile.nlp :as nlp]))
 
+
+
 (defn get-reviews []
   (->
-   (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
+   (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword :parser-fn :string})
    (ds/select-columns [:Text :Score])
-   (ds/update-column :Score #(map dec %))
-   (nlp/count-vectorize :Text :bow {:text->bow-fn  nlp/default-text->bow})
-   (nb/bow->SparseArray :bow :bow-sparse {:create-vocab-fn #(nlp/->vocabulary-top-n % 100)} )
+   (ds/categorical->number [:Score])
+   (nlp/count-vectorize :Text :bow {:text->bow-fn nlp/default-text->bow})
+   (nb/bow->SparseArray :bow :sparse {:create-vocab-fn #(nlp/->vocabulary-top-n % 100)})
    (ds-mod/set-inference-target :Score)))
 
 
 
-
-
 (deftest test-discrete-nb-bernoulli
-  (is (=
+  (is (= [1.000, 1.000, 1.000, 1.000, 1.000, 2.000, 2.000, 1.000, 1.000, 1.000]
        (:Score
         (let [reviews (get-reviews)
               trained-model
               (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
                                  :discrete-naive-bayes-model :bernoulli
-                                 :sparse-column :bow-sparse
+                                 :sparse-column :sparse
                                  :p 100
                                  :k 5})
               prediction (ml/predict (ds/head reviews 10) trained-model)]
           prediction))
-       [3 3 3 3 3 4 4 3 3 3])))
+       )))
 
 (deftest test-discrete-nb-multinomial
-  (is (=
+  (is (= [2.000, 2.000, 1.000, 0.000, 1.000, 2.000, 2.000, 2.000, 2.000, 2.000]
        (:Score
         (let [reviews (get-reviews)
               trained-model
               (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
                                  :discrete-naive-bayes-model :multinomial
-                                 :sparse-column :bow-sparse
+                                 :sparse-column :sparse
                                  :p 100
                                  :k 5})
               prediction (ml/predict (ds/head reviews 10) trained-model)]
           prediction))
-       [4 4 3 2 3 4 4 4 4 4])))
+       )))
