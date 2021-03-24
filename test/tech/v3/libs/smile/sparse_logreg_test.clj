@@ -12,8 +12,8 @@
    (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
    (ds/select-columns [:Text :Score])
    (ds/update-column :Score #(map dec %))
-   (nlp/count-vectorize :Text :bow nlp/default-text->bow)
-   (nb/bow->SparseArray :bow :sparse #(nlp/->vocabulary-top-n % 100))
+   (nlp/count-vectorize :Text :bow {:text->bow-fn nlp/default-text->bow})
+   (nb/bow->SparseArray :bow :sparse {:create-vocab-fn #(nlp/->vocabulary-top-n % 100)})
    (ds-mod/set-inference-target :Score)))
 
 

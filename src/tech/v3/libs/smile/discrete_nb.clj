@@ -27,8 +27,8 @@
                                 (get feature-ds (:sparse-column options)))
         train-score-array (into-array Integer/TYPE
                                       (get target-ds (first (ds-mod/inference-target-column-names target-ds))))
-        p (int (:p options))
-        _ (errors/when-not-error (pos? p) "p needs to be specified in options and greater 0")
+        p (:p options)
+        _ (errors/when-not-error (and (not (nil? p)) (pos? p)) "p needs to be specified in options and greater 0")
         nb-model
         (case (options :discrete-naive-bayes-model)
           :polyaurn DiscreteNaiveBayes$Model/POLYAURN

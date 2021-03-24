@@ -1,11 +1,13 @@
 (ns tech.v3.ml.metamorph-test
-  (:require [scicloj.metamorph.ml.metamorph :as sut]
+  (:require [scicloj.metamorph.ml :as ml]
             [clojure.test :refer [deftest is]]
             [tech.v3.dataset.column-filters :as cf]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset :as ds]
             [scicloj.metamorph.ml.loss :as loss]
-            [scicloj.metamorph.ml.classification]))
+            [scicloj.metamorph.ml.classification]
+            [tech.v3.libs.smile.classification]
+            ))
 
 
 (deftest test-model
@@ -21,7 +23,7 @@
         test-ds  (:test-ds split-data)
 
         pipeline (fn  [ctx]
-                   ((sut/model {:model-type :smile.classification/random-forest})
+                   ((ml/model {:model-type :smile.classification/random-forest})
                     ctx))
 
 

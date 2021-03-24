@@ -5,7 +5,9 @@
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.libs.smile.discrete-nb :as nb]
-   [tech.v3.libs.smile.nlp :as nlp])
+   [tech.v3.libs.smile.nlp :as nlp]
+   [tech.v3.datatype.errors :as errors]
+   )
 
   (:import [smile.classification SparseLogisticRegression]
            [smile.data SparseDataset]
@@ -17,7 +19,15 @@
 (defn train [feature-ds target-ds options]
   "Training function of sparse logistic regression model.
    The column of name `(options :sparse-column)` of `feature-ds` needs to contain the text as SparseArrays
-   over the vocabulary."
+   over the vocabulary.
+   Options:
+
+   * `:sparse-column` : column name with contains the sparse data as seq of SparseArrays
+   * `:n-sparse-columns`: Number of columns / dimensions of the sparse vectors
+
+"
+  (errors/when-not-error (:sparse-column options) ":sparse-column need to be given")
+  (errors/when-not-error (:n-sparse-columns options) ":n-sparse-columns need to be given")
   (let [train-array (into-array SparseArray
                                 (get feature-ds (:sparse-column options)))
         train-dataset (SparseDataset/of (seq train-array) (options :n-sparse-columns))

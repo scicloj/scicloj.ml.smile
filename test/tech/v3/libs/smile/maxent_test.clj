@@ -11,13 +11,13 @@
   (->
    (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
    (ds/select-columns [:Text :Score])
-   (nlp/count-vectorize :Text :bow nlp/default-text->bow)
-   (maxent/bow->sparse-array :bow :bow-sparse  #(nlp/->vocabulary-top-n % 1000))
+   (nlp/count-vectorize :Text :bow)
+   (maxent/bow->sparse-array :bow :bow-sparse {:create-vocab-fn #(nlp/->vocabulary-top-n % 1000)})
    (ds-mod/set-inference-target :Score)))
 
 (deftest test-maxent-multinomial []
   (let [reviews (get-reviews)
-        trained-model (ml/train reviews {:model-type :maxent-multinomial
+        trained-model (ml/train reviews {:model-type :smile.classification/maxent-multinomial
                                          :sparse-column :bow-sparse
                                          :p 1000})]
 
@@ -40,7 +40,7 @@
                                  (= score 2)))
 
                            ))
-        trained-model (ml/train reviews {:model-type :maxent-binomial
+        trained-model (ml/train reviews {:model-type :smile.classification/maxent-binomial
                                          :sparse-column :bow-sparse
                                          :p 1000})]
     trained-model

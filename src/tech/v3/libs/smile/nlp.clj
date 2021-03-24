@@ -194,7 +194,7 @@
                                               terms)]
                                          (zipmap terms tfidfs)))
                                      bows))]
-    (ds/add-column ds tfidf-column)))
+    (ds/add-or-update-column ds tfidf-column)))
 
 
 (defn freqs->SparseArray [freq-map vocab->index-map]

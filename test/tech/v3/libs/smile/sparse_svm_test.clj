@@ -15,8 +15,8 @@
                                 (fn [val] (if (> val 1)
                                             +1 -1))
                                 %))
-     (nlp/count-vectorize :Text :bow nlp/default-text->bow)
-     (nb/bow->SparseArray :bow :bow-sparse #(nlp/->vocabulary-top-n % 100))
+     (nlp/count-vectorize :Text :bow {:text->bow-fn nlp/default-text->bow})
+     (nb/bow->SparseArray :bow :bow-sparse {:create-vocab-fn #(nlp/->vocabulary-top-n % 100)})
      (ds-mod/set-inference-target :Score)))
 
 (deftest does-not-crash

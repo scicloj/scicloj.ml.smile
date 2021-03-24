@@ -15,7 +15,10 @@ of how to use this library."
 
 
   :profiles
-  {:codox
+  {:test
+   {:dependencies []}
+
+   :codox
    {:dependencies [[codox-theme-rdash "0.1.2"]]
     :plugins [[lein-codox "0.10.7"]]
     :codox {:project {:name "tech.ml"}

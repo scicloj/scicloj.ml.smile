@@ -11,8 +11,8 @@
    (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
    (ds/select-columns [:Text :Score])
    (ds/update-column :Score #(map dec %))
-   (nlp/count-vectorize :Text :bow nlp/default-text->bow)
-   (nb/bow->SparseArray :bow :bow-sparse #(nlp/->vocabulary-top-n % 100) )
+   (nlp/count-vectorize :Text :bow {:text->bow-fn  nlp/default-text->bow})
+   (nb/bow->SparseArray :bow :bow-sparse {:create-vocab-fn #(nlp/->vocabulary-top-n % 100)} )
    (ds-mod/set-inference-target :Score)))
 
 
@@ -24,7 +24,7 @@
        (:Score
         (let [reviews (get-reviews)
               trained-model
-              (ml/train reviews {:model-type :discrete-naive-bayes
+              (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
                                  :discrete-naive-bayes-model :bernoulli
                                  :sparse-column :bow-sparse
                                  :p 100
@@ -38,7 +38,7 @@
        (:Score
         (let [reviews (get-reviews)
               trained-model
-              (ml/train reviews {:model-type :discrete-naive-bayes
+              (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
                                  :discrete-naive-bayes-model :multinomial
                                  :sparse-column :bow-sparse
                                  :p 100
