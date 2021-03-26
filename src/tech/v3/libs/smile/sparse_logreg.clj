@@ -49,7 +49,16 @@
   :smile.classification/sparse-logistic-regression
   train
   predict
-  {})
+  {:options [{:name :lambda
+               :type :float32
+               :default 0.1}
+              {:name :tolerance
+               :type :float32
+               :default 1e-5}
+              {:name :max-iterations
+               :type :int32
+               :default 500}
+              ]})
 
 
 (comment

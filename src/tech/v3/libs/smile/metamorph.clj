@@ -36,20 +36,20 @@
   Behaviour in mode :fit               |normal
   Behaviour in mode :transform         |normal
   Reads keys from ctx                  |none
-  Writes keys to ctx                   |:tech.v3.libs.smile.metamorph/count-vectorize-vocabulary
+  Writes keys to ctx                   |:tech.v3.libs.smile.metamorph/bow->sparse-vocabulary
 
   "
 
 
   [bow-col indices-col bow->sparse-fn options]
-  (def bow-col bow-col)
-  (def indices-col indices-col)
-  (def bow->sparse-fn bow->sparse-fn)
-  (def options options)
+  ;; (def bow-col bow-col)
+  ;; (def indices-col indices-col)
+  ;; (def bow->sparse-fn bow->sparse-fn)
+  ;; (def options options)
 
   (fn [{:metamorph/keys [mode data] :as ctx}]
-    (def data data)
-    (def mode mode)
+    ;; (def data data)
+    ;; (def mode mode)
     (case mode
       :fit
       (let [
@@ -58,18 +58,18 @@
                                        bow-col indices-col
                                        bow->sparse-fn
                                        options)
-             _ (def ds ds)
-             _ (def vocab vocab)
+             ;; _ (def ds ds)
+             ;; _(def vocab vocab)
             ]
         (assoc ctx :metamorph/data ds
-               ::count-vectorize-vocabulary vocab
+               ::bow->sparse-vocabulary vocab
                ))
       :transform
       (do
-        (def ctx ctx)
-        (def data data)
+        ;; (def ctx ctx)
+        ;; (def data data)
         (let [{:keys [ds vocab]}
-              (nlp/bow->sparse data bow-col indices-col bow->sparse-fn (::count-vectorize-vocabulary ctx))]
+              (nlp/bow->sparse data bow-col indices-col bow->sparse-fn (::bow->sparse-vocabulary ctx))]
           (assoc ctx :metamorph/data ds))
         )
 

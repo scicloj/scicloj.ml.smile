@@ -4,11 +4,10 @@
             [tech.v3.dataset :as ds])
   (:import smile.nlp.normalizer.SimpleNormalizer
            smile.nlp.stemmer.PorterStemmer
-           [smile.nlp.tokenizer SimpleSentenceSplitter SimpleTokenizer]
+           [smile.nlp.tokenizer SimpleTokenizer BreakIteratorSentenceSplitter]
            [smile.nlp.dictionary EnglishStopWords]
            [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
            smile.util.SparseArray))
-
 
 
 (defn resolve-stopwords [stopwords-option]
@@ -26,15 +25,10 @@
                (.stem stemmer word))]
      word))
 
-
-
-
 (defn default-tokenize
   "Tokenizes text.
   The usage of a stemmer can be configured by options :stemmer "
   [text options]
-  (def text text)
-  (def options options)
   (let [normalizer (SimpleNormalizer/getInstance)
         stemmer-type (get options :stemmer :porter)
         tokenizer (SimpleTokenizer. )
@@ -42,7 +36,8 @@
                   :none nil
                   :porter (PorterStemmer.)
                   )
-        sentence-splitter (SimpleSentenceSplitter/getInstance)
+        sentence-splitter (BreakIteratorSentenceSplitter.)
+
         tokens
         (->> text
              (.normalize normalizer)
@@ -52,8 +47,11 @@
              flatten
              (remove nil?)
              (map #(word-process stemmer normalizer % ))
+
              )]
     tokens))
+
+
 
 (defn default-text->bow
   "Converts text to token counts (a map token -> count).
@@ -73,7 +71,13 @@
         freqs (frequencies tokens)]
     (apply dissoc freqs processed-stop-words)))
 
-
+(defn- remove-punctuation [sentence]
+  (->>
+    sentence
+    (filter #(or (Character/isLetter %)
+                 (Character/isSpace %)
+                 (Character/isDigit %)))
+    (apply str)))
 
 
 (defn count-vectorize
@@ -83,17 +87,17 @@
                          :or {text->bow-fn default-text->bow}
                          :as options
                          }]
-   (def ds ds)
-   (def text-col text-col)
-   (def bow-col bow-col)
-   (def options options)
+   ;; (def ds ds)
+   ;; (def text-col text-col)
+   ;; (def bow-col bow-col)
+   ;; (def options options)
    (ds/add-or-update-column
     ds
     (ds/new-column
      bow-col
      (ppp/ppmap-with-progress
-      "text->bow"
-      1000
+       "text->bow"
+       1000
       #(text->bow-fn % options)
       (get ds text-col)))))
   ([ds text-col bow-col]
@@ -244,3 +248,44 @@
    (filter vector?)
    (map first)
    (into-array Integer/TYPE)))
+
+
+(comment
+  (defn- remove-punctuation [sentence]
+    (->>
+     sentence
+     (filter #(or (Character/isLetter %)
+                  (Character/isSpace %)
+                  (Character/isDigit %)))
+     (apply str)))
+
+  (def tokenizer (SimpleTokenizer.))
+  (def normalizer (SimpleNormalizer/getInstance))
+  (def stemmer (PorterStemmer.))
+  (def text "this is a test")
+
+  (def sentence-spliter (BreakIteratorSentenceSplitter.))
+  (.split sentence-spliter "this is my world. and this is anoher text hello.")
+
+  (.split tokenizer "hello world")
+  (default-tokenize "hello My world. this is a tests" {})
+
+  (import java.text.BreakIterator)
+  (import smile.nlp.tokenizer.SimpleSentenceSplitter)
+
+  (def i (BreakIterator/getSentenceInstance))
+
+  (.setText  i "Today is friday. I am carsten.")
+
+  (.first i)
+  (.next i)
+
+  (def ssp-1 (SimpleSentenceSplitter/getInstance))
+  (def ssp-2 (BreakIteratorSentenceSplitter.))
+
+
+  (.split ssp "Today is friday. I am carsten.")
+
+  (default-tokenize "Today is friday. I am carsten." {})
+
+  )

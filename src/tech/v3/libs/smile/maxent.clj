@@ -5,6 +5,9 @@
             [tech.v3.libs.smile.nlp :as nlp]
             [scicloj.metamorph.ml :as ml]
             [tech.v3.datatype.errors :as errors]
+            [scicloj.metamorph.ml.model :as model]
+
+            [tech.v3.tensor :as dtt]
             )
   (:import smile.classification.Maxent))
 
@@ -73,16 +76,35 @@
 (defn maxent-predict [feature-ds
                       thawed-model
                       model]
+
   "Predict function for Maxent"
+  ;; (def feature-ds feature-ds)
+  ;; (def model model)
+  ;; (def thawed-model thawed-model)
   (let [predict-array
         (into-array ^"[[Ljava.lang.Integer"
-                    (get feature-ds :bow-sparse))
+                    (get feature-ds (get-in model [:options :sparse-column])))
         target-colum (first (:target-columns model))
-        predictions (seq  (.predict (:model-data model) predict-array))
+        ;; _ (def predictions predictions)
+        ;; _ (def predict-array predict-array)
+        ;; _ (def target-colum target-colum)
+        n-labels (-> model :target-categorical-maps target-colum :lookup-table count)
+        _ (errors/when-not-error (pos-int? n-labels) (str  "No labels found for target column" target-colum ))
+
+        posteriori
+        (into-array
+         (repeatedly (ds/row-count feature-ds)
+                     #(double-array n-labels)))
+        predictions (seq  (.predict (:model-data model) predict-array posteriori))
+        ;; _ (def predictions predictions)
         ]
-    (ds/->dataset {predictions
-                   target-colum
-                   })))
+    (model/finalize-classification
+     (dtt/->tensor posteriori)
+     (ds/row-count feature-ds)
+     target-colum
+     (-> model :target-categorical-maps)
+     )
+    ))
 
 
 
