@@ -1,6 +1,6 @@
 # scicloj.ml.smile
 
-Smile models models for `metamorph.ml` and `scicloj.ml`
+Smile models for [metamorph.ml](https://github.com/scicloj/metamorph.ml) and [scicloj.ml](https://github.com/scicloj/scicloj.ml)
 
 
 ## License
