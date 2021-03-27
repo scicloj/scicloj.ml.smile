@@ -1,13 +1,13 @@
-(ns tech.v3.libs.smile.sparse-logreg-test
+(ns scicloj.ml.smile.sparse-logreg-test
   (:require [clojure.test :refer :all]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.libs.smile.discrete-nb :as nb]
-            [tech.v3.libs.smile.nlp :as nlp]
+            [scicloj.ml.smile.discrete-nb :as nb]
+            [scicloj.ml.smile.nlp :as nlp]
             [scicloj.metamorph.ml :as ml]
             [scicloj.metamorph.ml.loss :as loss]
 
-            [tech.v3.libs.smile.sparse-logreg]))
+            [scicloj.ml.smile.sparse-logreg]))
 
 (defn get-reviews []
   (->
@@ -28,7 +28,7 @@
                            :sparse-column :sparse})
         prediction (ml/predict reviews trained-model)
         ]
-    (is (= 0.754
+    (is (= 0.742
            (loss/classification-accuracy (:Score prediction)
                                          (:Score reviews) )))
     ))
@@ -59,7 +59,7 @@
                            :sparse-column :sparse})
         prediction (ml/predict reviews trained-model)
         ]
-    (is (= 0.631
+    (is (= 0.629
            (loss/classification-accuracy (:Score prediction)
                                          (:Score reviews) )))
     ))

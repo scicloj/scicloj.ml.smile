@@ -1,4 +1,4 @@
-(ns tech.v3.libs.smile.protocols
+(ns scicloj.ml.smile.protocols
   (:require [tech.v3.libs.smile.data :as smile-data]
             [tech.v3.datatype :as dtype]
             [tech.v3.dataset.utils :as ds-utils])

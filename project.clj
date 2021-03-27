@@ -1,4 +1,4 @@
-(defproject techascent/tech.ml.smile "5.02-SNAPSHOT"
+(defproject scicloj/scicloj.ml.smile "5.02-SNAPSHOT"
   :description "Basic machine learning toolkit.  `tech.v3.ml` is the root
 namespace and provides train/predict pathways based on datasets and
 an options map.  Please see the xgboost article for a quick runthough
@@ -24,8 +24,8 @@ of how to use this library."
     :codox {:project {:name "tech.ml"}
             :metadata {:doc/format :markdown}
             :namespaces [
-                         tech.v3.libs.smile.classification
-                         tech.v3.libs.smile.regression]
+                         scicloj.ml.smile.classification
+                         scicloj.ml.smile.regression]
             :themes [:rdash]
             :source-paths ["src"]
             :output-path "docs"

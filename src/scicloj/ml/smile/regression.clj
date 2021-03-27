@@ -1,4 +1,4 @@
-(ns tech.v3.libs.smile.regression
+(ns scicloj.ml.smile.regression
   "Namespace to require to enable a set of smile regression models"
   (:require [scicloj.metamorph.ml :as ml]
             [scicloj.metamorph.ml.model :as model]
@@ -8,7 +8,7 @@
             [tech.v3.datatype :as dtype]
             [scicloj.metamorph.ml.gridsearch :as ml-gs]
             [tech.v3.libs.smile.data :as smile-data]
-            [tech.v3.libs.smile.protocols :as smile-proto])
+            [scicloj.ml.smile.protocols :as smile-proto])
   (:import [smile.regression
             OLS
             Regression

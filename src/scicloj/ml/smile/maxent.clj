@@ -1,8 +1,8 @@
-(ns tech.v3.libs.smile.maxent
+(ns scicloj.ml.smile.maxent
   (:require [pppmap.core :as ppp]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.libs.smile.nlp :as nlp]
+            [scicloj.ml.smile.nlp :as nlp]
             [scicloj.metamorph.ml :as ml]
             [tech.v3.datatype.errors :as errors]
             [scicloj.metamorph.ml.model :as model]

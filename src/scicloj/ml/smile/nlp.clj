@@ -1,4 +1,4 @@
-(ns tech.v3.libs.smile.nlp
+(ns scicloj.ml.smile.nlp
   (:require [clojure.string :as str]
             [pppmap.core :as ppp]
             [tech.v3.dataset :as ds])

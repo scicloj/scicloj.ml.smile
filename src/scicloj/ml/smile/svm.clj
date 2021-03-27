@@ -1,4 +1,4 @@
-(ns tech.v3.libs.smile.svm
+(ns scicloj.ml.smile.svm
   (:require [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [scicloj.metamorph.ml :as ml])

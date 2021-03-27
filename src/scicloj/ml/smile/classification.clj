@@ -1,4 +1,4 @@
-(ns tech.v3.libs.smile.classification
+(ns scicloj.ml.smile.classification
   "Namespace to require to enable a set of smile classification models."
   (:require [tech.v3.datatype :as dtype]
             [tech.v3.datatype.protocols :as dtype-proto]
@@ -9,14 +9,14 @@
             [scicloj.metamorph.ml.model :as model]
             [scicloj.metamorph.ml.gridsearch :as ml-gs]
             [scicloj.metamorph.ml :as ml]
-            [tech.v3.libs.smile.protocols :as smile-proto]
+            [scicloj.ml.smile.protocols :as smile-proto]
             [tech.v3.libs.smile.data :as smile-data]
             [tech.v3.datatype.errors :as errors]
-            [tech.v3.libs.smile.discrete-nb]
-            [tech.v3.libs.smile.maxent]
-            [tech.v3.libs.smile.sparse-logreg]
-            [tech.v3.libs.smile.sparse-svm]
-            [tech.v3.libs.smile.svm]
+            [scicloj.ml.smile.discrete-nb]
+            [scicloj.ml.smile.maxent]
+            [scicloj.ml.smile.sparse-logreg]
+            [scicloj.ml.smile.sparse-svm]
+            [scicloj.ml.smile.svm]
 
 
             )

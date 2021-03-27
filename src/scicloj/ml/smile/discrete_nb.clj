@@ -1,7 +1,7 @@
-(ns tech.v3.libs.smile.discrete-nb
+(ns scicloj.ml.smile.discrete-nb
   (:require [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.libs.smile.nlp :as nlp]
+            [scicloj.ml.smile.nlp :as nlp]
             [tech.v3.datatype.errors :as errors]
             [scicloj.metamorph.ml :as ml]
             [scicloj.metamorph.ml.model :as model]

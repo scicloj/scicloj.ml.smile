@@ -1,11 +1,11 @@
-(ns tech.v3.libs.smile.sparse-svm
+(ns scicloj.ml.smile.sparse-svm
   (:require
    [tech.v3.datatype :as dt]
    [tech.v3.datatype.errors :as errors]
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]
-   [tech.v3.libs.smile.discrete-nb :as nb]
-   [tech.v3.libs.smile.nlp :as nlp]
+   [scicloj.ml.smile.discrete-nb :as nb]
+   [scicloj.ml.smile.nlp :as nlp]
    [scicloj.metamorph.ml :as ml])
   (:import [smile.classification SVM]
            [smile.data SparseDataset]

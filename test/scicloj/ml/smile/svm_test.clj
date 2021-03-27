@@ -1,5 +1,5 @@
-(ns tech.v3.libs.smile.svm-test
-  (:require [tech.v3.libs.smile.svm :as svm]
+(ns scicloj.ml.smile.svm-test
+  (:require [scicloj.ml.smile.svm :as svm]
             [tech.v3.dataset.column-filters :as cf]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset :as ds]

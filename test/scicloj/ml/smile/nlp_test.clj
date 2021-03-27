@@ -1,5 +1,5 @@
-(ns tech.v3.libs.smile.nlp-test
-  (:require [tech.v3.libs.smile.nlp :as nlp]
+(ns scicloj.ml.smile.nlp-test
+  (:require [scicloj.ml.smile.nlp :as nlp]
             [tech.v3.dataset :as ds]
             [clojure.test :refer [deftest is] :as t]))
 

@@ -1,11 +1,11 @@
-(ns tech.v3.libs.smile.sparse-logreg
+(ns scicloj.ml.smile.sparse-logreg
   (:require
    [tech.v3.datatype :as dt]
    [scicloj.metamorph.ml :as ml]
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]
-   [tech.v3.libs.smile.discrete-nb :as nb]
-   [tech.v3.libs.smile.nlp :as nlp]
+   [scicloj.ml.smile.discrete-nb :as nb]
+   [scicloj.ml.smile.nlp :as nlp]
    [tech.v3.datatype.errors :as errors]
    )
 

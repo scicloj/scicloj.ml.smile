@@ -110,7 +110,7 @@ user> (def regression-ds (ds-mod/set-inference-target numeric-ds "petal_width"))
 #'user/regression-ds
 user> (require '[tech.v3.libs.xgboost])
 nil
-;; Also tech.v3.libs.smile.regression and tech.v3.libs.smile.classification provide quite
+;; Also scicloj.ml.smile.regression and scicloj.ml.smile.classification provide quite
 ;; a few models.
 user> (require '[tech.v3.ml :as ml])
 nil

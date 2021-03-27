@@ -1,7 +1,7 @@
-(ns tech.v3.libs.smile.metamorph
+(ns scicloj.ml.smile.metamorph
 
   (:require
-   [tech.v3.libs.smile.nlp :as nlp]
+   [scicloj.ml.smile.nlp :as nlp]
    [tech.v3.dataset :as ds]
    [pppmap.core :as ppp]
    ))
@@ -36,7 +36,7 @@
   Behaviour in mode :fit               |normal
   Behaviour in mode :transform         |normal
   Reads keys from ctx                  |none
-  Writes keys to ctx                   |:tech.v3.libs.smile.metamorph/bow->sparse-vocabulary
+  Writes keys to ctx                   |:scicloj.ml.smile.metamorph/bow->sparse-vocabulary
 
   "
 
@@ -86,7 +86,7 @@
   Behaviour in mode :fit               |normal
   Behaviour in mode :transform         |normal
   Reads keys from ctx                  |none
-  Writes keys to ctx                   |:tech.v3.libs.smile.metamorph/count-vectorize-vocabulary
+  Writes keys to ctx                   |:scicloj.ml.smile.metamorph/count-vectorize-vocabulary
 
   "
   ([bow-col indices-col options]
@@ -107,7 +107,7 @@
   Behaviour in mode :fit               |normal
   Behaviour in mode :transform         |normal
   Reads keys from ctx                  |none
-  Writes keys to ctx                   |:tech.v3.libs.smile.metamorph/count-vectorize-vocabulary
+  Writes keys to ctx                   |:scicloj.ml.smile.metamorph/count-vectorize-vocabulary
 
   "
   ([bow-col indices-col options]

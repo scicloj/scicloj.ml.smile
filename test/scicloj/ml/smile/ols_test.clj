@@ -1,8 +1,8 @@
-(ns tech.v3.libs.smile.ols-test
+(ns scicloj.ml.smile.ols-test
   (:require [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.libs.smile.regression]
-            [tech.v3.libs.smile.nlp :as nlp]
+            [scicloj.ml.smile.regression]
+            [scicloj.ml.smile.nlp :as nlp]
             [scicloj.metamorph.ml :as ml]
             [scicloj.metamorph.ml.gridsearch :as ml-gs]
             [clojure.test :refer (deftest is)]))

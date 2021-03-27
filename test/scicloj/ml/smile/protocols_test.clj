@@ -1,6 +1,6 @@
-(ns tech.v3.libs.protocols-test
+(ns scicloj.ml.smile.protocols-test
   (:require  [clojure.test :refer [is deftest]]
-             [tech.v3.libs.smile.protocols :as proto])
+             [scicloj.ml.smile.protocols :as proto])
   (:import [smile.base.cart SplitRule]))
 
 

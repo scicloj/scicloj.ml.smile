@@ -1,8 +1,8 @@
-(ns tech.v3.libs.smile-ml-test
+(ns scicloj.ml.smile.smile-ml-test
   (:require [scicloj.metamorph.ml.verify :as verify]
             [scicloj.metamorph.ml :as ml]
-            [tech.v3.libs.smile.regression]
-            [tech.v3.libs.smile.classification]
+            [scicloj.ml.smile.regression]
+            [scicloj.ml.smile.classification]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset.utils :as ds-utils]

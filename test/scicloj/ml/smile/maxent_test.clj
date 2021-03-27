@@ -1,9 +1,9 @@
-(ns tech.v3.libs.smile.maxent-test
+(ns scicloj.ml.smile.maxent-test
   (:require [clojure.test :as t :refer [deftest is]]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.libs.smile.maxent :as maxent]
-            [tech.v3.libs.smile.nlp :as nlp]
+            [scicloj.ml.smile.maxent :as maxent]
+            [scicloj.ml.smile.nlp :as nlp]
             [scicloj.metamorph.ml :as ml]))
 
 
@@ -22,7 +22,7 @@
                                          :p 1000})]
 
     (is (= 1 (get (first (:bow reviews)) "sweet")  ))
-    (is (= [120 243 453] (take 3 (-> reviews
+    (is (= [120 244 457] (take 3 (-> reviews
                                      :bow-sparse
                                      first))))
     (is (= 1001 (-> trained-model

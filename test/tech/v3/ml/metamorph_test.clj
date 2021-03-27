@@ -8,8 +8,8 @@
             [tech.v3.dataset :as ds]
             [scicloj.metamorph.ml.loss :as loss]
             [scicloj.metamorph.ml.classification]
-            [tech.v3.libs.smile.classification]
-            [tech.v3.libs.smile.metamorph :as smile-mm]
+            [scicloj.ml.smile.classification]
+            [scicloj.ml.smile.metamorph :as smile-mm]
             [scicloj.metamorph.core :as morph]
             ))
 (comment
