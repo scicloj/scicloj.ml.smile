@@ -1,4 +1,4 @@
-(defproject scicloj/scicloj.ml.smile "5.02-SNAPSHOT"
+(defproject scicloj/scicloj.ml.smile "5.02"
   :description "Basic machine learning toolkit.  `tech.v3.ml` is the root
 namespace and provides train/predict pathways based on datasets and
 an options map.  Please see the xgboost article for a quick runthough
