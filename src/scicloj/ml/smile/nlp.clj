@@ -1,7 +1,9 @@
 (ns scicloj.ml.smile.nlp
   (:require [clojure.string :as str]
             [pppmap.core :as ppp]
-            [tech.v3.dataset :as ds])
+            [tech.v3.dataset :as ds]
+            [tech.v3.datatype.errors :as errors]
+            )
   (:import smile.nlp.normalizer.SimpleNormalizer
            smile.nlp.stemmer.PorterStemmer
            [smile.nlp.tokenizer SimpleTokenizer BreakIteratorSentenceSplitter]
@@ -130,7 +132,9 @@
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
    The exact transformation to the sparse representtaion is given by `bow->sparse-fn`"
   [ds bow-col indices-col bow->sparse-fn {:keys [create-vocab-fn] :or {create-vocab-fn create-vocab-all}}  ]
-  (let [vocabulary-list (create-vocab-fn (get ds bow-col))
+  (let [bow (get ds bow-col)
+        _ (errors/when-not-error bow (str "bow column not found: " bow-col))
+        vocabulary-list (create-vocab-fn bow)
         vocab->index-map (zipmap vocabulary-list  (range))
         vocabulary {:vocab vocabulary-list
                     :vocab->index-map vocab->index-map

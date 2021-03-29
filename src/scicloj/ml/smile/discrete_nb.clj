@@ -6,7 +6,7 @@
             [scicloj.metamorph.ml :as ml]
             [scicloj.metamorph.ml.model :as model]
             [tech.v3.tensor :as dtt]
-
+            [scicloj.ml.smile.registration :refer [class->smile-url]]
             )
   (:import [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
            smile.util.SparseArray))
@@ -19,9 +19,14 @@
   (nlp/bow->something-sparse ds bow-col indices-col nlp/freqs->SparseArray options))
 
 
-
-
-
+(def nb-lookup-table
+  {
+   :polyaurn DiscreteNaiveBayes$Model/POLYAURN
+   :wcnb DiscreteNaiveBayes$Model/WCNB
+   :cnb DiscreteNaiveBayes$Model/CNB
+   :twcnb DiscreteNaiveBayes$Model/TWCNB
+   :bernoulli DiscreteNaiveBayes$Model/BERNOULLI
+   :multinomial DiscreteNaiveBayes$Model/MULTINOMIAL})
 
 (defn train [feature-ds target-ds options]
   "Training function of discrete naive bayes model.
@@ -34,13 +39,8 @@
         p (:p options)
         _ (errors/when-not-error (and (not (nil? p)) (pos? p)) "p needs to be specified in options and greater 0")
         nb-model
-        (case (options :discrete-naive-bayes-model)
-          :polyaurn DiscreteNaiveBayes$Model/POLYAURN
-          :wcnb DiscreteNaiveBayes$Model/WCNB
-          :cnb DiscreteNaiveBayes$Model/CNB
-          :twcnb DiscreteNaiveBayes$Model/TWCNB
-          :bernoulli  DiscreteNaiveBayes$Model/BERNOULLI
-          :multinomial DiscreteNaiveBayes$Model/MULTINOMIAL)
+        (get nb-lookup-table (options :discrete-naive-bayes-model))
+        _ (errors/when-not-error nb-model ":discrete-naive-bayes-model contains invalid model")
         nb (DiscreteNaiveBayes. nb-model (int (:k options)) (int  p))]
     (.update nb
              train-array
@@ -59,11 +59,11 @@
         sparse-col (get-in model [:options :sparse-column])
         sparse-arrays (get feature-ds  sparse-col)
         _ (errors/when-not-error sparse-arrays (str "Sparse arrays not found in column " sparse-col))
-        _ (def sparse-arrays sparse-arrays)
+        ;; _ (def sparse-arrays sparse-arrays)
         target-colum (first (:target-columns model))
         n-labels (-> model :target-categorical-maps target-colum :lookup-table count)
         _ (errors/when-not-error (pos-int? n-labels) (str  "No labels found for target column" target-colum ))
-        _ (def n-labels n-labels)
+        ;; _ (def n-labels n-labels)
         posteriori (double-array n-labels )
 
         predictions (map
@@ -75,8 +75,8 @@
                         )
 
                      sparse-arrays)]
-    (def predictions predictions)
-    (def target-colum target-colum)
+    ;; (def predictions predictions)
+    ;; (def target-colum target-colum)
     (model/finalize-classification
      (dtt/->tensor predictions)
      (ds/row-count feature-ds)
@@ -97,4 +97,15 @@
   :smile.classification/discrete-naive-bayes
   train
   predict
-  {})
+  {:options [{:name :p :type :int32 :default nil}
+             {:name :k :type :int32 :default nil}
+             {:name :discrete-naive-bayes-model
+              :type :keyword
+              :default nil
+              :lookup-table nb-lookup-table
+              }
+             ]
+   :documentation {:javadoc (class->smile-url DiscreteNaiveBayes)
+                   :user-guide "https://haifengl.github.io/nlp.html#naive-bayes"}
+
+   })

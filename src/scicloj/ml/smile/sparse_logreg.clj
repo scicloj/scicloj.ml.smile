@@ -17,6 +17,9 @@
 
 
 (defn train [feature-ds target-ds options]
+  ;; (def feature-ds feature-ds)
+  ;; (def target-ds target-ds)
+  ;; (def options options)
   "Training function of sparse logistic regression model.
    The column of name `(options :sparse-column)` of `feature-ds` needs to contain the text as SparseArrays
    over the vocabulary.
@@ -28,8 +31,9 @@
 "
   (errors/when-not-error (:sparse-column options) ":sparse-column need to be given")
   (errors/when-not-error (:n-sparse-columns options) ":n-sparse-columns need to be given")
-  (let [train-array (into-array SparseArray
-                                (get feature-ds (:sparse-column options)))
+  (let [sparse-column (get feature-ds (:sparse-column options))
+        _ (errors/when-not-error sparse-column (str  "Column not found: " (:sparse-column options)))
+        train-array (into-array SparseArray sparse-column)
         train-dataset (SparseDataset/of (seq train-array) (options :n-sparse-columns))
         score (get target-ds (first (ds-mod/inference-target-column-names target-ds)))]
     (SparseLogisticRegression/fit train-dataset

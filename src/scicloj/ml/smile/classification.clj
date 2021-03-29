@@ -17,6 +17,8 @@
             [scicloj.ml.smile.sparse-logreg]
             [scicloj.ml.smile.sparse-svm]
             [scicloj.ml.smile.svm]
+            [clojure.string :as str]
+            [scicloj.ml.smile.registration :refer [class->smile-url]]
 
 
             )
@@ -74,17 +76,23 @@
 
 (def ^:private classifier-metadata
   {:ada-boost
-   {:name :ada-boost
+   {:class AdaBoost
+    :name :ada-boost
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#adaboost"}
     :options [{:name :trees
+               :description "the number of trees"
                :type :int32
                :default 500}
               {:name :max-depth
+               :description "the maximum depth of the tree"
                :type :int32
                :default 200}
               {:name :max-nodes
+               :description "the maximum number of leaf nodes in the tree"
                :type :int32
                :default 6}
               {:name :node-size
+               :description "the number of instances in a node below which the tree will not split, setting nodeSize = 5 generally gives good results"
                :type :int32
                :default 1}]
     :gridsearch-options {:trees (ml-gs/linear 2 50 10 :int64)
@@ -92,8 +100,10 @@
     :property-name-stem "smile.databoost"
     :constructor #(AdaBoost/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
     :predictor tuple-predict-posterior}
+
    :logistic-regression
-   {:name :logistic-regression
+   {:class LogisticRegression
+    :name :logistic-regression
     :options [{:name :lambda
                :type :float64
                :default 0.1}
@@ -111,7 +121,8 @@
     :predictor double-array-predict-posterior}
 
    :decision-tree
-   {:name :decision-tree
+   {:class DecisionTree
+    :name :decision-tree
     :options [{:name :max-nodes
                :type :int32
                :default 100}
@@ -148,7 +159,8 @@
    ;;                  :type :float64
    ;;                  :default 1e-4}]}
    :gradient-tree-boost
-   {:class-name "GradientTreeBoost"
+   {:class GradientTreeBoost
+    :class-name "GradientTreeBoost"
     :documentation {:javadoc "http://haifengl.github.io/api/java/smile/classification/GradientTreeBoost.html"
                     :user-guide "https://haifengl.github.io/classification.html#gbm"
                     }
@@ -168,8 +180,7 @@
     :constructor #(GradientTreeBoost/fit ^Formula %1 ^DataFrame %2  ^Properties %3 )
     :predictor tuple-predict-posterior
     }
-   :knn {
-
+   :knn {:class KNN
          :name :knn
          :options [{:name :k
                     :type :int32
@@ -263,7 +274,8 @@
    ;;                       :alpha (ml-gs/linear [0.0 1.0])}}
 
 
-   :random-forest {:name :random-forest
+   :random-forest {:class RandomForest
+                   :name :random-forest
                    :constructor #(RandomForest/fit ^Formula %1 ^DataFrame %2  ^Properties %3)
                    :predictor tuple-predict-posterior
                    :options [{:name :trees :type :int32 :default 500}
@@ -354,16 +366,24 @@ See tech.v3.dataset/categorical->number.
                                        target-colname
                                        target-categorical-maps))))
 
+
+
 (doseq [[reg-kwd reg-def] classifier-metadata]
   (ml/define-model! (keyword "smile.classification" (name reg-kwd))
     train predict {:thaw-fn thaw
                    :hyperparameters (:gridsearch-options reg-def)
                    :options (:options reg-def)
-                   :documentation (:documentation reg-def)})
+                   :documentation {:javadoc (class->smile-url (:class reg-def))
+                                   :user-guide (-> reg-def :documentation :user-guide)}}))
 
-  )
 
 
+
+
+
+
+
+"http://haifengl.github.io/api/java/smile/classification/GradientTreeBoost.html"
 (comment
   (do
     (require '[tech.v3.dataset.column-filters :as cf])

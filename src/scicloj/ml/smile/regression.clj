@@ -8,7 +8,10 @@
             [tech.v3.datatype :as dtype]
             [scicloj.metamorph.ml.gridsearch :as ml-gs]
             [tech.v3.libs.smile.data :as smile-data]
-            [scicloj.ml.smile.protocols :as smile-proto])
+            [scicloj.ml.smile.protocols :as smile-proto]
+
+            [scicloj.ml.smile.registration :refer [class->smile-url]]
+            )
   (:import [smile.regression
             OLS
             Regression
@@ -100,7 +103,8 @@
 
 
 (def ^:private regression-metadata
-  {:ordinary-least-square {:options [{:name :method
+  {:ordinary-least-square {:cass OLS
+                           :options [{:name :method
                                       :type :enumeration
                                       :lookup-table ols-method-table
                                       :default :qr
@@ -116,7 +120,8 @@
                            :constructor #(OLS/fit %1 %2 %3)
                            :predictor predict-ols}
 
-   :elastic-net {:options [{:name :lambda1
+   :elastic-net {:class ElasticNet
+                 :options [{:name :lambda1
                             :type :float64
                             :default 0.1
                             :range :>0}
@@ -143,7 +148,8 @@
                  :predictor predict-linear-model}
 
    :lasso
-   {:options [{:name :lambda
+   {:class LASSO
+    :options [{:name :lambda
                :type :float64
                :default 1.0
                :range :>0}
@@ -165,7 +171,8 @@
 
 
    :ridge
-   {:options [{:name :lambda
+   {:class RidgeRegression
+    :options [{:name :lambda
                :type :float64
                :default 1.0
                :range :>0}]
@@ -176,7 +183,8 @@
 
 
    :gradient-tree-boost
-   {:options [{:name :trees
+   {:class GradientTreeBoost
+    :options [{:name :trees
                :type :int32
                :default 500
                :range :>0}
@@ -208,7 +216,8 @@
     :constructor #(GradientTreeBoost/fit %1 %2 %3)
     :predictor predict-df}
    :random-forest
-   {:options [
+   {:class RandomForest
+    :options [
               {:name :trees
                :type :int32
                :default 500
@@ -316,6 +325,9 @@
                                  explain)
                    :hyperparameters (:gridsearch-options reg-def)
                    :options (:options reg-def)
+                   :documentation {:javadoc (class->smile-url (:class reg-def))
+                                   :user-guide (-> reg-def :documentation :user-guide)}
+
                    }))
 
 
