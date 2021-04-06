@@ -29,8 +29,13 @@
    * `:n-sparse-columns`: Number of columns / dimensions of the sparse vectors
 
 "
+  (errors/when-not-error
+   (ds-mod/inference-target-label-map target-ds)
+   "In classification, the target column needs to be categorical and having been transformed to numeric.
+See tech.v3.dataset/categorical->number.")
   (errors/when-not-error (:sparse-column options) ":sparse-column need to be given")
   (errors/when-not-error (:n-sparse-columns options) ":n-sparse-columns need to be given")
+
   (let [sparse-column (get feature-ds (:sparse-column options))
         _ (errors/when-not-error sparse-column (str  "Column not found: " (:sparse-column options)))
         train-array (into-array SparseArray sparse-column)

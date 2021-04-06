@@ -127,7 +127,6 @@
 
 
 
-
 (defn bow->sparse-and-vocab
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
    The exact transformation to the sparse representtaion is given by `bow->sparse-fn`"

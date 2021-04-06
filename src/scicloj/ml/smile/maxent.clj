@@ -29,10 +29,24 @@
 
 
 
+
+
+
+
+
 (defn maxent-train [feature-ds target-ds options maxent-type]
-    "Training function of Maxent model
+  "Training function of Maxent model
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as a sparce vector
    agains the vocabulary."
+
+
+   (errors/when-not-error
+           (ds-mod/inference-target-label-map target-ds)
+           "In classification, the target column needs to be categorical and having been transformed to numeric.
+See tech.v3.dataset/categorical->number.
+"
+           )
+
   (let [train-array (into-array ^"[[Ljava.lang.Integer"
                                 (get feature-ds (:sparse-column options)))
         _ (def train-array train-array)
@@ -41,6 +55,7 @@
         p (int  (or  (:p options) 0) )
         _ (errors/when-not-error (pos? p) "p needs to be specified in options and greater 0")
         options (merge maxent-default-parameters options)]
+
     (case maxent-type
       :multinomial
       (Maxent/multinomial

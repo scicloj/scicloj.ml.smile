@@ -32,6 +32,12 @@
   "Training function of discrete naive bayes model.
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as SparseArrays
    over the vocabulary."
+
+  (errors/when-not-error
+   (ds-mod/inference-target-label-map target-ds)
+   "In classification, the target column needs to be categorical and having been transformed to numeric.
+See tech.v3.dataset/categorical->number.")
+
   (let [train-array (into-array SparseArray
                                 (get feature-ds (:sparse-column options)))
         train-score-array (into-array Integer/TYPE
@@ -57,6 +63,7 @@
 
   (let [
         sparse-col (get-in model [:options :sparse-column])
+
         sparse-arrays (get feature-ds  sparse-col)
         _ (errors/when-not-error sparse-arrays (str "Sparse arrays not found in column " sparse-col))
         ;; _ (def sparse-arrays sparse-arrays)

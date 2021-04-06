@@ -9,8 +9,9 @@
 
 (defn get-reviews []
   (->
-   (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
+   (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword :parser-fn :string})
    (ds/select-columns [:Text :Score])
+   (ds/categorical->number [:Score])
    (nlp/count-vectorize :Text :bow)
    (maxent/bow->sparse-array :bow :bow-sparse {:create-vocab-fn #(nlp/->vocabulary-top-n % 1000)})
    (ds-mod/set-inference-target :Score)))
@@ -36,8 +37,8 @@
         (-> (get-reviews)
          (ds/filter-column :Score
                            (fn [score]
-                             (or (= score 1)
-                                 (= score 2)))
+                             (or (= score 1.0)
+                                 (= score 2.0)))
 
                            ))
         trained-model (ml/train reviews {:model-type :smile.classification/maxent-binomial
