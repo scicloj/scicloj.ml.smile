@@ -19,6 +19,7 @@
             [scicloj.ml.smile.svm]
             [clojure.string :as str]
             [scicloj.ml.smile.registration :refer [class->smile-url]]
+            [scicloj.ml.smile.model-examples :as examples]
 
 
             )
@@ -67,6 +68,9 @@
 (defn construct-knn [^Formula formula ^DataFrame data-frame ^Properties props]
   (KNN/fit (.toArray (.matrix  formula data-frame false))
            (.toIntArray  (.y formula data-frame))))
+           (.toIntArray  (.y formula data-frame))
+           (Integer/parseInt (.getProperty props "smile.knn.k" "3"))
+           ))
 
 
 (def split-rule-lookup-table
@@ -161,8 +165,7 @@
    :gradient-tree-boost
    {:class GradientTreeBoost
     :class-name "GradientTreeBoost"
-    :documentation {:javadoc "http://haifengl.github.io/api/java/smile/classification/GradientTreeBoost.html"
-                    :user-guide "https://haifengl.github.io/classification.html#gbm"
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#gbm"
                     }
     :name :gradient-tree-boost
     :options [{:name :ntrees
@@ -182,9 +185,14 @@
     }
    :knn {:class KNN
          :name :knn
+         :documentation {
+                         :user-guide "https://haifengl.github.io/classification.html#knn"
+                         :code-example (:knn examples/model-examples)
+
+                         }
          :options [{:name :k
                     :type :int32
-                    :default 5}
+                    :default 3}
                    ]
          :constructor #(construct-knn ^Formula %1 ^DataFrame %2  ^Properties %3)
          :predictor double-array-predict-posterior
@@ -374,7 +382,9 @@ See tech.v3.dataset/categorical->number.
                    :hyperparameters (:gridsearch-options reg-def)
                    :options (:options reg-def)
                    :documentation {:javadoc (class->smile-url (:class reg-def))
-                                   :user-guide (-> reg-def :documentation :user-guide)}}))
+                                   :user-guide (-> reg-def :documentation :user-guide)
+                                   :code-example (-> reg-def :documentation :code-example)
+                                   }}))
 
 
 
