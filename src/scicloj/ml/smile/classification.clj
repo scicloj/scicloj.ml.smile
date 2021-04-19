@@ -67,7 +67,6 @@
 
 (defn construct-knn [^Formula formula ^DataFrame data-frame ^Properties props]
   (KNN/fit (.toArray (.matrix  formula data-frame false))
-           (.toIntArray  (.y formula data-frame))))
            (.toIntArray  (.y formula data-frame))
            (Integer/parseInt (.getProperty props "smile.knn.k" "3"))
            ))
@@ -415,7 +414,9 @@ See tech.v3.dataset/categorical->number.
 (comment
   (require '[tech.v3.dataset.metamorph :as ds-mm])
   (require '[scicloj.metamorph.ml  :as mm-ml])
-  (require '[scicloj.metamorph.ml.metamorph  :as mm-ml-mm])
+  (require '[tech.v3.dataset.column-filters :as cf])
+
+  ;; (require '[scicloj.metamorph.ml  :as mm-ml-mm])
 
   (def src-ds (ds/->dataset "test/data/iris.csv"))
 
@@ -426,7 +427,7 @@ See tech.v3.dataset/categorical->number.
          }
         ((ds-mm/categorical->number cf/categorical))
         ((ds-mm/set-inference-target "species"))
-        ((mm-ml-mm/model {:model-type :smile.classification/gradient-tree-boost}))))
+        ((mm-ml/model {:model-type :smile.classification/knn}))))
 
 
 
