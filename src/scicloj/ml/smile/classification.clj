@@ -83,24 +83,24 @@
     :name :ada-boost
     :documentation {:user-guide "https://haifengl.github.io/classification.html#adaboost"}
     :options [{:name :trees
-               :description "the number of trees"
+               :description "Number of trees"
                :type :int32
                :default 500}
               {:name :max-depth
-               :description "the maximum depth of the tree"
+               :description "Maximum depth of the tree"
                :type :int32
                :default 200}
               {:name :max-nodes
-               :description "the maximum number of leaf nodes in the tree"
+               :description "Maximum number of leaf nodes in the tree"
                :type :int32
                :default 6}
               {:name :node-size
-               :description "the number of instances in a node below which the tree will not split, setting nodeSize = 5 generally gives good results"
+               :description "Number of instances in a node below which the tree will not split, setting nodeSize = 5 generally gives good results"
                :type :int32
                :default 1}]
     :gridsearch-options {:trees (ml-gs/linear 2 50 10 :int64)
                          :max-nodes (ml-gs/linear 4 1000 20 :int64)}
-    :property-name-stem "smile.databoost"
+    :property-name-stem "smile.adaboost"
     :constructor #(AdaBoost/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
     :predictor tuple-predict-posterior}
 
@@ -280,24 +280,29 @@
    ;;  :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])
    ;;                       :alpha (ml-gs/linear [0.0 1.0])}}
 
-
    :random-forest {:class RandomForest
                    :name :random-forest
                    :constructor #(RandomForest/fit ^Formula %1 ^DataFrame %2  ^Properties %3)
                    :predictor tuple-predict-posterior
-                   :options [{:name :trees :type :int32 :default 500}
-                             {:name :mtry :type :int32 :default 0}
+                   :options [{:name :trees :type :int32 :default 500
+                              :description "Number of trees"}
+                             {:name :mtry :type :int32 :default 0
+                              :description "Number of attributed randomly selected at each node to choose the best split"}
                              {:name :split-rule
                               :type :string
                               :lookup-table split-rule-lookup-table
                               :default :gini}
-                             {:name :max-depth :type :int32 :default 20}
+                             {:name :max-depth :type :int32 :default 20
+                              :description "Maximum depth of tree"}
                              {:name :max-nodes :type :int32 :default (fn [dataset props] (unchecked-int (max 5 (/ (ds/row-count dataset) 5))))
+                              :description "Maximum number of nodes"
 
                               }
-                             {:name :node-size :type :int32 :default 5}
-                             {:name :sample-rate :type :float32 :default 1.0}
-                             {:name :class-weight :type :string :default nil}
+                             {:name :node-size :type :int32 :default 5
+                              :description "Minimum number of observations in trees' terminal nodes"}
+                             {:name :sample-rate :type :float32 :default 1.0 }
+                             {:name :class-weight :type :string :default nil
+                              :description "Weight of each class"}
                              ]
                    :property-name-stem "smile.random.forest"}
    ;; :rbf-network {:attributes #{}
