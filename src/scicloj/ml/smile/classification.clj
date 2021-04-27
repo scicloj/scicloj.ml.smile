@@ -106,6 +106,7 @@
 
    :logistic-regression
    {:class LogisticRegression
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#logit"}
     :name :logistic-regression
     :options [{:name :lambda
                :type :float64
@@ -128,6 +129,7 @@
 
    :decision-tree
    {:class DecisionTree
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#cart"}
     :name :decision-tree
     :options [{:name :max-nodes
                :type :int32
@@ -171,8 +173,7 @@
    :gradient-tree-boost
    {:class GradientTreeBoost
     :class-name "GradientTreeBoost"
-    :documentation {:user-guide "https://haifengl.github.io/classification.html#gbm"
-                    }
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#gbm"}
     :name :gradient-tree-boost
     :options [{:name :ntrees
                :type :int32
@@ -200,8 +201,8 @@
                :description "the sampling fraction for stochastic tree boosting"}]
     :property-name-stem "smile.gbt"
     :constructor #(GradientTreeBoost/fit ^Formula %1 ^DataFrame %2  ^Properties %3 )
-    :predictor tuple-predict-posterior
-    }
+    :predictor tuple-predict-posterior}
+
    :knn {:class KNN
          :name :knn
          :documentation {
@@ -303,6 +304,7 @@
 
    :random-forest {:class RandomForest
                    :name :random-forest
+                   :documentation {:user-guide "https://haifengl.github.io/classification.html#random-forest"}
                    :constructor #(RandomForest/fit ^Formula %1 ^DataFrame %2  ^Properties %3)
                    :predictor tuple-predict-posterior
                    :options [{:name :trees :type :int32 :default 500
