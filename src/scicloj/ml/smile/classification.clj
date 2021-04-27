@@ -308,22 +308,21 @@
                    :options [{:name :trees :type :int32 :default 500
                               :description "Number of trees"}
                              {:name :mtry :type :int32 :default 0
-                              :description "Number of attributed randomly selected at each node to choose the best split"}
+                              :description "number of input variables to be used to determine the decision at a node of the tree. floor(sqrt(p)) generally gives good performance, where p is the number of variables"}
                              {:name :split-rule
                               :type :string
                               :lookup-table split-rule-lookup-table
-                              :default :gini}
+                              :default :gini
+                              :description "Decision tree split rule"}
                              {:name :max-depth :type :int32 :default 20
                               :description "Maximum depth of tree"}
                              {:name :max-nodes :type :int32 :default (fn [dataset props] (unchecked-int (max 5 (/ (ds/row-count dataset) 5))))
-                              :description "Maximum number of nodes"
-
-                              }
+                              :description "Maximum number of leaf nodes in the tree"}
                              {:name :node-size :type :int32 :default 5
-                              :description "Minimum number of observations in trees' terminal nodes"}
-                             {:name :sample-rate :type :float32 :default 1.0 }
+                              :description "number of instances in a node below which the tree will not split, nodeSize = 5 generally gives good results"}
+                             {:name :sample-rate :type :float32 :default 1.0 :description "the sampling rate for training tree. 1.0 means sampling with replacement. < 1.0 means sampling without replacement."}
                              {:name :class-weight :type :string :default nil
-                              :description "Weight of each class"}
+                              :description "Priors of the classes. The weight of each class is roughly the ratio of samples in each class. For example, if there are 400 positive samples and 100 negative samples, the classWeight should be [1, 4] (assuming label 0 is of negative, label 1 is of positive)"}
                              ]
                    :property-name-stem "smile.random.forest"}
    ;; :rbf-network {:attributes #{}
