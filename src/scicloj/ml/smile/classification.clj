@@ -131,17 +131,21 @@
     :name :decision-tree
     :options [{:name :max-nodes
                :type :int32
-               :default 100}
+               :default 100
+               :description "maximum number of leaf nodes in the tree"}
               {:name :node-size
                :type :int32
-               :default 1}
+               :default 1
+               :description "minimum size of leaf nodes"}
               {:name :max-depth
                :type :int32 
-               :default 20}
+               :default 20
+               :description "maximum depth of the tree"}
               {:name :split-rule
                :type :string
                :lookup-table split-rule-lookup-table
-               :default :gini}]
+               :default :gini
+               :description "the splitting rule"}]
     :gridsearch-options {:max-nodes (ml-gs/linear 10 1000 30)
                          :node-size (ml-gs/linear 1 20 20)
                          :max-depth (ml-gs/linear 1 50 20 )
