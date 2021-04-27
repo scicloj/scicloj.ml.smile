@@ -109,13 +109,16 @@
     :name :logistic-regression
     :options [{:name :lambda
                :type :float64
-               :default 0.1}
+               :default 0.1
+               :description "lambda > 0 gives a regularized estimate of linear weights which often has superior generalization performance, especially when the dimensionality is high"}
               {:name :tolerance
                :type :float64
-               :default 1e-5}
+               :default 1e-5
+               :description "tolerance for stopping iterations"}
               {:name :max-iterations
                :type :int32
-               :default 500}]
+               :default 500
+               :description "maximum number of iterations"}]
     :gridsearch-options {:lambda (ml-gs/linear 1e-3 1e2 30)
                          :tolerance (ml-gs/linear 1e-9 1e-1 20)
                          :max-iterations (ml-gs/linear 1e2 1e4 20 :int64)}
