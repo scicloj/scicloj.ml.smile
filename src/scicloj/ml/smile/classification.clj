@@ -211,7 +211,8 @@
                          }
          :options [{:name :k
                     :type :int32
-                    :default 3}
+                    :default 3
+                    :description "number of neighbors for decision"}
                    ]
          :constructor #(construct-knn ^Formula %1 ^DataFrame %2  ^Properties %3)
          :predictor double-array-predict-posterior
