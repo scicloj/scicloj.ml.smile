@@ -169,16 +169,29 @@
     :name :gradient-tree-boost
     :options [{:name :ntrees
                :type :int32
-               :default 500}
+               :default 500
+               :description "number of iterations (trees)"}
+              {:name :max-depth
+               :type :int32
+               :default 20
+               :description "maximum depth of the tree"}
               {:name :max-nodes
                :type :int32
-               :default 6}
+               :default 6
+               :description "maximum number of leaf nodes in the tree"}
+              {:name :node-size
+               :type :int32
+               :default 5
+               :description "number of instances in a node below which the tree will not split, setting nodeSize = 5 generally gives good results"}
               {:name :shrinkage
                :type :float64
-               :default 0.005}
-              {:name :sampling-fraction
+               :default 0.05
+               :description "the shrinkage parameter in (0, 1] controls the learning rate of procedure"}
+              {:name :sampling-rate
                :type :float64
-               :default 0.7}]
+               :default 0.7
+               :description "the sampling fraction for stochastic tree boosting"}]
+    :property-name-stem "smile.gbt"
     :constructor #(GradientTreeBoost/fit ^Formula %1 ^DataFrame %2  ^Properties %3 )
     :predictor tuple-predict-posterior
     }
