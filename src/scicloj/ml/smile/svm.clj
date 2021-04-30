@@ -34,4 +34,19 @@
   :smile.classification/svm
   train
   predict
-  {})
+  {
+   :options [{:name :C
+              :type :float32
+              :default 1.0
+              :description "soft margin penalty parameter"}
+             {:name :tol
+              :type :float32
+              :default 1e-4
+              :description "tolerance of convergence test"}
+
+             ]
+   :documentation {:javadoc "http://haifengl.github.io/api/java/smile/classification/SVM.html"
+                   :user-guide "https://haifengl.github.io/classification.html#svm"
+
+                   }}
+  )
