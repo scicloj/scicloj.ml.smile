@@ -100,16 +100,18 @@
 (defn reduce-dimensions
   "Metamorph transformer, which reduces the dimensions of a given dataset.
 
-  `algorithm` can ne any of:
-    :pca-cov
-    :pca-cor
-    :pca-prob
-    :kpca
-    :gha
-    :random
+  `algorithm` can be any of:
+    * :pca-cov
+    * :pca-cor
+    * :pca-prob
+    * :kpca
+    * :gha
+    * :random
 
-  `target-dims` is number of dimensions o reduce to
+  `target-dims` is number of dimensions to reduce to.
+
   `cnames` is a sequence of column names on which the reduction get performed
+
   `opts` are the options of the algorithm
   "
   [algorithm target-dims cnames opts]
