@@ -113,6 +113,14 @@
   `cnames` is a sequence of column names on which the reduction get performed
 
   `opts` are the options of the algorithm
+
+  metamorph                            | .
+  -------------------------------------|----------------------------------------------------------------------------
+  Behaviour in mode :fit               | Reduces dimensions of the dataset at key `:metamorph/data` and stores the trained model in ctx under key at `:metamorph/id`
+  Behaviour in mode :transform         | Reads trained reduction model from ctx and applies it to data in `:metamorph/data`
+  Reads keys from ctx                  | In mode `:transform` : Reads trained model to use from ctx at key in `:metamorph/id`.
+  Writes keys to ctx                   | In mode `:fit` : Stores trained model in ctx under key in `:metamorph/id`.
+
   "
   [algorithm target-dims cnames opts]
   (fn [{:metamorph/keys [data id mode] :as ctx}]
