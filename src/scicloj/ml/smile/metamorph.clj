@@ -11,6 +11,10 @@
   "Transforms the text column `text-col` into a map of token frequencies in column
   `bow-col`
 
+  `options` can be any of
+
+  `text->bow-fn` A functions which takes as input a
+
   metamorph                            |.
   -------------------------------------|---------
   Behaviour in mode :fit               |normal
@@ -77,16 +81,24 @@
       )))
 
 (defn bow->sparse-array
-  "Converts a bag-of-word column `bow-col` to sparse indices column `indices-col`,
-   as needed by the Maxent model.
-   `vocab size` is the size of vocabluary used, sorted by token frequency
+  "Converts a bag-of-word column `bow-col` to sparse indices column
+  `indices-col`,   as needed by the Maxent model.
+  `Options` can be of:
+
+  `create-vocab-fn` A function which converts the bow map to a list of tokens.
+                    Defaults to scicloj.ml.smile.nlp/create-vocab-all
+
+
+  The sparse data is represented as `primitive int arrays`,
+  of which entries are the indices against the vocabulary
+  of the present tokens.
 
   metamorph                            |.
   -------------------------------------|---------
   Behaviour in mode :fit               |normal
   Behaviour in mode :transform         |normal
   Reads keys from ctx                  |none
-  Writes keys to ctx                   |:scicloj.ml.smile.metamorph/count-vectorize-vocabulary
+  Writes keys to ctx                   |:scicloj.ml.smile.metamorph/bow->sparse-vocabulary
 
   "
   ([bow-col indices-col options]
@@ -100,14 +112,21 @@
 
 (defn bow->SparseArray
   "Converts a bag-of-word column `bow-col` to sparse indices column `indices-col`,
-   as needed by the discrete naive bayes model. `vocab size` is the size of vocabluary used, sorted by token frequency
+   as needed by the discrete naive bayes model.
+
+  `Options` can be of:
+
+  `create-vocab-fn` A function which converts the bow map to a list of tokens.
+                    Defaults to scicloj.ml.smile.nlp/create-vocab-all
+
+  The sparse data is represented as `smile.util.SparseArray`.
 
   metamorph                            |.
   -------------------------------------|---------
   Behaviour in mode :fit               |normal
   Behaviour in mode :transform         |normal
   Reads keys from ctx                  |none
-  Writes keys to ctx                   |:scicloj.ml.smile.metamorph/count-vectorize-vocabulary
+  Writes keys to ctx                   |:scicloj.ml.smile.metamorph/bow->sparse-vocabulary
 
   "
   ([bow-col indices-col options]
