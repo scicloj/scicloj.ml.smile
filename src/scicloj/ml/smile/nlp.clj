@@ -27,17 +27,23 @@
                (.stem stemmer word))]
      word))
 
+(defn resolve-stemmer [options]
+  (let [stemmer-type (get options :stemmer :porter)]
+         (case stemmer-type
+                  :none nil
+                  :porter (PorterStemmer.)
+                  )
+
+    )
+  )
+
 (defn default-tokenize
   "Tokenizes text.
   The usage of a stemmer can be configured by options :stemmer "
   [text options]
   (let [normalizer (SimpleNormalizer/getInstance)
-        stemmer-type (get options :stemmer :porter)
+        stemmer (resolve-stemmer options)
         tokenizer (SimpleTokenizer. )
-        stemmer (case stemmer-type
-                  :none nil
-                  :porter (PorterStemmer.)
-                  )
         sentence-splitter (BreakIteratorSentenceSplitter.)
 
         tokens
@@ -65,7 +71,7 @@
 "
   [text options]
   (let [normalizer (SimpleNormalizer/getInstance)
-        stemmer (PorterStemmer.)
+        stemmer (resolve-stemmer options)
         stopwords-option (:stopwords options)
         stopwords  (resolve-stopwords stopwords-option)
         processed-stop-words (map #(word-process stemmer normalizer %)  stopwords)
