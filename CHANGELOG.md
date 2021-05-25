@@ -1,4 +1,12 @@
 # ConstantChangeLog
+
+## 5.06
+
+- added projections
+- added more model specific docu
+
+
+
 ## 3.00
  * Upgrade to smile 2.5.0.
  * Minimum workingtech.ml.dataset version is 4.00
