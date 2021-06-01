@@ -46,3 +46,15 @@
               prediction (ml/predict (ds/head reviews 10) trained-model)]
           prediction))
        )))
+
+
+
+
+
+(deftest defaults []
+  (let [reviews (get-reviews)]
+    (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
+                       :sparse-column :sparse
+                       :p 100
+                       :k 5
+                       })))

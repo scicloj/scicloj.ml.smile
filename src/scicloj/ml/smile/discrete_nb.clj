@@ -7,6 +7,7 @@
             [scicloj.metamorph.ml.model :as model]
             [tech.v3.tensor :as dtt]
             [scicloj.ml.smile.registration :refer [class->smile-url]]
+            [scicloj.ml.smile.utils :refer :all]
             )
   (:import [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
            smile.util.SparseArray))
@@ -38,14 +39,17 @@
    "In classification, the target column needs to be categorical and having been transformed to numeric.
 See tech.v3.dataset/categorical->number.")
 
-  (let [train-array (into-array SparseArray
-                                (get feature-ds (:sparse-column options)))
+  (let [sparse-data-ds (get feature-ds (:sparse-column options))
+        _ (errors/when-not-error sparse-data-ds "Column with sparse data need to be defined in option :sparse-column")
+        train-array (into-array SparseArray sparse-data-ds)
         train-score-array (into-array Integer/TYPE
                                       (get target-ds (first (ds-mod/inference-target-column-names target-ds))))
         p (:p options)
-        _ (errors/when-not-error (and (not (nil? p)) (pos? p)) "p needs to be specified in options and greater 0")
+        _ (when-not-pos-error p "p needs to be specified in options and greater 0")
+        k (:k options)
+        - (when-not-pos-error k "k needs to be specified in options and greater 0")
         nb-model
-        (get nb-lookup-table (options :discrete-naive-bayes-model))
+        (get nb-lookup-table (get options :discrete-naive-bayes-model :multinomial))
         _ (errors/when-not-error nb-model ":discrete-naive-bayes-model contains invalid model")
         nb (DiscreteNaiveBayes. nb-model (int (:k options)) (int  p))]
     (.update nb
