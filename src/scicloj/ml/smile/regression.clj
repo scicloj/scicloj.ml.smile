@@ -150,14 +150,18 @@
    :lasso
    {:class LASSO
     :options [{:name :lambda
+               :description "The shrinkage/regularization parameter. Large lambda means more shrinkage.
+                    Choosing an appropriate value of lambda is important, and also difficult"
                :type :float64
                :default 1.0
                :range :>0}
               {:name :tolerance
+               :description "Tolerance for stopping iterations (relative target duality gap)"
                :type :float64
                :default 1e-4
                :range :>0}
               {:name :max-iterations
+               :description "Maximum number of IPM (Newton) iterations"
                :type :int32
                :default 1000
                :range :>0}]
@@ -335,7 +339,7 @@
   (do
     (require '[tech.v3.dataset.column-filters :as cf])
     (require '[tech.v3.dataset.modelling :as ds-mod])
-    (require '[tech.v3.ml.loss :as loss])
+    (require '[scicloj.metamorph.ml.loss :as loss])
     (def src-ds (ds/->dataset "test/data/iris.csv"))
     (def ds (->  src-ds
                  (ds/categorical->number cf/categorical)
