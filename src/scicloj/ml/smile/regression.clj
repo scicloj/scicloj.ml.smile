@@ -110,11 +110,11 @@
                                       :default :qr
                                       }
                                      {:name :standard-error
-                                      :type boolean
+                                      :type :boolean
                                       :default true
                                       }
                                      {:name :recursive
-                                      :type boolean
+                                      :type :boolean
                                       :default true}]
                            :property-name-stem "smile.ols"
                            :constructor #(OLS/fit %1 %2 %3)
