@@ -1,4 +1,4 @@
-(defproject scicloj/scicloj.ml.smile "5.06"
+(defproject scicloj/scicloj.ml.smile "5.07-SNAPSHOT"
   :description "Smile models for scicloj.ml"
   :url "https://github.com/scicloj/scicloj.ml.smile"
   :license {:name "Eclipse Public License"
