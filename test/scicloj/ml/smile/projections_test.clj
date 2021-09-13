@@ -1,6 +1,7 @@
 (ns scicloj.ml.smile.projections-test
   (:require [scicloj.ml.smile.projections :as projections]
             [clojure.test :refer [deftest is]]
+            [scicloj.ml.smile.test-tools :as tt]
             [tablecloth.api :refer [dataset]]
             [tech.v3.dataset.column-filters :as cf]
             [scicloj.metamorph.core :as mm]
@@ -26,19 +27,25 @@
         (pipe-fn {:metamorph/data data
                   :metamorph/mode :fit})]
     (def fit-context fit-context)
-    (is (=  [ 0.014003307840190701
-             -2.5565339942868195
-             -0.05148019186471198
-             1.0141500183909435
-             1.579860859920397]
-            (get-in fit-context [:metamorph/data "pca-cov-0"])))
+    (is (tt/seq-fuzzy=?  [ 0.01400330784019062
+                          -2.556533994286818
+                          -0.0514801918647123
+                          1.014150018390943
+                          1.5798608599203965]
+                         (seq
+                          (get-in fit-context [:metamorph/data "pca-cov-0"]))
+                         0.0001))
 
-    (is (=  [ 0.7559747649563955
-             -0.7804317748323735
-             1.2531347040524983
-             2.3880830993486978E-4
-             -1.228916502486455]
-            (get-in fit-context [:metamorph/data "pca-cov-1"])))
+
+    (is (tt/seq-fuzzy=?  [ 0.7559747649563955
+                          -0.7804317748323724
+                          1.2531347040524976
+                          2.3880830993447353E-4
+                          -1.228916502486455]
+                         (seq
+                          (get-in fit-context [:metamorph/data "pca-cov-1"]))
+                         0.0001))
+
     (is (= [ 0.628948310202486
             0.8952704360795221
             0.9937421970301336
@@ -48,7 +55,3 @@
                :fit-result :model
                (.getCumulativeVarianceProportion)
                seq)))))
-               
-           
-        
-  
