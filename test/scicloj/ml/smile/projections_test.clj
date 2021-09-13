@@ -5,23 +5,23 @@
             [tech.v3.dataset.column-filters :as cf]
             [scicloj.metamorph.core :as mm]
             [tech.v3.dataset.math :as math]
-            [scicloj.metamorph.ml.preprocessing :as preprocessing]
-            ))
+            [scicloj.metamorph.ml.preprocessing :as preprocessing]))
+            
 
 (def data
   (dataset {:f1 [1 5 1 5 8]
             :f2 [2 5 4 3 1]
             :f3 [3 6 2 2 2]
-            :f4 [4 7 3 1 2]
-            }))
+            :f4 [4 7 3 1 2]}))
+            
 
 
 (deftest reduce-dimensions-test
   (let [pipe-fn
         (mm/pipeline
          (preprocessing/std-scale [:f1 :f2 :f3 :f4] {})
-         (projections/reduce-dimensions :pca-cov 2 [:f1 :f2 :f3 :f4 ] {})
-         )
+         (projections/reduce-dimensions :pca-cov 2 [:f1 :f2 :f3 :f4 ] {}))
+         
         fit-context
         (pipe-fn {:metamorph/data data
                   :metamorph/mode :fit})]
@@ -37,7 +37,7 @@
              -0.7804317748323735
              1.2531347040524983
              2.3880830993486978E-4
-             -1.228916502486455 ]
+             -1.228916502486455]
             (get-in fit-context [:metamorph/data "pca-cov-1"])))
     (is (= [ 0.628948310202486
             0.8952704360795221
@@ -47,8 +47,8 @@
                (nth 3)
                :fit-result :model
                (.getCumulativeVarianceProportion)
-               seq
-               )
-           )
-        ))
-  )
+               seq)))))
+               
+           
+        
+  
