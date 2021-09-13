@@ -21,11 +21,13 @@
 
 (t/deftest cluster-test
   (let [pipeline (morph/pipeline
-                  {:metamorph/id :cluster} (cluster :k-means [3]))
-
+                  {:metamorph/id :cluster} (cluster :k-means [3] :cluster-row))
         fittex-ctx
         (pipeline
          {:metamorph/mode :fit
-          :metamorph/data (:train split)})]
+          :metamorph/data (:train split)})
+
+        _ (def fittex-ctx fittex-ctx)]
     (t/is (= 3
-           (-> fittex-ctx :cluster :clustering count)))))
+             (-> fittex-ctx :cluster :clustering count)))
+    (t/is (= 3 (-> fittex-ctx :metamorph/data :cluster-row count)))))

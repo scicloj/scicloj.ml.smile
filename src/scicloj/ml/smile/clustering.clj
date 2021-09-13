@@ -40,7 +40,7 @@ The cluster id of each row gets written to the column in `target-column`
     (let [mode (:metamorph/mode ctx)
           id (:metamorph/id ctx)
           data (:metamorph/data ctx)
-          fun (resolve (symbol  "fastmath.clustering" (name :lloyd)))
+          fun (resolve (symbol  "fastmath.clustering" (name clustering-method)))
           data-rows (tc/rows data)
           clustering
           (case mode
