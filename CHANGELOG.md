@@ -1,5 +1,8 @@
 # ConstantChangeLog
 
+## 5.07
+- added clustering
+
 ## 5.06
 
 - added projections
