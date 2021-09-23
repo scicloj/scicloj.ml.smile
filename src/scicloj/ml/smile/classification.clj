@@ -19,10 +19,10 @@
             [scicloj.ml.smile.svm]
             [clojure.string :as str]
             [scicloj.ml.smile.registration :refer [class->smile-url]]
-            [scicloj.ml.smile.model-examples :as examples]
+            [scicloj.ml.smile.model-examples :as examples])
 
 
-            )
+            
   (:import [smile.classification SoftClassifier AdaBoost LogisticRegression
             DecisionTree RandomForest KNN GradientTreeBoost]
            [smile.base.cart SplitRule]
@@ -68,8 +68,8 @@
 (defn construct-knn [^Formula formula ^DataFrame data-frame ^Properties props]
   (KNN/fit (.toArray (.matrix  formula data-frame false))
            (.toIntArray  (.y formula data-frame))
-           (Integer/parseInt (.getProperty props "smile.knn.k" "3"))
-           ))
+           (Integer/parseInt (.getProperty props "smile.knn.k" "3"))))
+           
 
 
 (def split-rule-lookup-table
@@ -150,15 +150,15 @@
                :description "the splitting rule"}]
     :gridsearch-options {:max-nodes (ml-gs/linear 10 1000 30)
                          :node-size (ml-gs/linear 1 20 20)
-                         :max-depth (ml-gs/linear 1 50 20 )
-                         :split-rule (ml-gs/categorical [:gini :entropy :classification-error] )
+                         :max-depth (ml-gs/linear 1 50 20)
+                         :split-rule (ml-gs/categorical [:gini :entropy :classification-error])}
 
-                         }
+                         
     :property-name-stem "smile.cart"
     :constructor #(DecisionTree/fit ^Formula %1 ^DataFrame %2  ^Properties %3)
-    :predictor tuple-predict-posterior
+    :predictor tuple-predict-posterior}
 
-    }
+    
 
    ;; :fld {:attributes #{:projection}
    ;;       :class-name "FLD"
@@ -200,21 +200,21 @@
                :default 0.7
                :description "the sampling fraction for stochastic tree boosting"}]
     :property-name-stem "smile.gbt"
-    :constructor #(GradientTreeBoost/fit ^Formula %1 ^DataFrame %2  ^Properties %3 )
+    :constructor #(GradientTreeBoost/fit ^Formula %1 ^DataFrame %2  ^Properties %3)
     :predictor tuple-predict-posterior}
 
    :knn {:class KNN
          :name :knn
          :documentation {
                          :user-guide "https://haifengl.github.io/classification.html#knn"
-                         :code-example (:knn examples/model-examples)
+                         :code-example (:knn examples/model-examples)}
 
-                         }
+                         
          :options [{:name :k
                     :type :int32
                     :default 3
-                    :description "number of neighbors for decision"}
-                   ]
+                    :description "number of neighbors for decision"}]
+                   
          :constructor #(construct-knn ^Formula %1 ^DataFrame %2  ^Properties %3)
          :predictor double-array-predict-posterior
          :property-name-stem "smile.knn"
@@ -324,16 +324,16 @@
                               :description "number of instances in a node below which the tree will not split, nodeSize = 5 generally gives good results"}
                              {:name :sample-rate :type :float32 :default 1.0 :description "the sampling rate for training tree. 1.0 means sampling with replacement. < 1.0 means sampling without replacement."}
                              {:name :class-weight :type :string :default nil
-                              :description "Priors of the classes. The weight of each class is roughly the ratio of samples in each class. For example, if there are 400 positive samples and 100 negative samples, the classWeight should be [1, 4] (assuming label 0 is of negative, label 1 is of positive)"}
-                             ]
-                   :property-name-stem "smile.random.forest"}
+                              :description "Priors of the classes. The weight of each class is roughly the ratio of samples in each class. For example, if there are 400 positive samples and 100 negative samples, the classWeight should be [1, 4] (assuming label 0 is of negative, label 1 is of positive)"}]
+                             
+                   :property-name-stem "smile.random.forest"}})
    ;; :rbf-network {:attributes #{}
    ;;               :class-name "RBFNetwork"
    ;;               :datatypes #{}
    ;;               :name :rbf-network}
 
 
-   })
+   
 
 
 (defmulti ^:private model-type->classification-model
@@ -358,8 +358,8 @@
            (ds-mod/inference-target-label-map label-ds)
            "In classification, the target column needs to be categorical and having been transformed to numeric.
 See tech.v3.dataset/categorical->number.
-"
-           )
+")
+           
         target-colname (first (ds/column-names label-ds))
         feature-colnames (ds/column-names feature-ds)
         formula (smile-proto/make-formula (ds-utils/column-safe-name target-colname)
@@ -409,8 +409,8 @@ See tech.v3.dataset/categorical->number.
                    :options (:options reg-def)
                    :documentation {:javadoc (class->smile-url (:class reg-def))
                                    :user-guide (-> reg-def :documentation :user-guide)
-                                   :code-example (-> reg-def :documentation :code-example)
-                                   }}))
+                                   :code-example (-> reg-def :documentation :code-example)}}))
+                                   
 
 
 
@@ -419,7 +419,7 @@ See tech.v3.dataset/categorical->number.
 
 
 
-"http://haifengl.github.io/api/java/smile/classification/GradientTreeBoost.html"
+
 (comment
   (do
     (require '[tech.v3.dataset.column-filters :as cf])
@@ -434,9 +434,9 @@ See tech.v3.dataset/categorical->number.
     (def train-ds (:train-ds split-data))
     (def test-ds (:test-ds split-data))
     (def model (ml/train train-ds {:model-type :smile.classification/gradient-tree-boost}))
-    (def prediction (ml/predict test-ds model)))
+    (def prediction (ml/predict test-ds model))))
 
-  )
+  
 
 (comment
   (require '[tech.v3.dataset.metamorph :as ds-mm])
@@ -450,13 +450,13 @@ See tech.v3.dataset/categorical->number.
   (def predicted-ctx
     (-> {:metamorph/data src-ds
          :metamorph/mode :fit
-         :metamorph/id :the-model
-         }
+         :metamorph/id :the-model}
+         
         ((ds-mm/categorical->number cf/categorical))
         ((ds-mm/set-inference-target "species"))
-        ((mm-ml/model {:model-type :smile.classification/knn}))))
+        ((mm-ml/model {:model-type :smile.classification/knn})))))
 
 
 
 
-  )
+  
