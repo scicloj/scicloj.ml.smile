@@ -34,11 +34,11 @@
                  :smile.classification/sparse-svm
                  :smile.classification/svm
                  :smile.classification/discrete-naive-bayes
-                 :smile.classification/sparse-logistic-regression
-                 })
-       )
+                 :smile.classification/sparse-logistic-regression})))
+                 
+       
 
-  )
+  
 
 
 (deftest smile-classification-test
@@ -49,18 +49,15 @@
 
 
 
-(deftest test-require-categorical-target
-  (let [titanic (-> (ds/->dataset "test/data/titanic.csv")
-                    (ds/drop-columns ["Name"])
-                    (ds-mod/set-inference-target "Survived"))
+;; (deftest test-require-categorical-target
+;;   (let [titanic (-> (ds/->dataset "test/data/titanic.csv")
+;;                     (ds/drop-columns ["Name"])
+;;                     (ds-mod/set-inference-target "Survived"))
 
-        titanic-numbers (ds/categorical->number titanic cf/categorical)
-        split-data (ds-mod/train-test-split titanic-numbers)
-        train-ds (:train-ds split-data)
-        test-ds (:test-ds split-data)
-        ]
-     (is (thrown? Exception
-                   (ml/train train-ds {:model-type :smile.classification/random-forest})
-                   ))
+;;         titanic-numbers (ds/categorical->number titanic cf/categorical)
+;;         split-data (ds-mod/train-test-split titanic-numbers)
+;;         train-ds (:train-ds split-data)
+;;         test-ds (:test-ds split-data)]
 
-     ))
+;;      (is (thrown? Exception
+;;                    (ml/train train-ds {:model-type :smile.classification/random-forest})))))

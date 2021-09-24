@@ -4,6 +4,8 @@
             [tech.v3.datatype.protocols :as dtype-proto]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
+            [tech.v3.dataset.column-filters :as ds-cf]
+
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.tensor :as dtt]
             [scicloj.metamorph.ml.model :as model]
@@ -349,26 +351,55 @@
                      :available-types (keys classifier-metadata)}))))
 
 
+(defn- all-int? [v]
+  (def v v)
+  (== 0
+     (tech.v3.datatype.functional/sum
+      (tech.v3.datatype.functional/rem v 1))))
+
+
+
 (defn- train
   [feature-ds label-ds options]
   (let [entry-metadata (model-type->classification-model
                         (model/options->model-type options))
 
         _ (errors/when-not-error
-           (ds-mod/inference-target-label-map label-ds)
-           "In classification, the target column needs to be categorical and having been transformed to numeric.
-See tech.v3.dataset/categorical->number.
-")
-           
+           (every? all-int?  (ds/columns label-ds))
+           "All values in target need to be castable to int.")
+
+
+        ;; _ (errors/when-not-error
+        ;;    (= (ds/column-count label-ds)
+        ;;       ;; (-> (ds-cf/numeric label-ds ) ds/column-count)
+        ;;       (-> label-ds
+        ;;           (ds-cf/metadata-filter  (fn [meta]
+        ;;                                     (tech.v3.datatype.casting/integer-type?
+        ;;                                      (:datatype meta))))
+        ;;           ds/column-count))
+
+
+        ;;    (str "In classification the target column(s) need to be numeric .Types of "
+        ;;         (clojure.string/join "," (ds/column-names label-ds))
+        ;;         " are :"
+        ;;         (clojure.string/join "," (map  #(-> % meta :datatype) (ds/columns label-ds)))))
+
+
         target-colname (first (ds/column-names label-ds))
         feature-colnames (ds/column-names feature-ds)
         formula (smile-proto/make-formula (ds-utils/column-safe-name target-colname)
                                           (map ds-utils/column-safe-name
                                                feature-colnames))
+
+        ;;  this does eventualy the wrong thing, but we check for int
+
         dataset (merge feature-ds
                        (ds/update-columnwise
                         label-ds :all
                         dtype/elemwise-cast :int32))
+
+        ;; dataset (merge feature-ds label-ds)
+
         data (smile-data/dataset->smile-dataframe dataset)
         properties (smile-proto/options->properties entry-metadata dataset options)
         ctor (:constructor entry-metadata)
