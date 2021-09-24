@@ -373,12 +373,16 @@ See tech.v3.dataset/categorical->number.
         properties (smile-proto/options->properties entry-metadata dataset options)
         ctor (:constructor entry-metadata)
         model (ctor formula data properties)]
-    (model/model->byte-array model)))
+    {:smile-df-used data
+     :smile-props-used properties
+     :smile-formula-used formula
+     :model-as-bytes
+     (model/model->byte-array model)}))
 
 
 (defn- thaw
   [model-data]
-  (model/byte-array->model model-data))
+  (model/byte-array->model (:model-as-bytes model-data)))
 
 
 (defn- predict
