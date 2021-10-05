@@ -8,6 +8,7 @@
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.datatype :as dtype]
             [tech.v3.dataset.column-filters :as cf]
+            [scicloj.ml.smile.malli :as malli]
             ;; [tablecloth.api :as]
             [clojure.test :refer [deftest is]]))
 
@@ -49,7 +50,7 @@
 (defn ->malli [[k def]]
   (let [
         option (:options def)]
-    (scicloj.ml.smile.classification/options->malli option)))
+    (malli/options->malli option)))
 
 (deftest can-convert-options-to-malli
   (is (sequential?
