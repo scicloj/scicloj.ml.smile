@@ -8,7 +8,8 @@
                  [scicloj/metamorph.ml "0.3.0-beta6"]
                  [org.bytedeco/openblas "0.3.10-1.5.4"]
                  [org.bytedeco/openblas-platform "0.3.10-1.5.4"]
-                 [generateme/fastmath "2.1.6"]]
+                 [generateme/fastmath "2.1.6"]
+                 [metosin/malli "0.6.2"]]
                  
 
 

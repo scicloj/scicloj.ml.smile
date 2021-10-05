@@ -21,8 +21,8 @@
   (let [ds (-> (ds/->dataset {:interest-rate interest-rate
                               :unemployment-rate unemployment-rate
                               :stoc-index-price stock-index-price})
-               (ds-mod/set-inference-target :stoc-index-price)
-               )
+               (ds-mod/set-inference-target :stoc-index-price))
+               
         ols
         (ml/train ds {:model-type :smile.regression/ordinary-least-square})
 
@@ -34,3 +34,13 @@
     (is (close? 0.1 1798.4  (:bias weights)))
     (is (close? 0.1 345.5  (-> weights :coefficients first second)))
     (is (close? 0.1 -250.1  (-> weights :coefficients second second)))))
+
+(deftest fail-on-wrong-params
+  (let [ds (-> (ds/->dataset {:interest-rate interest-rate
+                              :unemployment-rate unemployment-rate
+                              :stoc-index-price stock-index-price})
+               (ds-mod/set-inference-target :stoc-index-price))]
+
+
+    (is (thrown? IllegalArgumentException (ml/train ds {:model-type :smile.regression/ordinary-least-square
+                                                        :blub false})))))

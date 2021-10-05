@@ -46,18 +46,37 @@
     (verify/basic-classification {:model-type classify-model})))
 
 
+(defn ->malli [[k def]]
+  (let [
+        option (:options def)]
+    (scicloj.ml.smile.classification/options->malli option)))
+
+(deftest can-convert-options-to-malli
+  (is (sequential?
+       (mapv
+        ->malli
+        @ml/model-definitions*))))
 
 
 
-;; (deftest test-require-categorical-target
-;;   (let [titanic (-> (ds/->dataset "test/data/titanic.csv")
-;;                     (ds/drop-columns ["Name"])
-;;                     (ds-mod/set-inference-target "Survived"))
 
-;;         titanic-numbers (ds/categorical->number titanic cf/categorical)
-;;         split-data (ds-mod/train-test-split titanic-numbers)
-;;         train-ds (:train-ds split-data)
-;;         test-ds (:test-ds split-data)]
 
-;;      (is (thrown? Exception
-;;                    (ml/train train-ds {:model-type :smile.classification/random-forest})))))
+(deftest test-fail-invalid-params
+  (let [titanic (-> (ds/->dataset "test/data/titanic.csv")
+                    (ds/categorical->number tech.v3.dataset.column-filters/categorical)
+                    (ds-mod/set-inference-target "Survived"))]
+
+
+    (is (thrown? IllegalArgumentException
+                 (ml/train titanic {:model-type :smile.classification/random-forest
+                                    :not-existing 123})))))
+
+
+
+(deftest test-valid-params
+  (let [titanic (-> (ds/->dataset "test/data/titanic.csv")
+                    (ds/categorical->number tech.v3.dataset.column-filters/categorical)
+                    (ds-mod/set-inference-target "Survived"))]
+
+    (ml/train titanic {:model-type :smile.classification/random-forest
+                       :trees 10})))

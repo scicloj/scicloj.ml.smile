@@ -20,11 +20,13 @@
             [scicloj.ml.smile.sparse-svm]
             [scicloj.ml.smile.svm]
             [clojure.string :as str]
+            [scicloj.ml.smile.malli :as malli]
             [scicloj.ml.smile.registration :refer [class->smile-url]]
-            [scicloj.ml.smile.model-examples :as examples])
+            [scicloj.ml.smile.model-examples :as examples]
 
 
-            
+
+            [malli.util :as mu])
   (:import [smile.classification SoftClassifier AdaBoost LogisticRegression
             DecisionTree RandomForest KNN GradientTreeBoost]
            [smile.base.cart SplitRule]
@@ -304,6 +306,7 @@
    ;;  :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])
    ;;                       :alpha (ml-gs/linear [0.0 1.0])}}
 
+
    :random-forest {:class RandomForest
                    :name :random-forest
                    :documentation {:user-guide "https://haifengl.github.io/classification.html#random-forest"}
@@ -363,27 +366,10 @@
   [feature-ds label-ds options]
   (let [entry-metadata (model-type->classification-model
                         (model/options->model-type options))
-
+        _ (malli/check-schema (:options entry-metadata) options)
         _ (errors/when-not-error
            (every? all-int?  (ds/columns label-ds))
            "All values in target need to be castable to int.")
-
-
-        ;; _ (errors/when-not-error
-        ;;    (= (ds/column-count label-ds)
-        ;;       ;; (-> (ds-cf/numeric label-ds ) ds/column-count)
-        ;;       (-> label-ds
-        ;;           (ds-cf/metadata-filter  (fn [meta]
-        ;;                                     (tech.v3.datatype.casting/integer-type?
-        ;;                                      (:datatype meta))))
-        ;;           ds/column-count))
-
-
-        ;;    (str "In classification the target column(s) need to be numeric .Types of "
-        ;;         (clojure.string/join "," (ds/column-names label-ds))
-        ;;         " are :"
-        ;;         (clojure.string/join "," (map  #(-> % meta :datatype) (ds/columns label-ds)))))
-
 
         target-colname (first (ds/column-names label-ds))
         feature-colnames (ds/column-names feature-ds)
@@ -392,13 +378,11 @@
                                                feature-colnames))
 
         ;;  this does eventualy the wrong thing, but we check for int
-
         dataset (merge feature-ds
                        (ds/update-columnwise
                         label-ds :all
                         dtype/elemwise-cast :int32))
 
-        ;; dataset (merge feature-ds label-ds)
 
         data (smile-data/dataset->smile-dataframe dataset)
         properties (smile-proto/options->properties entry-metadata dataset options)
@@ -489,9 +473,4 @@
          
         ((ds-mm/categorical->number cf/categorical))
         ((ds-mm/set-inference-target "species"))
-        ((mm-ml/model {:model-type :smile.classification/knn})))))
-
-
-
-
-  
+        ((mm-ml/model {:model-type :smile.classification/random-forest :treesa 50})))))

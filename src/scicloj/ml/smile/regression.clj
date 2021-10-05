@@ -9,9 +9,9 @@
             [scicloj.metamorph.ml.gridsearch :as ml-gs]
             [tech.v3.libs.smile.data :as smile-data]
             [scicloj.ml.smile.protocols :as smile-proto]
-
-            [scicloj.ml.smile.registration :refer [class->smile-url]]
-            )
+            [scicloj.ml.smile.malli :as malli]
+            [scicloj.ml.smile.registration :refer [class->smile-url]])
+            
   (:import [smile.regression
             OLS
             Regression
@@ -22,9 +22,9 @@
             RidgeRegression
             ElasticNet
             LASSO
-            LinearModel
+            LinearModel]
             ;; OnlineRegression
-            ]
+            
            [smile.data.formula Formula TechFactory Variable]
            [smile.data DataFrame]
            [java.lang.reflect Field]
@@ -59,8 +59,8 @@
 (def ^:private ols-method-table
   {
    :qr "qr"
-   :svd "svd"
-   })
+   :svd "svd"})
+   
 
 
 
@@ -107,12 +107,12 @@
                            :options [{:name :method
                                       :type :enumeration
                                       :lookup-table ols-method-table
-                                      :default :qr
-                                      }
+                                      :default :qr}
+                                      
                                      {:name :standard-error
                                       :type :boolean
-                                      :default true
-                                      }
+                                      :default true}
+                                      
                                      {:name :recursive
                                       :type :boolean
                                       :default true}]
@@ -170,8 +170,8 @@
                          :max-iterations (ml-gs/linear 1e4 1e7 100 :int64)}
     :property-name-stem "smile.lasso"
     :constructor #(LASSO/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
-    :predictor predict-linear-model
-    }
+    :predictor predict-linear-model}
+    
 
 
    :ridge
@@ -245,9 +245,9 @@
               {:name :sample-rate
                :type :float64
                :default 1.0
-               :range [0.0 1.0]}
+               :range [0.0 1.0]}]
 
-              ]
+              
     :property-name-stem "smile.random.forest"
     :constructor #(RandomForest/fit %1 %2 %3)
     :predictor predict-df}})
@@ -270,11 +270,11 @@
   [model-type]
   (get regression-metadata :elastic-net))
 
-
 (defn- train
   [feature-ds label-ds options]
   (let [entry-metadata (model-type->regression-model
                         (model/options->model-type options))
+        _ (malli/check-schema (:options entry-metadata) options)
         target-colnames (ds/column-names label-ds)
         feature-colnames (ds/column-names feature-ds)
         _ (when-not (= 1 (count target-colnames))
@@ -330,9 +330,9 @@
                    :hyperparameters (:gridsearch-options reg-def)
                    :options (:options reg-def)
                    :documentation {:javadoc (class->smile-url (:class reg-def))
-                                   :user-guide (-> reg-def :documentation :user-guide)}
+                                   :user-guide (-> reg-def :documentation :user-guide)}}))
 
-                   }))
+                   
 
 
 (comment
@@ -349,7 +349,7 @@
     (def train-ds (:train-ds split-data))
     (def test-ds (:test-ds split-data))
     (def model (ml/train train-ds {:model-type :smile.regression/ordinary-least-square}))
-    (def prediction (ml/predict test-ds model))
-    )
-  )
+    (def prediction (ml/predict test-ds model))))
+    
+  
 
