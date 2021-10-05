@@ -12,7 +12,7 @@
     :float32 'float?
     :float64 'double?
     :boolean 'boolean?
-    :keyword 'any?
+    :keyword 'keyword?
     :enumeration 'any?))
 
 

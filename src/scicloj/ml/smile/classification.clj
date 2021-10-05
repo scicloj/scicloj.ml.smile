@@ -148,7 +148,7 @@
                :default 20
                :description "maximum depth of the tree"}
               {:name :split-rule
-               :type :string
+               :type :keyword
                :lookup-table split-rule-lookup-table
                :default :gini
                :description "the splitting rule"}]
