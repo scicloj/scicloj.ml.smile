@@ -24,10 +24,7 @@
 
 
 (defn check-schema [defined-options options]
-  (def options options)
-  (let [;; entry-metadata (model-type->classification-model
-        ;;                 (model/options->model-type options))
-        malli-schema (apply vector :map (options->malli defined-options))
+  (let [malli-schema (apply vector :map (options->malli defined-options))
 
         model-options (dissoc options :model-type)
         final-schema (-> malli-schema

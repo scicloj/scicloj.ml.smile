@@ -317,7 +317,7 @@
                              {:name :mtry :type :int32 :default 0
                               :description "number of input variables to be used to determine the decision at a node of the tree. floor(sqrt(p)) generally gives good performance, where p is the number of variables"}
                              {:name :split-rule
-                              :type :string
+                              :type :keyword
                               :lookup-table split-rule-lookup-table
                               :default :gini
                               :description "Decision tree split rule"}
