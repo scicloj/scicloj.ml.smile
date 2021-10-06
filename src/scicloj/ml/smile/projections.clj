@@ -3,9 +3,14 @@
   (:require [tablecloth.api.utils :refer [column-names]]
             [tablecloth.api.dataset :refer [rows dataset columns]]
             [tablecloth.api.columns :refer [select-columns drop-columns add-or-replace-columns]]
-            [fastmath.kernel :as k])
+            [fastmath.kernel :as k]
+            [scicloj.ml.smile.malli :as malli])
+
   (:import [smile.projection PCA ProbabilisticPCA KPCA GHA RandomProjection Projection]
            [smile.math.kernel MercerKernel]))
+
+(require '[malli.instrument :as mi])
+(require '[malli.dev.pretty :as pretty])
 
 (set! *warn-on-reflection* true)
 
@@ -82,17 +87,17 @@
      (-> ds
          (add-or-replace-columns (columns ds-res :as-map)))
      :model model
-    :cnames cnames
-     :target-columns target-columns
-     }))
+     :cnames cnames
+     :target-columns target-columns}))
+     
 
 (defn process-reduction-transform
   [ds model cnames target-columns]
   (let [rows (rows->array ds cnames)
         ds-res (array->ds (.project model #^"[[D" rows) target-columns)]
     (-> ds
-        (add-or-replace-columns (columns ds-res :as-map)))
-    ))
+        (add-or-replace-columns (columns ds-res :as-map)))))
+    
 
 
 
@@ -122,18 +127,30 @@
   Writes keys to ctx                   | In mode `:fit` : Stores trained model in ctx under key in `:metamorph/id`.
 
   "
+  {:malli/schema [:=> [:cat
+                       [:enum :pca-cov :pca-cor :pca-prob :kpca :gha :random]
+                       int?
+                       [sequential? [:or :string? keyword?]]
+                       map?]
+                      [fn?]]}
   [algorithm target-dims cnames opts]
-  (fn [{:metamorph/keys [data id mode] :as ctx}]
-    (case mode
-      :fit
-      (let [fit-result (process-reduction-fit data algorithm target-dims cnames opts)]
 
-        (assoc ctx
-               id {:fit-result (dissoc fit-result :dataset)}
-               :metamorph/data (:dataset fit-result)))
-      :transform
-      (let [fit-result (get-in ctx [id :fit-result])]
-        (assoc ctx :metamorph/data (process-reduction-transform
-                                    (:metamorph/data ctx)
-                                    (:cnames fit-result)
-                                    (:target-columns fit-result)))))))
+  (malli/instrument-mm
+   (fn [{:metamorph/keys [data id mode] :as ctx}]
+     (case mode
+       :fit
+       (let [fit-result (process-reduction-fit data algorithm target-dims cnames opts)]
+
+         (assoc ctx
+                id {:fit-result (dissoc fit-result :dataset)}
+                :metamorph/data (:dataset fit-result)))
+       :transform
+       (let [fit-result (get-in ctx [id :fit-result])]
+         (assoc ctx :metamorph/data (process-reduction-transform
+                                     (:metamorph/data ctx)
+                                     (:cnames fit-result)
+                                     (:target-columns fit-result))))))))
+
+
+(mi/collect! {:ns 'scicloj.ml.smile.projections})
+(mi/instrument! {:report (pretty/thrower) :scope #{:input}})

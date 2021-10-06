@@ -2,8 +2,9 @@
   (:require
    [malli.util :as mu]
    [malli.core :as m]
-   [malli.error :as me]))
-
+   [malli.dev.pretty :as pretty]
+   [malli.error :as me]
+   [tech.v3.dataset.impl.dataset :refer [dataset?]]))
 
 (defn type->malli [type]
   (case type
@@ -33,3 +34,14 @@
         explanation (m/explain final-schema model-options)]
     (when (some? explanation)
       (throw (IllegalArgumentException. (str "invalid options:" (me/humanize explanation)))))))
+
+(defn instrument-mm [fn]
+  (m/-instrument
+     {:report (pretty/thrower) :scope #{:input}
+      :schema [:=> [:cat [:map
+                          [:metamorph/id any?]
+                          [:metamorph/data [:fn dataset?]]
+                          [:metamorph/mode [:enum :fit :transform]]]]
+
+               map?]}
+     fn))
