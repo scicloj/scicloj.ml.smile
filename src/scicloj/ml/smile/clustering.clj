@@ -35,6 +35,11 @@ The cluster id of each row gets written to the column in `target-column`
   Writes keys to ctx                   | In mode `:fit` : Stores cluster centers in ctx under key in `:metamorph/id`.
 
   "
+  {:malli/schema [:=> [:cat
+                       [:enum :spectral :dbscan :k-means :mec :clarans :g-means :lloyd :x-means :deterministic-annealing :denclue]
+                       map
+                       [:or :string? keyword?]]
+                      [fn?]]}
   [clustering-method clustering-method-args target-column]
   (fn [ctx]
     (let [mode (:metamorph/mode ctx)

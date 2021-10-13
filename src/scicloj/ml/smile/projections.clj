@@ -12,7 +12,7 @@
 (require '[malli.instrument :as mi])
 (require '[malli.dev.pretty :as pretty])
 
-(set! *warn-on-reflection* true)
+;; (set! *warn-on-reflection* true)
 
 (defn- pca
   ([rows target-dims] (pca rows target-dims false))
@@ -130,9 +130,9 @@
   {:malli/schema [:=> [:cat
                        [:enum :pca-cov :pca-cor :pca-prob :kpca :gha :random]
                        int?
-                       [sequential? [:or :string? keyword?]]
-                       map?]
-                      [fn?]]}
+                       [:sequential [:or string? keyword?]]
+                       any?]
+                  [fn?]]}
   [algorithm target-dims cnames opts]
 
   (malli/instrument-mm
@@ -151,6 +151,6 @@
                                      (:cnames fit-result)
                                      (:target-columns fit-result))))))))
 
-
-(mi/collect! {:ns 'scicloj.ml.smile.projections})
-(mi/instrument! {:report (pretty/thrower) :scope #{:input}})
+(malli/instrument-ns *ns*)
+;; (mi/collect! {:ns 'scicloj.ml.smile.projections})
+;; (mi/instrument! {:report (pretty/thrower) :scope #{:input}})
