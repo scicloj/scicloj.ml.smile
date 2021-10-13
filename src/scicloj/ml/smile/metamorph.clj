@@ -4,7 +4,10 @@
    [scicloj.ml.smile.nlp :as nlp]
    [tech.v3.dataset :as ds]
    [pppmap.core :as ppp]
-   ))
+   [scicloj.ml.smile.malli :as malli]))
+
+
+   
 
 
 (defn count-vectorize
@@ -24,9 +27,10 @@
   "
 
   ([text-col bow-col options]
-   (fn [ctx]
-     (assoc ctx :metamorph/data
-            (nlp/count-vectorize (:metamorph/data ctx) text-col bow-col options))))
+   (malli/instrument-mm
+    (fn [ctx]
+      (assoc ctx :metamorph/data
+             (nlp/count-vectorize (:metamorph/data ctx) text-col bow-col options)))))
   ([text-col bow-col]
    (count-vectorize text-col bow-col {})))
 
@@ -46,39 +50,28 @@
 
 
   [bow-col indices-col bow->sparse-fn options]
-  ;; (def bow-col bow-col)
-  ;; (def indices-col indices-col)
-  ;; (def bow->sparse-fn bow->sparse-fn)
-  ;; (def options options)
+  (malli/instrument-mm
+   (fn [{:metamorph/keys [mode data] :as ctx}]
+     (case mode
+       :fit
+       (let [
+             {:keys [ds vocab]}
+             (nlp/bow->sparse-and-vocab data
+                                        bow-col indices-col
+                                        bow->sparse-fn
+                                        options)]
 
-  (fn [{:metamorph/keys [mode data] :as ctx}]
-    ;; (def data data)
-    ;; (def mode mode)
-    (case mode
-      :fit
-      (let [
-            {:keys [ds vocab]}
-            (nlp/bow->sparse-and-vocab data
-                                       bow-col indices-col
-                                       bow->sparse-fn
-                                       options)
-             ;; _ (def ds ds)
-             ;; _(def vocab vocab)
-            ]
-        (assoc ctx :metamorph/data ds
-               ::bow->sparse-vocabulary vocab
-               ))
-      :transform
-      (do
-        ;; (def ctx ctx)
-        ;; (def data data)
-        (let [{:keys [ds vocab]}
-              (nlp/bow->sparse data bow-col indices-col bow->sparse-fn (::bow->sparse-vocabulary ctx))]
-          (assoc ctx :metamorph/data ds))
-        )
+         (assoc ctx :metamorph/data ds
+                ::bow->sparse-vocabulary vocab))
+               
+       :transform
+       (let [{:keys [ds vocab]}
+             (nlp/bow->sparse data bow-col indices-col bow->sparse-fn (::bow->sparse-vocabulary ctx))]
+         (assoc ctx :metamorph/data ds))))))
+        
 
 
-      )))
+      
 
 (defn bow->sparse-array
   "Converts a bag-of-word column `bow-col` to sparse indices column
@@ -102,12 +95,12 @@
 
   "
   ([bow-col indices-col options]
-   (bow->something-sparse bow-col indices-col nlp/bow->sparse-indices options)
+   (bow->something-sparse bow-col indices-col nlp/bow->sparse-indices options))
 
-   )
+   
   ([bow-col indices-col]
-   (bow->something-sparse bow-col indices-col nlp/bow->sparse-indices {})
-   ))
+   (bow->something-sparse bow-col indices-col nlp/bow->sparse-indices {})))
+   
 
 
 (defn bow->SparseArray
@@ -147,9 +140,10 @@
   Writes keys to ctx                   |none
   "
   [bow-column tfidf-column]
-  (fn [ctx]
-    (assoc ctx :metamorph/data
-           (nlp/bow->tfidf
-            (:metamorph/data ctx)
-            bow-column
-            tfidf-column))))
+  (malli/instrument-mm
+   (fn [ctx]
+     (assoc ctx :metamorph/data
+            (nlp/bow->tfidf
+             (:metamorph/data ctx)
+             bow-column
+             tfidf-column)))))

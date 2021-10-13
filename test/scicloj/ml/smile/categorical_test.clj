@@ -89,8 +89,8 @@
 
 (comment
 
-  (ml/thaw-model trained)
 
+  
   (->
    (ml/predict (->  (ds/->dataset {:col-1 [:a]})
                     (ds/categorical->number [:col-1]))

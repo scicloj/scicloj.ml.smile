@@ -2,8 +2,8 @@
   (:require [clojure.string :as str]
             [pppmap.core :as ppp]
             [tech.v3.dataset :as ds]
-            [tech.v3.datatype.errors :as errors]
-            )
+            [tech.v3.datatype.errors :as errors])
+            
   (:import smile.nlp.normalizer.SimpleNormalizer
            smile.nlp.stemmer.PorterStemmer
            [smile.nlp.tokenizer SimpleTokenizer BreakIteratorSentenceSplitter]
@@ -29,13 +29,13 @@
 
 (defn resolve-stemmer [options]
   (let [stemmer-type (get options :stemmer :porter)]
-         (case stemmer-type
-                  :none nil
-                  :porter (PorterStemmer.)
-                  )
+       (case stemmer-type
+                :none nil
+                :porter (PorterStemmer.))))
+                  
 
-    )
-  )
+    
+  
 
 (defn default-tokenize
   "Tokenizes text.
@@ -43,7 +43,7 @@
   [text options]
   (let [normalizer (SimpleNormalizer/getInstance)
         stemmer (resolve-stemmer options)
-        tokenizer (SimpleTokenizer. )
+        tokenizer (SimpleTokenizer.)
         sentence-splitter (BreakIteratorSentenceSplitter.)
 
         tokens
@@ -54,9 +54,9 @@
              (map seq)
              flatten
              (remove nil?)
-             (map #(word-process stemmer normalizer % ))
+             (map #(word-process stemmer normalizer %)))]
 
-             )]
+             
     tokens))
 
 
@@ -93,8 +93,8 @@
    in the form of a frequency-count map"
   ([ds text-col bow-col {:keys [text->bow-fn]
                          :or {text->bow-fn default-text->bow}
-                         :as options
-                         }]
+                         :as options}]
+                         
    ;; (def ds ds)
    ;; (def text-col text-col)
    ;; (def bow-col bow-col)
@@ -109,9 +109,9 @@
       #(text->bow-fn % options)
       (get ds text-col)))))
   ([ds text-col bow-col]
-   (count-vectorize ds text-col bow-col {:text->bow-fn  default-text->bow })
-   )
-  )
+   (count-vectorize ds text-col bow-col {:text->bow-fn  default-text->bow})))
+   
+  
 
 (defn ->vocabulary-top-n [bows n]
   "Takes top-n most frequent tokens as vocabulary"
@@ -119,32 +119,32 @@
         (->>
          (apply merge-with + bows)
          (sort-by second)
-        reverse
+         reverse
          (take n)
          keys)]
     vocabulary))
 
 (defn create-vocab-all
   "Uses all tokens as the vocabulary"
-  [bow ]
+  [bow]
   (keys
-   (apply merge bow))
-  )
+   (apply merge bow)))
+  
 
 
 
 (defn bow->sparse-and-vocab
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
    The exact transformation to the sparse representtaion is given by `bow->sparse-fn`"
-  [ds bow-col indices-col bow->sparse-fn {:keys [create-vocab-fn] :or {create-vocab-fn create-vocab-all}}  ]
+  [ds bow-col indices-col bow->sparse-fn {:keys [create-vocab-fn] :or {create-vocab-fn create-vocab-all}}]
   (let [bow (get ds bow-col)
         _ (errors/when-not-error bow (str "bow column not found: " bow-col))
         vocabulary-list (create-vocab-fn bow)
         vocab->index-map (zipmap vocabulary-list  (range))
         vocabulary {:vocab vocabulary-list
                     :vocab->index-map vocab->index-map
-                    :index->vocab-map (clojure.set/map-invert vocab->index-map)
-                    }
+                    :index->vocab-map (clojure.set/map-invert vocab->index-map)}
+                    
         vocab->index-map (:vocab->index-map vocabulary)
         ds
         (ds/add-or-update-column
@@ -157,8 +157,8 @@
            #(bow->sparse-fn % vocab->index-map)
            (get ds bow-col))))]
     {:ds ds
-     :vocab vocabulary}
-    ))
+     :vocab vocabulary}))
+    
 
 (defn bow->sparse [ds bow-col indices-col bow->sparse-fn vocabulary]
   (let [
@@ -174,8 +174,8 @@
            #(bow->sparse-fn % vocab->index-map)
            (get ds bow-col))))]
     {:ds ds
-     :vocab vocabulary}
-    ))
+     :vocab vocabulary}))
+    
 
 (defn bow->something-sparse
   "Converts a bag-of-word column `bow-col` to a sparse data column `indices-col`.
@@ -200,7 +200,7 @@
 (defn idf [tf-map term bows]
   (let [n-t (count bows)
         n-d (get tf-map term)]
-    (Math/log10 (/ n-t n-d ))))
+    (Math/log10 (/ n-t n-d))))
 
 
 (defn tf [term bow]
@@ -210,7 +210,7 @@
 
 
 (defn tfidf [tf-map term bow bows]
-  (* (tf term bow)  (idf tf-map term bows) ))
+  (* (tf term bow)  (idf tf-map term bows)))
 
 
 (defn bow->tfidf
@@ -257,44 +257,3 @@
    (filter vector?)
    (map first)
    (into-array Integer/TYPE)))
-
-
-(comment
-  (defn- remove-punctuation [sentence]
-    (->>
-     sentence
-     (filter #(or (Character/isLetter %)
-                  (Character/isSpace %)
-                  (Character/isDigit %)))
-     (apply str)))
-
-  (def tokenizer (SimpleTokenizer.))
-  (def normalizer (SimpleNormalizer/getInstance))
-  (def stemmer (PorterStemmer.))
-  (def text "this is a test")
-
-  (def sentence-spliter (BreakIteratorSentenceSplitter.))
-  (.split sentence-spliter "this is my world. and this is anoher text hello.")
-
-  (.split tokenizer "hello world")
-  (default-tokenize "hello My world. this is a tests" {})
-
-  (import java.text.BreakIterator)
-  (import smile.nlp.tokenizer.SimpleSentenceSplitter)
-
-  (def i (BreakIterator/getSentenceInstance))
-
-  (.setText  i "Today is friday. I am carsten.")
-
-  (.first i)
-  (.next i)
-
-  (def ssp-1 (SimpleSentenceSplitter/getInstance))
-  (def ssp-2 (BreakIteratorSentenceSplitter.))
-
-
-  (.split ssp "Today is friday. I am carsten.")
-
-  (default-tokenize "Today is friday. I am carsten." {})
-
-  )
