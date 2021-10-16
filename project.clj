@@ -1,11 +1,11 @@
-(defproject scicloj/scicloj.ml.smile "5.08-SNAPSHOT"
+(defproject scicloj/scicloj.ml.smile "6.0.0"
   :description "Smile models for scicloj.ml"
   :url "https://github.com/scicloj/scicloj.ml.smile"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.10.2"]
-                 [scicloj/tablecloth "6.012"]
-                 [scicloj/metamorph.ml "0.3.0-beta6"]
+                 [scicloj/tablecloth "6.023"]
+                 [scicloj/metamorph.ml "0.4.0"]
                  [org.bytedeco/openblas "0.3.10-1.5.4"]
                  [org.bytedeco/openblas-platform "0.3.10-1.5.4"]
                  [generateme/fastmath "2.1.6"]

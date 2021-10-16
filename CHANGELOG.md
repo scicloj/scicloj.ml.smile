@@ -1,5 +1,11 @@
 # ConstantChangeLog
 
+
+## 6.00
+
+- added Malli schemas to model options
+
+
 ## 5.07
 - added clustering
 
