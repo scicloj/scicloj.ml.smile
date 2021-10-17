@@ -49,4 +49,6 @@
 
 (defn instrument-ns [ns]
   (mi/collect! {:ns ns})
-  (mi/instrument! {:report (pretty/reporter) :scope #{:input}}))
+  (mi/instrument! {:report (pretty/thrower) :scope #{:input}}))
+
+;; (mi/unstrument!)

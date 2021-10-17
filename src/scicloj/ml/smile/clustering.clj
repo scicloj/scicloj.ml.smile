@@ -1,7 +1,8 @@
 (ns scicloj.ml.smile.clustering
   (:require
-             [fastmath.clustering :as clustering]
-             [tablecloth.api :as tc]))
+   [fastmath.clustering :as clustering]
+   [tablecloth.api :as tc]
+   [scicloj.ml.smile.malli :as malli]))
 
 
 
@@ -37,24 +38,28 @@ The cluster id of each row gets written to the column in `target-column`
   "
   {:malli/schema [:=> [:cat
                        [:enum :spectral :dbscan :k-means :mec :clarans :g-means :lloyd :x-means :deterministic-annealing :denclue]
-                       map
-                       [:or :string? keyword?]]
-                      [fn?]]}
+                       sequential?
+                       [:or string? keyword?]]
+                  [fn?]]}
   [clustering-method clustering-method-args target-column]
-  (fn [ctx]
-    (let [mode (:metamorph/mode ctx)
-          id (:metamorph/id ctx)
-          data (:metamorph/data ctx)
-          fun (resolve (symbol  "fastmath.clustering" (name clustering-method)))
-          data-rows (tc/rows data)
-          clustering
-          (case mode
-            :fit (apply fun data-rows clustering-method-args)
-            :transform (ctx id))
-          clusters (map (partial clustering/predict clustering)
-                        data-rows)]
+  (malli/instrument-mm
+   (fn [ctx]
+     (let [mode (:metamorph/mode ctx)
+           id (:metamorph/id ctx)
+           data (:metamorph/data ctx)
+           fun (resolve (symbol  "fastmath.clustering" (name clustering-method)))
+           data-rows (tc/rows data)
+           clustering
+           (case mode
+             :fit (apply fun data-rows clustering-method-args)
+             :transform (ctx id))
+           clusters (map (partial clustering/predict clustering)
+                         data-rows)]
 
-      (cond-> ctx
-        (= mode :fit) (assoc id clustering)
-        true          (update :metamorph/data
-                              tc/add-column target-column clusters)))))
+       (cond-> ctx
+         (= mode :fit) (assoc id clustering)
+         true          (update :metamorph/data
+                               tc/add-column target-column clusters))))))
+
+
+(malli/instrument-ns 'scicloj.ml.smile.clustering)
