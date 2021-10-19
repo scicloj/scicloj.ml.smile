@@ -30,8 +30,8 @@
                                  :p 100
                                  :k 5})
               prediction (ml/predict (ds/head reviews 10) trained-model)]
-          prediction))
-       )))
+          prediction)))))
+       
 
 (deftest test-discrete-nb-multinomial
   (is (= [2.000, 2.000, 1.000, 0.000, 1.000, 2.000, 2.000, 2.000, 2.000, 2.000]
@@ -44,17 +44,17 @@
                                  :p 100
                                  :k 5})
               prediction (ml/predict (ds/head reviews 10) trained-model)]
-          prediction))
-       )))
+          prediction)))))
+       
 
 
 
 
 
 (deftest defaults []
-  (let [reviews (get-reviews)]
-    (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
-                       :sparse-column :sparse
-                       :p 100
-                       :k 5
-                       })))
+  (is map?
+      (let [reviews (get-reviews)]
+        (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
+                           :sparse-column :sparse
+                           :p 100
+                           :k 5}))))

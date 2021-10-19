@@ -14,7 +14,9 @@
 
 
   :profiles
-  {:test
+  {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.902"]]}
+
+   :test
    {:dependencies []}
 
    :codox
@@ -30,5 +32,6 @@
             :output-path "docs"
             :doc-paths ["topics"]
             :source-uri "https://github.com/techascent/tech.ml/blob/master/{filepath}#L{line}"}}}
-  :aliases {"codox" ["with-profile" "codox,dev" "codox"]}
+  :aliases {"codox" ["with-profile" "codox,dev" "codox"]
+            "kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]}
   :java-source-paths ["java"])

@@ -79,5 +79,6 @@
                     (ds/categorical->number tech.v3.dataset.column-filters/categorical)
                     (ds-mod/set-inference-target "Survived"))]
 
-    (ml/train titanic {:model-type :smile.classification/random-forest
-                       :trees 10})))
+    (is map?
+        (ml/train titanic {:model-type :smile.classification/random-forest
+                           :trees 10}))))
