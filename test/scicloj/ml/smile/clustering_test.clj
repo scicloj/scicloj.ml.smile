@@ -53,13 +53,12 @@
 
 
 (deftest cluster-model-test
-  (is (= 5
-         (count
-          (get-in
-           (mm/fit iris
-                   (tc-mm/drop-columns [:species])
-                   {:metamorph/id :cluster}
-                   (morphml/model {:model-type :fastmath/cluster
-                                   :clustering-method :g-means
-                                   :clustering-method-args [5]}))
-           [:cluster :model-data :sizes])))))
+  (is (= :g-means
+         (get-in
+          (mm/fit iris
+                  (tc-mm/drop-columns [:species])
+                  {:metamorph/id :cluster}
+                  (morphml/model {:model-type :fastmath/cluster
+                                  :clustering-method :g-means
+                                  :clustering-method-args [5]}))
+          [:cluster :model-data :type]))))
