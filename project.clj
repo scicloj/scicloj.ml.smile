@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.10.2"]
                  [scicloj/tablecloth "6.023"]
-                 [scicloj/metamorph.ml "0.4.0"]
+                 [scicloj/metamorph.ml "0.4.1-SNAPSHOT"]
                  [org.bytedeco/openblas "0.3.10-1.5.4"]
                  [org.bytedeco/openblas-platform "0.3.10-1.5.4"]
                  [generateme/fastmath "2.1.6"]
