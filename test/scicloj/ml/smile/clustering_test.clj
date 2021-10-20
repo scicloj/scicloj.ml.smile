@@ -1,9 +1,10 @@
 (ns scicloj.ml.smile.clustering-test
-  (:require  [clojure.test :as t]
+  (:require  [clojure.test :refer [deftest is] :as t]
              [fastmath.clustering :as clustering]
              [tablecloth.api :as tc]
+             [tablecloth.pipeline :as tc-mm]
              [scicloj.ml.smile.clustering :refer [cluster]]
-             [scicloj.metamorph.core :as morph]
+             [scicloj.metamorph.core :as mm]
              [scicloj.metamorph.ml :as morphml]))
 
 
@@ -20,7 +21,7 @@
 
 
 (t/deftest cluster-test
-  (let [pipeline (morph/pipeline
+  (let [pipeline (mm/pipeline
                   {:metamorph/id :cluster} (cluster :k-means [3] :cluster-row))
         fittex-ctx
         (pipeline
@@ -31,3 +32,34 @@
     (t/is (= 3
              (-> fittex-ctx :cluster :clustering count)))
     (t/is (= 3 (-> fittex-ctx :metamorph/data :cluster-row count)))))
+
+
+(def iris
+  (->
+   (tc/dataset
+    "https://raw.githubusercontent.com/scicloj/metamorph.ml/main/test/data/iris.csv" {:key-fn keyword})))
+
+(deftest cluster-test
+  (let [
+        pipe-fn
+        (mm/pipeline
+         (tc-mm/drop-columns [:species])
+         {:metamorph/id :cluster} (cluster :k-means [3] :cluster))
+
+        fitted-ctx
+        (mm/fit-pipe iris pipe-fn)]
+    (is (= 3
+           (-> fitted-ctx :cluster :clusters)))))
+
+
+(deftest cluster-model-test
+  (is (= 5
+         (count
+          (get-in
+           (mm/fit iris
+                   (tc-mm/drop-columns [:species])
+                   {:metamorph/id :cluster}
+                   (morphml/model {:model-type :fastmath/cluster
+                                   :clustering-method :g-means
+                                   :clustering-method-args [5]}))
+           [:cluster :model-data :sizes])))))

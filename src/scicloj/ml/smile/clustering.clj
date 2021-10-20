@@ -1,10 +1,17 @@
 (ns scicloj.ml.smile.clustering
   (:require
+   [scicloj.metamorph.ml :as ml]
    [fastmath.clustering :as clustering]
    [tablecloth.api :as tc]
    [scicloj.ml.smile.malli :as malli]))
 
 
+
+(defn fit-cluster [data clustering-method clustering-method-args]
+  (let [
+        fun (resolve (symbol  "fastmath.clustering" (name clustering-method)))
+        data-rows (tc/rows data)]
+    (apply fun data-rows clustering-method-args)))
 
 (defn cluster
   "Metamorph transformer, which clusters the data and creates a new column with the cluster id.
@@ -51,7 +58,7 @@ The cluster id of each row gets written to the column in `target-column`
            data-rows (tc/rows data)
            clustering
            (case mode
-             :fit (apply fun data-rows clustering-method-args)
+             :fit (fit-cluster data clustering-method clustering-method-args)
              :transform (ctx id))
            clusters (map (partial clustering/predict clustering)
                          data-rows)]
@@ -60,6 +67,17 @@ The cluster id of each row gets written to the column in `target-column`
          (= mode :fit) (assoc id clustering)
          true          (update :metamorph/data
                                tc/add-column target-column clusters))))))
+
+
+(defn train-fn [feature-ds label-ds options] {}
+  (fit-cluster feature-ds
+                          (options :clustering-method)
+                          (options :clustering-method-args)))
+
+
+
+
+(ml/define-model! :fastmath/cluster train-fn nil {:unsupervised? true})
 
 
 (malli/instrument-ns 'scicloj.ml.smile.clustering)
