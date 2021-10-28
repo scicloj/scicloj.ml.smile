@@ -25,7 +25,8 @@
                          :cnames [:f1 :f2 :f3 :f4]})]
     (is  (every? pos?
                  (seq
-                  (.getCumulativeVarianceProportion (-> train-result :model-data :model)))))))
+                  (.getCumulativeVarianceProportion
+                   (-> train-result :model-data :model)))))))
 
 (deftest reduce-dimensions-test
   (let [pipe-fn
