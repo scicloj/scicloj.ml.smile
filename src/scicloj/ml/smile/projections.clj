@@ -4,8 +4,8 @@
             [tablecloth.api.dataset :refer [rows dataset columns]]
             [tablecloth.api.columns :refer [select-columns drop-columns add-or-replace-columns]]
             [fastmath.kernel :as k]
-            [scicloj.ml.smile.malli :as malli])
-
+            [scicloj.ml.smile.malli :as malli]
+            [scicloj.metamorph.ml :as ml])
   (:import [smile.projection PCA ProbabilisticPCA KPCA GHA RandomProjection Projection]
            [smile.math.kernel MercerKernel]))
 
@@ -150,6 +150,22 @@
                                      (:metamorph/data ctx)
                                      (:cnames fit-result)
                                      (:target-columns fit-result))))))))
+
+(defn- train
+  [feature-ds label-ds options]
+  (let [{:keys [algorithm target-dims cnames opts]} options]
+    (select-keys
+     (process-reduction-fit feature-ds
+                            algorithm
+                            target-dims
+                            cnames
+                            opts)
+     [:dataset :model])))
+
+(ml/define-model! :smile.projections
+  train nil {:unsupervised? true})
+
+
 
 (malli/instrument-ns *ns*)
 ;; (mi/collect! {:ns 'scicloj.ml.smile.projections})

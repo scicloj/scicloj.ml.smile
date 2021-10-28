@@ -5,9 +5,11 @@
             [tablecloth.api :refer [dataset]]
             [tech.v3.dataset.column-filters :as cf]
             [scicloj.metamorph.core :as mm]
+            [scicloj.metamorph.ml :as ml]
             [tech.v3.dataset.math :as math]
             [scicloj.metamorph.ml.preprocessing :as preprocessing]))
             
+
 
 (def data
   (dataset {:f1 [1 5 1 5 8]
@@ -15,7 +17,15 @@
             :f3 [3 6 2 2 2]
             :f4 [4 7 3 1 2]}))
             
-
+(deftest train-pca-model
+  (let [train-result
+        (ml/train data  {:model-type :smile.projections
+                         :target-dims 2
+                         :algorithm :pca-cov
+                         :cnames [:f1 :f2 :f3 :f4]})]
+    (is  (every? pos?
+                 (seq
+                  (.getCumulativeVarianceProportion (-> train-result :model-data :model)))))))
 
 (deftest reduce-dimensions-test
   (let [pipe-fn
