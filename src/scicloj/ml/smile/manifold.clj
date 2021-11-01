@@ -1,24 +1,22 @@
 (ns scicloj.ml.smile.manifold
   (:require [smile.manifold :as smile-mf]
-            [tablecloth.api :as tc]))
+            [scicloj.metamorph.ml :as ml]
+            [tablecloth.api :as tc]
+            [scicloj.metamorph.ml.model :as model]))
 
 
 (defn manifold [data manifold-method manifold-method-args]
-  (def data data)
-  (def manifold-method manifold-method)
   (let [fun (resolve (symbol (str "smile.manifold/" (name manifold-method))))
         data-rows (tc/rows data :as-double-arrays)]
-    (def fun fun)
-    (def data-rows data-rows)
-    (def manifold-method-args manifold-method-args)
-    (->  (apply fun data-rows manifold-method-args)
-         (#(.coordinates %))
-         tc/dataset)))
-
+    (apply fun data-rows manifold-method-args)))
 
 (defn- train [manifold-method]
   (fn  [feature-ds label-ds options]
-    (manifold feature-ds manifold-method (options :args))))
+
+    (let [model (manifold feature-ds manifold-method (options :args))]
+      {:coordinates
+       (tc/dataset (.coordinates model))
+       :model model})))
 
 
 
