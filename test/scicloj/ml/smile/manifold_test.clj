@@ -5,6 +5,7 @@
              [camel-snake-kebab.core :as csk]
              [tablecloth.pipeline :as tc-mm]
              [tablecloth.api :as tc]
+             [scicloj.ml.smile.manifold]
              [scicloj.metamorph.ml.preprocessing]))
 
 
