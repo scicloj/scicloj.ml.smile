@@ -3,13 +3,16 @@
                  :fn compile
                  :ensure "target/classes"}
  :deps {
-        org.clojure/clojure {:mvn/version "1.10.2"}
-        scicloj/tablecloth {:mvn/version "6.023"}
-        scicloj/metamorph.ml {:mvn/version "0.4.1-SNAPSHOT"}
-        org.bytedeco/openblas {:mvn/version "0.3.10-1.5.4"}
+        org.clojure/clojure           {:mvn/version "1.10.2"}
+        scicloj/tablecloth             {:mvn/version "6.023"}
+        org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
+        scicloj/metamorph.ml           {:git/url "https://github.com/scicloj/metamorph.ml.git"
+                                        :git/sha "f8350f3b2b47954b66416e01c5de54915fbd56a6"}
+
+        org.bytedeco/openblas          {:mvn/version "0.3.10-1.5.4"}
         org.bytedeco/openblas-platform {:mvn/version "0.3.10-1.5.4"}
-        generateme/fastmath {:mvn/version "2.1.6"}
-        metosin/malli {:mvn/version "0.6.2"}}
+        generateme/fastmath            {:mvn/version "2.1.6"}
+        metosin/malli                  {:mvn/version "0.6.2"}}
  :aliases {
            :codox {:extra-deps {codox/codox {:mvn/version "0.10.7"}
                                 codox-theme-rdash/codox-theme-rdash {:mvn/version  "0.1.2"}}
