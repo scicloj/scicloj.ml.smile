@@ -12,6 +12,15 @@
 (require '[malli.instrument :as mi])
 (require '[malli.dev.pretty :as pretty])
 
+(def model-keywords
+  [
+   :pca-cov
+   :pca-cor
+   :pca-prob
+   :kpca
+   :gha
+   :random])
+
 ;; (set! *warn-on-reflection* true)
 
 (defn- pca
@@ -151,9 +160,9 @@
                                      (:cnames fit-result)
                                      (:target-columns fit-result))))))))
 
-(defn- train
-  [feature-ds label-ds options]
-  (let [{:keys [algorithm target-dims cnames opts]} options]
+(defn- train-algorithm
+  [algorithm feature-ds label-ds options]
+  (let [{:keys [target-dims cnames opts]} options]
     (select-keys
      (process-reduction-fit feature-ds
                             algorithm
@@ -162,10 +171,23 @@
                             opts)
      [:dataset :model])))
 
+(defn- train
+  [feature-ds label-ds options]
+  (train-algorithm (options :algorithm) feature-ds label-ds options))
+  
+
+
+
 (ml/define-model! :smile.projections
   train nil {:unsupervised? true})
 
-
+(run!
+ #(ml/define-model!
+    (keyword (str "smile.projections/" (name  %)))
+    (partial train-algorithm %)
+    nil
+    {:unsupervised? true})
+ model-keywords)
 
 (malli/instrument-ns *ns*)
 ;; (mi/collect! {:ns 'scicloj.ml.smile.projections})

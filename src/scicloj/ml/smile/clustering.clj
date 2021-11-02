@@ -5,6 +5,18 @@
    [tablecloth.api :as tc]
    [scicloj.ml.smile.malli :as malli]))
 
+(def model-keywords
+  [
+   :spectral
+   :dbscan
+   :k-means
+   :mec
+   :clarans
+   :g-means
+   :lloyd
+   :x-means
+   :deterministic-annealing
+   :denclue])
 
 
 (defn fit-cluster [data clustering-method clustering-method-args]
@@ -69,15 +81,27 @@ The cluster id of each row gets written to the column in `target-column`
                                tc/add-column target-column clusters))))))
 
 
-(defn train-fn [feature-ds label-ds options] {}
+(defn train-fn [feature-ds label-ds options]
   (fit-cluster feature-ds
                           (options :clustering-method)
                           (options :clustering-method-args)))
 
-
+(defn train-fn-method [clustering-method feature-ds label-ds options]
+  (fit-cluster feature-ds
+                          clustering-method
+                          (options :clustering-method-args)))
 
 
 (ml/define-model! :fastmath/cluster train-fn nil {:unsupervised? true})
+
+(run!
+ #(ml/define-model!
+    (keyword (str "fastmath.cluster/" (name  %)))
+    (partial train-fn-method %)
+    nil
+    {:unsupervised? true})
+ model-keywords)
+
 
 
 (malli/instrument-ns 'scicloj.ml.smile.clustering)

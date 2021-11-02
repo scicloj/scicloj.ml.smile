@@ -28,6 +28,17 @@
                   (.getCumulativeVarianceProportion
                    (-> train-result :model-data :model)))))))
 
+(deftest train-pca-model-2
+  (let [train-result
+        (ml/train data  {:model-type :smile.projections/pca-cov
+                         :target-dims 2
+                         :algorithm :pca-cov
+                         :cnames [:f1 :f2 :f3 :f4]})]
+    (is  (every? pos?
+                 (seq
+                  (.getCumulativeVarianceProportion
+                   (-> train-result :model-data :model)))))))
+
 (deftest reduce-dimensions-test
   (let [pipe-fn
         (mm/pipeline
