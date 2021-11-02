@@ -6,8 +6,7 @@
         org.clojure/clojure           {:mvn/version "1.10.2"}
         scicloj/tablecloth             {:mvn/version "6.023"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
-        scicloj/metamorph.ml           {:git/url "https://github.com/scicloj/metamorph.ml.git"
-                                        :git/sha "f8350f3b2b47954b66416e01c5de54915fbd56a6"}
+        scicloj/metamorph.ml           {:mvn/version "0.4.1"}
 
         org.bytedeco/openblas          {:mvn/version "0.3.10-1.5.4"}
         org.bytedeco/openblas-platform {:mvn/version "0.3.10-1.5.4"}
