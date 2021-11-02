@@ -1,6 +1,14 @@
 # ConstantChangeLog
 
 
+## 6.1.572
+add 3 types of unsupervised models
+
+- added clustering models
+- added projection models
+- added manifold models
+
+
 ## 6.00
 
 - added Malli schemas to model options
