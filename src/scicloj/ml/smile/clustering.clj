@@ -3,20 +3,33 @@
    [scicloj.metamorph.ml :as ml]
    [fastmath.clustering :as clustering]
    [tablecloth.api :as tc]
-   [scicloj.ml.smile.malli :as malli]))
+   [scicloj.ml.smile.malli :as malli]
+   [scicloj.ml.smile.registration :refer [class->smile-url]])
+  (:import [smile.clustering SpectralClustering DBSCAN KMeans MEC
+            CLARANS GMeans XMeans DeterministicAnnealing DENCLUE]))
 
 (def model-keywords
-  [
-   :spectral
-   :dbscan
-   :k-means
-   :mec
-   :clarans
-   :g-means
-   :lloyd
-   :x-means
-   :deterministic-annealing
-   :denclue])
+  {
+   :spectral {:class SpectralClustering
+              :documentation {:user-guide "https://haifengl.github.io/clustering.html#spectral-clustering"}}
+   :dbscan {:class DBSCAN
+            :documentation {:user-guide "https://haifengl.github.io/clustering.html#dbscan"}}
+   :k-means {:class KMeans
+             :documentation {:user-guide "https://haifengl.github.io/clustering.html#k-means"}}
+   :mec {:class MEC
+         :documentation {:user-guide "https://haifengl.github.io/clustering.html#mec"}}
+   :clarans {:class CLARANS
+             :documentation {:user-guide "https://haifengl.github.io/clustering.html#clarans"}}
+   :g-means {:class GMeans
+             :documentation {:user-guide "https://haifengl.github.io/clustering.html#g-means"}}
+   :lloyd {:class KMeans
+           :documentation {:user-guide "https://haifengl.github.io/clustering.html#k-means"}}
+   :x-means {:class XMeans
+             :documentation {:user-guide "https://haifengl.github.io/clustering.html#x-means"}}
+   :deterministic-annealing {:class DeterministicAnnealing
+                             :documentation {:user-guide "https://haifengl.github.io/clustering.html#deterministic-annealing"}}
+   :denclue {:class DENCLUE
+             :documentation {:user-guide "https://haifengl.github.io/clustering.html#denclue"}}})
 
 
 (defn fit-cluster [data clustering-method clustering-method-args]
@@ -95,11 +108,18 @@ The cluster id of each row gets written to the column in `target-column`
 (ml/define-model! :fastmath/cluster train-fn nil {:unsupervised? true})
 
 (run!
- #(ml/define-model!
-    (keyword (str "fastmath.cluster/" (name  %)))
-    (partial train-fn-method %)
-    nil
-    {:unsupervised? true})
+ (fn [[kwf reg-def]]
+   (ml/define-model!
+
+     (keyword (str "fastmath.cluster/" (name  kwf)))
+     (partial train-fn-method kwf)
+     nil
+     {:documentation
+      {:javadoc (class->smile-url (:class reg-def))
+       :user-guide (-> reg-def :documentation :user-guide)
+       :code-example nil ;; (-> reg-def :documentation :code-example)
+       :description ""}
+      :unsupervised? true}))
  model-keywords)
 
 
