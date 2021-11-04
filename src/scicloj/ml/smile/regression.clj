@@ -103,52 +103,57 @@
 
 
 (def ^:private regression-metadata
-  {:ordinary-least-square {:cass OLS
-                           :options [{:name :method
-                                      :type :enumeration
-                                      :lookup-table ols-method-table
-                                      :default :qr}
-                                      
-                                     {:name :standard-error
-                                      :type :boolean
-                                      :default true}
-                                      
-                                     {:name :recursive
-                                      :type :boolean
-                                      :default true}]
-                           :property-name-stem "smile.ols"
-                           :constructor #(OLS/fit %1 %2 %3)
-                           :predictor predict-ols}
+  {:ordinary-least-square 
+   {:cass OLS
+    :documentation {:user-guide "https://haifengl.github.io/regression.html#ols"}
+    :options [{:name :method
+               :type :enumeration
+               :lookup-table ols-method-table
+               :default :qr}
 
-   :elastic-net {:class ElasticNet
-                 :options [{:name :lambda1
-                            :type :float64
-                            :default 0.1
-                            :range :>0}
-                           {:name :lambda2
-                            :type :float64
-                            :default 0.1
-                            :range :>0}
+              {:name :standard-error
+               :type :boolean
+               :default true}
 
-                           {:name :tolerance
-                            :type :float64
-                            :default 1e-4
-                            :range :>0}
+              {:name :recursive
+               :type :boolean
+               :default true}]
+    :property-name-stem "smile.ols"
+    :constructor #(OLS/fit %1 %2 %3)
+    :predictor predict-ols}
 
-                           {:name :max-iterations
-                            :type :int32
-                            :default (int 1000)
-                            :range :>0}]
-                 :gridsearch-options {:lambda1 (ml-gs/linear 1e-2 1e2)
-                                      :lambda2 (ml-gs/linear 1e-4 1e2)
-                                      :tolerance (ml-gs/linear 1e-6 1e-2)
-                                      :max-iterations (ml-gs/linear 1e4 1e7)}
-                 :property-name-stem "smile.elastic.net"
-                 :constructor #(ElasticNet/fit %1 %2 %3)
-                 :predictor predict-linear-model}
+   :elastic-net 
+   {:class ElasticNet
+    :documentation {:user-guide "https://haifengl.github.io/regression.html"}
+    :options [{:name :lambda1
+               :type :float64
+               :default 0.1
+               :range :>0}
+              {:name :lambda2
+               :type :float64
+               :default 0.1
+               :range :>0}
+
+              {:name :tolerance
+               :type :float64
+               :default 1e-4
+               :range :>0}
+
+              {:name :max-iterations
+               :type :int32
+               :default (int 1000)
+               :range :>0}]
+    :gridsearch-options {:lambda1 (ml-gs/linear 1e-2 1e2)
+                         :lambda2 (ml-gs/linear 1e-4 1e2)
+                         :tolerance (ml-gs/linear 1e-6 1e-2)
+                         :max-iterations (ml-gs/linear 1e4 1e7)}
+    :property-name-stem "smile.elastic.net"
+    :constructor #(ElasticNet/fit %1 %2 %3)
+    :predictor predict-linear-model}
 
    :lasso
    {:class LASSO
+    :documentation {:user-guide "https://haifengl.github.io/regression.html#lasso"}
     :options [{:name :lambda
                :description "The shrinkage/regularization parameter. Large lambda means more shrinkage.
                     Choosing an appropriate value of lambda is important, and also difficult"
@@ -176,6 +181,7 @@
 
    :ridge
    {:class RidgeRegression
+    :documentation {:user-guide "https://haifengl.github.io/regression.html#ridge"}
     :options [{:name :lambda
                :type :float64
                :default 1.0
@@ -188,6 +194,7 @@
 
    :gradient-tree-boost
    {:class GradientTreeBoost
+    :documentation {:user-guide "https://haifengl.github.io/regression.html#gbm"}
     :options [{:name :trees
                :type :int32
                :default 500
@@ -219,8 +226,10 @@
     :property-name-stem "smile.bgt.trees"
     :constructor #(GradientTreeBoost/fit %1 %2 %3)
     :predictor predict-df}
+   
    :random-forest
    {:class RandomForest
+    :documentation {:user-guide "https://haifengl.github.io/regression.html#forest"}
     :options [
               {:name :trees
                :type :int32
