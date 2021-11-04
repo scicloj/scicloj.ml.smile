@@ -5,7 +5,8 @@
             [tablecloth.api.columns :refer [select-columns drop-columns add-or-replace-columns]]
             [fastmath.kernel :as k]
             [scicloj.ml.smile.malli :as malli]
-            [scicloj.metamorph.ml :as ml])
+            [scicloj.metamorph.ml :as ml]
+            [scicloj.ml.smile.registration :refer [class->smile-url]])
   (:import [smile.projection PCA ProbabilisticPCA KPCA GHA RandomProjection Projection]
            [smile.math.kernel MercerKernel]))
 
@@ -13,13 +14,31 @@
 (require '[malli.dev.pretty :as pretty])
 
 (def model-keywords
-  [
+  {
    :pca-cov
+   {:class PCA
+    :documentation {:user-guide "https://haifengl.github.io/feature.html#pca"}}
+
    :pca-cor
+   {:class PCA
+    :documentation {:user-guide "https://haifengl.github.io/feature.html#pca"}}
+
    :pca-prob
+   {:class ProbabilisticPCA
+    :documentation {:user-guide "https://haifengl.github.io/feature.html#ppca"}}
+
    :kpca
+   {:class KPCA
+    :documentation {:user-guide "https://haifengl.github.io/feature.html#kpca"}}
+
    :gha
-   :random])
+   {:class GHA
+    :documentation {:user-guide "https://haifengl.github.io/feature.html#gha"}}
+
+   :random
+   {:class RandomProjection
+    :documentation {:user-guide "https://haifengl.github.io/feature.html"}}})
+
 
 ;; (set! *warn-on-reflection* true)
 
@@ -181,14 +200,20 @@
 (ml/define-model! :smile.projections
   train nil {:unsupervised? true})
 
-(run!
- #(ml/define-model!
-    (keyword (str "smile.projections/" (name  %)))
-    (partial train-algorithm %)
+(doseq [[reg-kwd reg-def] model-keywords]
+  (ml/define-model!
+    (keyword (str "smile.projections/" (name  reg-kwd)))
+    (partial train-algorithm reg-kwd)
     nil
-    {:unsupervised? true})
- model-keywords)
+    {:unsupervised? true
+     :documentation {:javadoc (class->smile-url (:class reg-def))
+                     :user-guide (-> reg-def :documentation :user-guide)
+                     :code-example nil ;; (-> reg-def :documentation :code-example)
+                     :description nil}}))
 
-(malli/instrument-ns *ns*)
+
+
+(malli/instrument-ns *ns*
 ;; (mi/collect! {:ns 'scicloj.ml.smile.projections})
 ;; (mi/instrument! {:report (pretty/thrower) :scope #{:input}})
+ )
