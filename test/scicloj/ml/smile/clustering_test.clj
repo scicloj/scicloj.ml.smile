@@ -26,9 +26,8 @@
         fittex-ctx
         (pipeline
          {:metamorph/mode :fit
-          :metamorph/data (:train split)})
+          :metamorph/data (:train split)})]
 
-        _ (def fittex-ctx fittex-ctx)]
     (t/is (= 3
              (-> fittex-ctx :cluster :clustering count)))
     (t/is (= 3 (-> fittex-ctx :metamorph/data :cluster-row count)))))

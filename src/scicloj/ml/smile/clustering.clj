@@ -81,17 +81,22 @@ The cluster id of each row gets written to the column in `target-column`
            data (:metamorph/data ctx)
            fun (resolve (symbol  "fastmath.clustering" (name clustering-method)))
            data-rows (tc/rows data)
-           clustering
+           clusterresult-and-clusters
+
            (case mode
-             :fit (fit-cluster data clustering-method clustering-method-args)
-             :transform (ctx id))
-           clusters (map (partial clustering/predict clustering)
-                         data-rows)]
+             :fit (let [fit-result (fit-cluster data clustering-method clustering-method-args)
+                        _ (def fit-result fit-result)]
+                    {:clusterresult  fit-result
+                     :clusters (:clustering fit-result)})
+                    
+             :transform {:clusterresult  (ctx id)
+                         :clusters (map (partial clustering/predict (ctx id))
+                                        data-rows)})]
 
        (cond-> ctx
-         (= mode :fit) (assoc id clustering)
+         (= mode :fit) (assoc id (clusterresult-and-clusters :clusterresult))
          true          (update :metamorph/data
-                               tc/add-column target-column clusters))))))
+                               tc/add-column target-column (clusterresult-and-clusters :clusters)))))))
 
 
 (defn train-fn [feature-ds label-ds options]
