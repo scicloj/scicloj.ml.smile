@@ -1,5 +1,8 @@
 # ConstantChangeLog
 
+## 6.1.578
+- produce java 8 compatible java classes
+- more docu
 
 ## 6.1.572
 add 3 types of unsupervised models
