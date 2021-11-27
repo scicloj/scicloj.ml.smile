@@ -1,5 +1,9 @@
 # ConstantChangeLog
 
+## unreleased
+
+- added LDA QDA RDA FLD]
+
 ## 6.1.578
 - produce java 8 compatible java classes
 - more docu

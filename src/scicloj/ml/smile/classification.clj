@@ -27,8 +27,8 @@
 
 
             [malli.util :as mu])
-  (:import [smile.classification SoftClassifier AdaBoost LogisticRegression
-            DecisionTree RandomForest KNN GradientTreeBoost]
+  (:import [smile.classification Classifier SoftClassifier AdaBoost LogisticRegression
+            DecisionTree RandomForest KNN GradientTreeBoost LDA QDA RDA FLD]
            [smile.base.cart SplitRule]
            [smile.data.formula Formula]
            [smile.data DataFrame]
@@ -52,6 +52,24 @@
         (let [posterior (double-array n-labels)]
           (.predict model (.get df idx) posterior)
           posterior)))))
+
+(defn- simple-prediction->posterior [predictions]
+  (as-> (ds/->dataset {:prediction predictions}) it
+    (ds/categorical->one-hot it [:prediction])
+    (ds/value-reader it)
+    (map double-array it)
+    (into-array it)))
+
+
+(defn- double-array-predict
+  [^Classifier model ds options n-labels]
+  (let [value-reader (ds/value-reader ds)
+        n-rows (ds/row-count ds)]
+    (simple-prediction->posterior
+     (map #(.predict model
+                     (double-array (value-reader %)))
+          (range n-rows)))))
+    
 
 
 (defn- double-array-predict-posterior
@@ -163,6 +181,20 @@
     :predictor tuple-predict-posterior}
 
     
+   :fld
+   {:class FLD
+    :name :linear-discriminant-analysis
+    :constructor #(FLD/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
+    :predictor double-array-predict
+    :property-name-stem "smile.fisher"
+    :options [{:name :dimension
+               :type :int32
+               :default -1
+               :description "The dimensionality of mapped space."}
+              {:name :tolerance
+               :default 1e-4
+               :type :float64
+               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]}
 
    ;; :fld {:attributes #{:projection}
    ;;       :class-name "FLD"
@@ -259,52 +291,54 @@
    ;;                 :datatypes #{:double}
    ;;                 :name :platt-scaling}
 
+   :linear-discriminant-analysis
+   {:class LDA
+    :name :linear-discriminant-analysis
+    :constructor #(LDA/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
+    :predictor double-array-predict-posterior
+    :property-name-stem "smile.lda"
+    :options [{:name :prioiri
+               :type :float64-array
+               :default nil
+               :description "The priori probability of each class. If null, it will be estimated from the training data."}
+              {:name :tolerance
+               :default 1e-4
+               :type :float64
+               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]}
 
-   ;; ;;Lots of discriminant analysis
-   ;; :linear-discriminant-analysis
-   ;; {:attributes #{:probabilities}
-   ;;  :class-name "LDA"
-   ;;  :datatypes #{:float64-array}
-   ;;  :name :lda
-   ;;  :options [{:name :prioiri
-   ;;             :type :float64-array
-   ;;             :default nil}
-   ;;            {:name :tolerance
-   ;;             :default 1e-4
-   ;;             :type :float64}]
-   ;;  :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])}}
+   :quadratic-discriminant-analysis
+   {:class QDA
+    :name :linear-discriminant-analysis
+    :constructor #(QDA/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
+    :predictor double-array-predict-posterior
+    :property-name-stem "smile.qda"
+    :options [{:name :prioiri
+               :type :float64-array
+               :default nil
+               :description "The priori probability of each class. If null, it will be estimated from the training data."}
+              {:name :tolerance
+               :default 1e-4
+               :type :float64
+               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]}
 
-
-   ;; :quadratic-discriminant-analysis
-   ;; {:attributes #{:probabilities}
-   ;;  :class-name "QDA"
-   ;;  :datatypes #{:float64-array}
-   ;;  :name :qda
-   ;;  :options [{:name :prioiri
-   ;;             :type :float64-array
-   ;;             :default nil}
-   ;;            {:name :tolerance
-   ;;             :default 1e-4
-   ;;             :type :float64}]
-   ;;  :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])}}
-
-
-   ;; :regularized-discriminant-analysis
-   ;; {:attributes #{:probabilities}
-   ;;  :class-name "RDA"
-   ;;  :datatypes #{:float64-array}
-   ;;  :name :rda
-   ;;  :options [{:name :prioiri
-   ;;             :type :float64-array
-   ;;             :default nil}
-   ;;            {:name :alpha
-   ;;             :type :float64
-   ;;             :default 0.0 }
-   ;;            {:name :tolerance
-   ;;             :default 1e-4
-   ;;             :type :float64}]
-   ;;  :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])
-   ;;                       :alpha (ml-gs/linear [0.0 1.0])}}
+   :regularized-discriminant-analysis
+   {:class RDA
+    :name :linear-discriminant-analysis
+    :constructor #(RDA/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
+    :predictor double-array-predict-posterior
+    :property-name-stem "smile.rda"
+    :options [{:name :prioiri
+               :type :float64-array
+               :default nil
+               :description "The priori probability of each class. If null, it will be estimated from the training data."}
+              {:name :alpha
+               :type :float64
+               :default 0.9
+               :description "Regularization factor in [0, 1] allows a continuum of models between LDA and QDA."}
+              {:name :tolerance
+               :default 1e-4
+               :type :float64
+               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]}
 
 
    :random-forest {:class RandomForest
@@ -413,12 +447,19 @@
         _ (errors/when-not-error (pos? n-labels) "n-labels equals 0. Something is wrong with the :lookup-table")
         predictor (:predictor entry-metadata)
         predictions (predictor thawed-model feature-ds options n-labels)]
+
+    (def predictions predictions)
+    (def feature-ds feature-ds)
     (-> predictions
         (dtt/->tensor)
         (model/finalize-classification (ds/row-count feature-ds)
                                        target-colname
                                        target-categorical-maps))))
 
+
+
+
+;; (ds/rename-columns (vec (ds/column-names feature-ds)))
 
 
 (doseq [[reg-kwd reg-def] classifier-metadata]
@@ -452,7 +493,7 @@
     (def split-data (ds-mod/train-test-split ds))
     (def train-ds (:train-ds split-data))
     (def test-ds (:test-ds split-data))
-    (def model (ml/train train-ds {:model-type :smile.classification/gradient-tree-boost}))
+    (def model (ml/train train-ds {:model-type :smile.classification/fld}))
     (def prediction (ml/predict test-ds model))))
 
   
@@ -473,4 +514,16 @@
          
         ((ds-mm/categorical->number cf/categorical))
         ((ds-mm/set-inference-target "species"))
-        ((mm-ml/model {:model-type :smile.classification/random-forest :treesa 50})))))
+        ((mm-ml/model {:model-type :smile.classification/fld}))))
+
+  (->
+   (merge predicted-ctx
+
+          {:metamorph/data src-ds
+           :metamorph/mode :transform
+           :metamorph/id :the-model})
+
+   ((ds-mm/categorical->number cf/categorical))
+   ((ds-mm/set-inference-target "species"))
+   ((mm-ml/model {:model-type :smile.classification/fld})))
+ :ok)

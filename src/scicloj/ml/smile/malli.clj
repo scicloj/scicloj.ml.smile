@@ -9,6 +9,7 @@
 
 (defn type->malli [type]
   (case type
+    :float64-array [:sequential float?]
     :int32 'integer?
     :string 'string?
     :float32 'float?
