@@ -5,7 +5,6 @@
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset.column-filters :as ds-cf]
-
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.tensor :as dtt]
             [scicloj.metamorph.ml.model :as model]
@@ -23,17 +22,16 @@
             [scicloj.ml.smile.malli :as malli]
             [scicloj.ml.smile.registration :refer [class->smile-url]]
             [scicloj.ml.smile.model-examples :as examples]
-
-
-
             [malli.util :as mu])
-  (:import [smile.classification Classifier SoftClassifier AdaBoost LogisticRegression
-            DecisionTree RandomForest KNN GradientTreeBoost LDA QDA RDA FLD]
-           [smile.base.cart SplitRule]
-           [smile.data.formula Formula]
-           [smile.data DataFrame]
-           [java.util Properties List]
-           [tech.v3.datatype ObjectReader]))
+  (:import
+   [smile.base.rbf RBF]
+   [smile.classification Classifier SoftClassifier AdaBoost LogisticRegression
+    DecisionTree RandomForest KNN GradientTreeBoost LDA QDA RDA FLD]
+   [smile.base.cart SplitRule]
+   [smile.data.formula Formula]
+   [smile.data DataFrame]
+   [java.util Properties List]
+   [tech.v3.datatype ObjectReader]))
 
 
 (set! *warn-on-reflection* true)
@@ -53,12 +51,17 @@
           (.predict model (.get df idx) posterior)
           posterior)))))
 
+(defn- ds->doubles [ds]
+  (->> ds
+       ds/value-reader
+       (map double-array)
+       into-array))
+
+
 (defn- simple-prediction->posterior [predictions]
-  (as-> (ds/->dataset {:prediction predictions}) it
-    (ds/categorical->one-hot it [:prediction])
-    (ds/value-reader it)
-    (map double-array it)
-    (into-array it)))
+  (-> (ds/->dataset {:prediction predictions})
+    (ds/categorical->one-hot [:prediction])
+    (ds->doubles)))
 
 
 (defn- double-array-predict
@@ -184,6 +187,7 @@
    :fld
    {:class FLD
     :name :linear-discriminant-analysis
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#fld"}
     :constructor #(FLD/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
     :predictor double-array-predict
     :property-name-stem "smile.fisher"
@@ -196,16 +200,6 @@
                :type :float64
                :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]}
 
-   ;; :fld {:attributes #{:projection}
-   ;;       :class-name "FLD"
-   ;;       :datatypes #{:float64-array}
-   ;;       :name :fld
-   ;;       :options [{:name :L
-   ;;                  :type :int32
-   ;;                  :default -1}
-   ;;                 {:name :tolerance
-   ;;                  :type :float64
-   ;;                  :default 1e-4}]}
    :gradient-tree-boost
    {:class GradientTreeBoost
     :class-name "GradientTreeBoost"
@@ -294,6 +288,7 @@
    :linear-discriminant-analysis
    {:class LDA
     :name :linear-discriminant-analysis
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#lda"}
     :constructor #(LDA/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
     :predictor double-array-predict-posterior
     :property-name-stem "smile.lda"
@@ -309,6 +304,7 @@
    :quadratic-discriminant-analysis
    {:class QDA
     :name :linear-discriminant-analysis
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#qda"}
     :constructor #(QDA/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
     :predictor double-array-predict-posterior
     :property-name-stem "smile.qda"
@@ -324,6 +320,7 @@
    :regularized-discriminant-analysis
    {:class RDA
     :name :linear-discriminant-analysis
+    :documentation {:user-guide "https://haifengl.github.io/classification.html#rda"}
     :constructor #(RDA/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
     :predictor double-array-predict-posterior
     :property-name-stem "smile.rda"
@@ -366,10 +363,12 @@
                               :description "Priors of the classes. The weight of each class is roughly the ratio of samples in each class. For example, if there are 400 positive samples and 100 negative samples, the classWeight should be [1, 4] (assuming label 0 is of negative, label 1 is of positive)"}]
                              
                    :property-name-stem "smile.random.forest"}})
-   ;; :rbf-network {:attributes #{}
-   ;;               :class-name "RBFNetwork"
-   ;;               :datatypes #{}
-   ;;               :name :rbf-network}
+;; fix when this is released:
+;; https://github.com/haifengl/smile/blob/2352cff6880056eb9a03dbe2556acdbd8f07ddda/core/src/main/java/smile/regression/RBFNetwork.java#L165
+;; :rbf-network {:attributes #{}
+;;               :class-name "RBFNetwork"
+;;               :datatypes #{}
+;;               :name :rbf-network}
 
 
    
