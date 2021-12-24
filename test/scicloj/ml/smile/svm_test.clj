@@ -1,11 +1,14 @@
 (ns scicloj.ml.smile.svm-test
   (:require [scicloj.ml.smile.svm :as svm]
-            [tech.v3.dataset.column-filters :as cf]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.dataset :as ds]
-            [scicloj.metamorph.ml.loss :as loss]
-            [scicloj.metamorph.ml :as ml]
-            [clojure.test :refer [deftest is] :as t])
+
+   [tech.v3.dataset.math :as std-math]
+   [scicloj.metamorph.ml.preprocessing :as pre]
+   [tech.v3.dataset.column-filters :as cf]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.dataset :as ds]
+   [scicloj.metamorph.ml.loss :as loss]
+   [scicloj.metamorph.ml :as ml]
+   [clojure.test :refer [deftest is] :as t])
   (:import [smile.math MathEx]))
 
 
@@ -26,22 +29,22 @@
    "worst smoothness"  "worst compactness"
    "worst concavity"  "worst concave points"
    "worst symmetry"  "worst fractal dimension"
-   "target"
-   ])
+   "target"])
+   
 
 (defn train-split [ds options-map]
   (let [
-        _ (def ds ds)
-        _ (def options-map options-map)
+        scaling (std-math/fit-std-scale (cf/feature ds))
+        scaled-features (std-math/transform-std-scale (cf/feature ds) scaling)
+        ds (ds/append-columns scaled-features (cf/target ds))
         split (ds-mod/train-test-split ds options-map)
-        _ (def split split)
         target-colname (first (ds/column-names (cf/target (:test-ds split))))
         fitted-model (ml/train (:train-ds split) options-map)
         predictions (ml/predict (:test-ds split) fitted-model)]
     (loss/classification-loss ((:test-ds split) target-colname) (predictions target-colname))))
 
-(def test-svn
-  (let [src-ds (ds/->dataset "test/data/breast_cancer.csv.gz", {:header-row? false :n-initial-skip-rows 1 })
+(deftest test-svn
+  (let [src-ds (ds/->dataset "test/data/breast_cancer.csv.gz", {:header-row? false :n-initial-skip-rows 1})
         ds (->  src-ds
                 (ds/rename-columns
                  (zipmap
@@ -51,14 +54,14 @@
                  (ds/new-column "target"
                                 (map
                                  #(if  (= 0 %) 1 -1)
-                                 (get src-ds "column-30"))
-                                ))
+                                 (get src-ds "column-30"))))
+                                
                 (ds-mod/set-inference-target "target"))
 
         _ (MathEx/setSeed 1234)
         loss
         (train-split ds {:model-type :smile.classification/svm
-                         :randomize-dataset? false}
-                     )]
+                         :randomize-dataset? false})]
+                     
 
-    (is (= loss  0.13450292397660824 ))))
+    (is (= loss   0.023391812865497075))))
