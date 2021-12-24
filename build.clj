@@ -5,7 +5,7 @@
 
 (def lib 'scicloj/scicloj.ml.smile)
 ; alternatively, use MAJOR.MINOR.COMMITS:
-(def version (format "6.1.%s" (b/git-count-revs nil)))
+(def version (format "6.2.%s" (b/git-count-revs nil)))
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
 (def jar-file (format "target/%s-%s.jar" (name lib) version))
