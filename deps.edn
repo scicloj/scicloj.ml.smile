@@ -6,7 +6,7 @@
         org.clojure/clojure           {:mvn/version "1.10.2"}
         scicloj/tablecloth             {:mvn/version "6.023"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
-        scicloj/metamorph.ml           {:mvn/version "0.5-SNAPSHOT"}
+        scicloj/metamorph.ml           {:mvn/version "0.5.0"}
 
         org.bytedeco/openblas          {:mvn/version "0.3.10-1.5.4"}
         org.bytedeco/openblas-platform {:mvn/version "0.3.10-1.5.4"}
