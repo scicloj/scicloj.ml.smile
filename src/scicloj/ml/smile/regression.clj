@@ -104,7 +104,7 @@
 
 (def ^:private regression-metadata
   {:ordinary-least-square 
-   {:cass OLS
+   {:class OLS
     :documentation {:user-guide "https://haifengl.github.io/regression.html#ols"}
     :options [{:name :method
                :type :enumeration
