@@ -57,15 +57,16 @@
 The `clustering-args` is a vector with the positional arguments for each cluster function,
 as documented here:
 https://cljdoc.org/d/generateme/fastmath/2.1.5/api/fastmath.clustering
+(but minus the `data` argument, which will be passed in automatically)
 
 The cluster id of each row gets written to the column in `target-column`
 
-  metamorph                            | .
-  -------------------------------------|----------------------------------------------------------------------------
-  Behaviour in mode :fit               | Calculates cluster centers of the rows dataset at key `:metamorph/data` and stores them in ctx under key at `:metamorph/id`. Adds as wll column in `target-column` with cluster centers into the dataset.
-  Behaviour in mode :transform         | Reads cluster centers from ctx and applies it to data in `:metamorph/data`
-  Reads keys from ctx                  | In mode `:transform` : Reads cluster centers to use from ctx at key in `:metamorph/id`.
-  Writes keys to ctx                   | In mode `:fit` : Stores cluster centers in ctx under key in `:metamorph/id`.
+  metamorph                    | .
+  -----------------------------|----------------------------------------------------------------------------
+  Behaviour in mode :fit       | Calculates cluster centers of the rows dataset at key `:metamorph/data` and stores them in ctx under key at `:metamorph/id`. Adds as wll column in `target-column` with cluster centers into the dataset.
+  Behaviour in mode :transform | Reads cluster centers from ctx and applies it to data in `:metamorph/data`
+  Reads keys from ctx          | In mode `:transform` : Reads cluster centers to use from ctx at key in `:metamorph/id`.
+  Writes keys to ctx           | In mode `:fit` : Stores cluster centers in ctx under key in `:metamorph/id`.
 
   "
   {:malli/schema [:=> [:cat

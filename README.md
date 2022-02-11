@@ -1,6 +1,6 @@
 # scicloj.ml.smile
 
-Smile models for [metamorph.ml](https://github.com/scicloj/metamorph.ml) and [scicloj.ml](https://github.com/scicloj/scicloj.ml)
+Smile models for [metamorph.ml](https://github.com/scicloj/metamorph.ml) and [scicloj.ml](https://github.com/scicloj/scicloj.ml) (where symbols from a number of scicloj.ml.smile namespaces are re-exported under the `scicloj.ml.metamorph` namespace.)
 
 
 ## License
