@@ -223,7 +223,7 @@
                :type :float64
                :default 0.7
                :range [0.0 1.0]}]
-    :property-name-stem "smile.bgt.trees"
+    :property-name-stem "smile.gbt"
     :constructor #(GradientTreeBoost/fit %1 %2 %3)
     :predictor predict-df}
    
