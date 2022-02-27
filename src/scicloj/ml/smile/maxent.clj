@@ -7,16 +7,16 @@
             [tech.v3.datatype.errors :as errors]
             [scicloj.metamorph.ml.model :as model]
 
-            [tech.v3.tensor :as dtt]
-            )
+            [tech.v3.tensor :as dtt])
+            
   (:import smile.classification.Maxent))
 
 (def maxent-default-parameters
   {
    :lambda 0.1
    :tol 1e-5
-   :max-iter 500
-   })
+   :max-iter 500})
+   
 
 
 
@@ -44,15 +44,15 @@
            (ds-mod/inference-target-label-map target-ds)
            "In classification, the target column needs to be categorical and having been transformed to numeric.
 See tech.v3.dataset/categorical->number.
-"
-           )
+")
+           
 
   (let [train-array (into-array ^"[[Ljava.lang.Integer"
                                 (get feature-ds (:sparse-column options)))
         _ (def train-array train-array)
         train-score-array (into-array Integer/TYPE
                                       (get target-ds (first (ds-mod/inference-target-column-names target-ds))))
-        p (int  (or  (:p options) 0) )
+        p (int  (or  (:p options) 0))
         _ (errors/when-not-error (pos? p) "p needs to be specified in options and greater 0")
         options (merge maxent-default-parameters options)]
 
@@ -104,22 +104,31 @@ See tech.v3.dataset/categorical->number.
         ;; _ (def predict-array predict-array)
         ;; _ (def target-colum target-colum)
         n-labels (-> model :target-categorical-maps target-colum :lookup-table count)
-        _ (errors/when-not-error (pos-int? n-labels) (str  "No labels found for target column" target-colum ))
+        _ (errors/when-not-error (pos-int? n-labels) (str  "No labels found for target column" target-colum))
 
         posteriori
         (into-array
          (repeatedly (ds/row-count feature-ds)
                      #(double-array n-labels)))
         predictions (seq  (.predict (:model-data model) predict-array posteriori))
-        ;; _ (def predictions predictions)
-        ]
-    (model/finalize-classification
-     (dtt/->tensor posteriori)
-     (ds/row-count feature-ds)
-     target-colum
-     (-> model :target-categorical-maps)
-     )
-    ))
+
+        finalised-predictions
+        (model/finalize-classification
+         (dtt/->tensor posteriori)
+         (ds/row-count feature-ds)
+         target-colum
+         (-> model :target-categorical-maps))
+
+        mapped-prediction
+        (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colum)
+            (ds/update-column target-colum
+                              #(vary-meta % assoc :column-type :prediction)))]
+    mapped-prediction))
+                                 ;; _ (def predictions predictions)
+        
+    
+     
+    
 
 
 
