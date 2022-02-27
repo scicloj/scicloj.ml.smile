@@ -388,11 +388,8 @@
 
 
 (defn- all-int? [v]
-  (def v v)
-  (== 0
-     (tech.v3.datatype.functional/sum
-      (tech.v3.datatype.functional/rem v 1))))
-
+  (every? number? v))
+  
 
 
 (defn- train
@@ -402,7 +399,7 @@
         _ (malli/check-schema (:options entry-metadata) options)
         _ (errors/when-not-error
            (every? all-int?  (ds/columns label-ds))
-           "All values in target need to be castable to int.")
+           "All values in target need to be numbers.")
 
         target-colname (first (ds/column-names label-ds))
         feature-colnames (ds/column-names feature-ds)
