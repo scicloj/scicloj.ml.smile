@@ -85,15 +85,22 @@ See tech.v3.dataset/categorical->number.")
                         posteriori
                         )
 
-                     sparse-arrays)]
-    ;; (def predictions predictions)
-    ;; (def target-colum target-colum)
-    (model/finalize-classification
-     (dtt/->tensor predictions)
-     (ds/row-count feature-ds)
-     target-colum
-     (-> model :target-categorical-maps)
-     )
+                     sparse-arrays)
+        finalised-predictions
+        (model/finalize-classification
+         (dtt/->tensor predictions)
+         (ds/row-count feature-ds)
+         target-colum
+         (-> model :target-categorical-maps))
+
+        mapped-predictions
+        (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colum)
+            (ds/update-column target-colum
+                              #(vary-meta % assoc :column-type :prediction)))
+        ]
+    (def predictions predictions)
+    (def target-colum target-colum)
+    mapped-predictions
 
     ))
 

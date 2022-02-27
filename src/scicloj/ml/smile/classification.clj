@@ -434,6 +434,8 @@
   [feature-ds thawed-model {:keys [target-columns
                                    target-categorical-maps
                                    options]}]
+  (errors/when-not-error target-categorical-maps "target-categorical-maps not found. Target column need to be categorical.")
+
   (let [entry-metadata (model-type->classification-model
                         (model/options->model-type options))
         target-colname (first target-columns)
@@ -442,15 +444,22 @@
                      count)
         _ (errors/when-not-error (pos? n-labels) "n-labels equals 0. Something is wrong with the :lookup-table")
         predictor (:predictor entry-metadata)
-        predictions (predictor thawed-model feature-ds options n-labels)]
+        predictions (predictor thawed-model feature-ds options n-labels)
+        finalised-predictions
+        (-> predictions
+            (dtt/->tensor)
+            (model/finalize-classification (ds/row-count feature-ds)
+                                           target-colname
+                                           target-categorical-maps))
+        mapped-predictions
+        (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colname)
+            (ds/update-column target-colname
+                              #(vary-meta % assoc :column-type :prediction)))]
 
-    (def predictions predictions)
-    (def feature-ds feature-ds)
-    (-> predictions
-        (dtt/->tensor)
-        (model/finalize-classification (ds/row-count feature-ds)
-                                       target-colname
-                                       target-categorical-maps))))
+    mapped-predictions))
+
+  
+    
 
 
 
@@ -489,8 +498,10 @@
     (def split-data (ds-mod/train-test-split ds))
     (def train-ds (:train-ds split-data))
     (def test-ds (:test-ds split-data))
-    (def model (ml/train train-ds {:model-type :smile.classification/fld}))
-    (def prediction (ml/predict test-ds model))))
+    (def model (ml/train train-ds {:model-type :smile.classification/random-forest}))
+    (def prediction (ml/predict test-ds model)))
+
+  :ok)
 
   
 

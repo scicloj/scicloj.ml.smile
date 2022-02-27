@@ -6,8 +6,8 @@
    [tech.v3.dataset.modelling :as ds-mod]
    [scicloj.ml.smile.discrete-nb :as nb]
    [scicloj.ml.smile.nlp :as nlp]
-   [tech.v3.datatype.errors :as errors]
-   )
+   [tech.v3.datatype.errors :as errors])
+   
 
   (:import [smile.classification SparseLogisticRegression]
            [smile.data SparseDataset]
@@ -45,8 +45,8 @@ See tech.v3.dataset/categorical->number.")
                                   (dt/->int-array score)
                                   (get options :lambda 0.1)
                                   (get options :tolerance 1e-5)
-                                  (get options :max-iterations 500)
-                                  )))
+                                  (get options :max-iterations 500))))
+                                  
 (defn predict [feature-ds
                thawed-model
                model]
@@ -61,31 +61,32 @@ See tech.v3.dataset/categorical->number.")
   {:options [{:name :lambda
                :type :float32
                :default 0.1}
-              {:name :tolerance
-               :type :float32
-               :default 1e-5}
-              {:name :max-iterations
-               :type :int32
-               :default 500}
-              ]})
+             {:name :tolerance
+              :type :float32
+              :default 1e-5}
+             {:name :max-iterations
+              :type :int32
+              :default 500}]})
+              
 
 
 (comment
 
   (defn get-reviews []
     (->
-     (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword })
+     (ds/->dataset "test/data/reviews.csv.gz" {:key-fn keyword :parser-fn {:Score :string}})
      (ds/select-columns [:Text :Score])
-     (ds/update-column :Score #(map dec %))
+     (ds/categorical->number [:Score])
+    ;; (ds/update-column :Score #(map dec %))
      (nlp/count-vectorize :Text :bow nlp/default-text->bow)
      (nb/bow->SparseArray :bow :bow-sparse 100)
      (ds-mod/set-inference-target :Score)))
 
 
+  (def reviews (get-reviews))
+
   (def trained-model
-    (ml/train reviews {:model-type :sparse-logistic-regression
+    (ml/train reviews {:model-type :smile.classification/sparse-logistic-regression
                        :sparse-column :bow-sparse}))
 
-  (ml/predict reviews trained-model)
-
-  )
+  (ml/predict reviews trained-model))

@@ -71,17 +71,17 @@
 
 (t/deftest keyword-target-should-crash
   (try
-    (ml/train
-     (ml/train
-      (-> (ds/->dataset {:col-1 [:a :a :b :b
-                                 :a :a :b :b]
-                         :y [:a :a :b :b
-                             :a :b :b :b]})
-          (ds-mod/set-inference-target :y)
-          (ds/categorical->number [:col-1]))
-      {:model-type :smile.classification/decision-tree})
 
+    (ml/train
+     (-> (ds/->dataset {:col-1 [:a :a :b :b
+                                :a :a :b :b]
+                        :y [:a :a :b :b
+                            :a :b :b :b]})
+        (ds-mod/set-inference-target :y)
+        (ds/categorical->number [:col-1]))
      {:model-type :smile.classification/decision-tree})
+
+
     (throw "failed")
     (catch Exception e (t/is true))))
 
@@ -96,4 +96,8 @@
                     (ds/categorical->number [:col-1]))
                trained)
    (ds/select-columns [:y])
-   (ds-cat/reverse-map-categorical-xforms)))
+   (ds-cat/reverse-map-categorical-xforms))
+
+
+
+  (def r (ml/train (first work) {:model-type :smile.classification/decision-tree})))

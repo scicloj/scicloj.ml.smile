@@ -10,8 +10,8 @@
             [scicloj.metamorph.ml.classification]
             [scicloj.ml.smile.classification]
             [scicloj.ml.smile.metamorph :as smile-mm]
-            [scicloj.metamorph.core :as morph]
-            ))
+            [scicloj.metamorph.core :as morph]))
+            
 (comment
   (def train-ds
     (ds/->dataset {:text ["a" "b" "c"]
@@ -31,20 +31,21 @@
      (smile-mm/count-vectorize :text :text)
      (smile-mm/bow->SparseArray :text :text)
      (ds-mm/set-inference-target :score)
+     {:metamorph/id :model}
      (ml/model {:model-type :smile.classification/sparse-logistic-regression
                 :sparse-column :text
-                :n-sparse-columns 3})
-     ))
+                :n-sparse-columns 3})))
+     
   ;;  { :lookup-table { "z" 0, "x" 1, "y" 2 }, :src-column :score, :result-datatype :f
   (def evals
     (ml/evaluate-pipelines
      [pipe]
      [{:train train-ds :test test-ds-1}
-       {:train train-ds :test test-ds-2}
-      ]
+      {:train train-ds :test test-ds-2}]
+      
      loss/classification-accuracy
-     :accuracy
-     ))
+     :accuracy))
+     
 
   (map :metric (first evals))
 
@@ -90,10 +91,10 @@
                           :metamorph/data test-ds}))
 
         predicted-species (ds-mod/column-values->categorical (:metamorph/data prediction)
-                                                             "species"
-                                                             )]
+                                                             "species")]
+                                                             
 
     (is (= ["setosa" "setosa" "virginica"]
-           (take 3 predicted-species)))
+           (take 3 predicted-species)))))
 
-    ))
+    

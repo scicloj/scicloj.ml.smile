@@ -52,9 +52,9 @@
 
 
 (deftest defaults []
-  (is map?
-      (let [reviews (get-reviews)]
-        (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
-                           :sparse-column :sparse
-                           :p 100
-                           :k 5}))))
+  (is (map?
+       (let [reviews (get-reviews)]
+         (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
+                            :sparse-column :sparse
+                            :p 100
+                            :k 5})))))
