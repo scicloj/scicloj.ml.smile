@@ -4,7 +4,7 @@
             [scicloj.ml.smile.nlp :as nlp]
             [tech.v3.datatype.errors :as errors]
             [scicloj.metamorph.ml :as ml]
-            [scicloj.metamorph.ml.model :as model]
+            [scicloj.ml.smile.model :as model]
             [tech.v3.tensor :as dtt]
             [scicloj.ml.smile.registration :refer [class->smile-url]]
             [scicloj.ml.smile.utils :refer :all]

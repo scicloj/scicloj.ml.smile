@@ -1,7 +1,7 @@
 (ns scicloj.ml.smile.regression
   "Namespace to require to enable a set of smile regression models"
   (:require [scicloj.metamorph.ml :as ml]
-            [scicloj.metamorph.ml.model :as model]
+            [scicloj.ml.smile.model :as model]
             [tech.v3.dataset :as ds]
             [tech.v3.tensor :as dtt]
             [tech.v3.dataset.utils :as ds-utils]

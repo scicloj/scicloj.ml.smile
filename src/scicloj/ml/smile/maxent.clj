@@ -5,7 +5,7 @@
             [scicloj.ml.smile.nlp :as nlp]
             [scicloj.metamorph.ml :as ml]
             [tech.v3.datatype.errors :as errors]
-            [scicloj.metamorph.ml.model :as model]
+            [scicloj.ml.smile.model :as model]
 
             [tech.v3.tensor :as dtt])
             

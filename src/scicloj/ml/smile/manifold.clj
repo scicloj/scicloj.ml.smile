@@ -2,7 +2,6 @@
   (:require [smile.manifold :as smile-mf]
             [scicloj.metamorph.ml :as ml]
             [tablecloth.api :as tc]
-            [scicloj.metamorph.ml.model :as model]
             [scicloj.ml.smile.registration :refer [class->smile-url]])
   (:import (smile.manifold IsoMap LaplacianEigenmap LLE TSNE UMAP)))
 

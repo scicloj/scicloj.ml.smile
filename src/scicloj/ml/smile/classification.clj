@@ -7,7 +7,7 @@
             [tech.v3.dataset.column-filters :as ds-cf]
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.tensor :as dtt]
-            [scicloj.metamorph.ml.model :as model]
+            [scicloj.ml.smile.model :as model]
             [scicloj.metamorph.ml.gridsearch :as ml-gs]
             [scicloj.metamorph.ml :as ml]
             [scicloj.ml.smile.protocols :as smile-proto]
