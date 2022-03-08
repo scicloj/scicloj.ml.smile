@@ -150,7 +150,7 @@
         ds
         (ds/add-or-update-column
          ds
-         (ds/new-column
+         (ds-col/new-column
           indices-col
           (ppp/ppmap-with-progress
            "bow->sparse"
@@ -167,7 +167,7 @@
         ds
         (ds/add-or-update-column
          ds
-         (ds/new-column
+         (ds-col/new-column
           indices-col
           (ppp/ppmap-with-progress
            "bow->sparse"
@@ -220,7 +220,7 @@
   [ds bow-column tfidf-column]
   (let [bows (get ds bow-column)
         tf-map (tf-map bows)
-        tfidf-column (ds/new-column tfidf-column
+        tfidf-column (ds-col/new-column tfidf-column
                                     (ppp/ppmap-with-progress
                                      "tfidf" 1000
                                      (fn [bow]
