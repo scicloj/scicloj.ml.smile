@@ -3,6 +3,7 @@
   (:require [scicloj.metamorph.ml :as ml]
             [scicloj.ml.smile.model :as model]
             [tech.v3.dataset :as ds]
+            [tech.v3.dataset.column :as ds-col]
             [tech.v3.tensor :as dtt]
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.datatype :as dtype]
@@ -87,7 +88,7 @@
   (let [ds-with-bias
         (ds/append-columns
          (ds/new-dataset
-          [(ds/new-column :intercept (repeat (ds/row-count ds) 1))])
+          [(ds-col/new-column :intercept (repeat (ds/row-count ds) 1))])
          (ds/columns ds))]
     (predict-linear-model thawed-model ds-with-bias)))
 

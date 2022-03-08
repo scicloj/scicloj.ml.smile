@@ -4,7 +4,7 @@
                  :ensure "target/classes"}
  :deps {
         org.clojure/clojure           {:mvn/version "1.10.2"}
-        scicloj/tablecloth             {:mvn/version "6.023"}
+        scicloj/tablecloth             {:mvn/version "6.051"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
         scicloj/metamorph.ml           {:mvn/version "0.6.0"}
 
