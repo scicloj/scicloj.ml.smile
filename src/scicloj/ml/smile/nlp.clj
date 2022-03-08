@@ -1,6 +1,7 @@
 (ns scicloj.ml.smile.nlp
   (:require [clojure.string :as str]
             [pppmap.core :as ppp]
+            [tech.v3.dataset.column :as ds-col]
             [tech.v3.dataset :as ds]
             [tech.v3.datatype.errors :as errors])
             
@@ -101,7 +102,7 @@
    ;; (def options options)
    (ds/add-or-update-column
     ds
-    (ds/new-column
+    (ds-col/new-column
      bow-col
      (ppp/ppmap-with-progress
        "text->bow"
