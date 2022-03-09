@@ -75,7 +75,7 @@
     
 
 
-(defn- double-array-predict-posterior
+(defn double-array-predict-posterior
   [^SoftClassifier model ds options n-labels]
   (let [value-reader (ds/value-reader ds)
         n-rows (ds/row-count ds)]
