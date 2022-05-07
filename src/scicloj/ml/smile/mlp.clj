@@ -49,7 +49,10 @@
                      count)
         _ (errors/when-not-error (pos? n-labels) "n-labels equals 0. Something is wrong with the :lookup-table")
 
-        predictions (classification/double-array-predict-posterior (:model-data thawed-model) feature-ds {} n-labels)
+        predictions (classification/double-array-predict-posterior
+                     thawed-model
+                     ;; (:model-data thawed-model)
+                     feature-ds {} n-labels)
         finalised-predictions
         (-> predictions
             (dtt/->tensor)
@@ -98,13 +101,13 @@
       (HiddenLayerBuilder. 1 (ActivationFunction/linear)))
 
     (def output-layer-builder
-      (OutputLayerBuilder. 3 (OutputFunction/LINEAR) (Cost/MEAN_SQUARED_ERROR)))
+      (OutputLayerBuilder. 3 (OutputFunction/SOFTMAX) (Cost/LIKELIHOOD)))
     ;; or, for softmax
     (comment
       (OutputLayerBuilder. 3 (OutputFunction/SOFTMAX) (Cost/LIKELIHOOD)))
 
-    (def dropout-rate 0.45) ;; 0.0 - 1.0, default 0.0 (no momentum)
-    (def learning-rate 0.1) ;; 0.0 - 1.0
+    (def dropout-rate 1.0)   ;; 0.0 - 1.0, default 0.0 (no momentum)
+    (def learning-rate 0.001) ;; 0.0 - 1.0
     (def epochs 200)
 
     (def src-ds (ds/->dataset "test/data/iris.csv"))
@@ -112,7 +115,7 @@
                  (ds/categorical->number cf/categorical)
                  (ds-mod/set-inference-target "species")))
     (def feature-ds (cf/feature ds))
-    (def split-data (ds-mod/train-test-split ds))
+    (def split-data (ds-mod/train-test-split ds {:seed 100}))
     (def train-ds (:train-ds split-data))
     (def test-ds (:test-ds split-data))
     (def model (ml/train train-ds {:model-type     :smile.classification/mlp
@@ -122,5 +125,6 @@
                                    :layer-builders [hidden-layer-builder output-layer-builder]}))
     (def prediction
       (-> (ml/predict test-ds model)
-          (ds-cat/reverse-map-categorical-xforms))))
+          (ds-cat/reverse-map-categorical-xforms)))
+    (frequencies (get prediction "species")))
   :ok)
