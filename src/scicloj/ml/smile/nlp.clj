@@ -156,7 +156,8 @@
            "bow->sparse"
            1000
            #(bow->sparse-fn % vocab->index-map)
-           (get ds bow-col))))]
+           (get ds bow-col))
+          {:categorical? false}))]
     {:ds ds
      :vocab vocabulary}))
     
