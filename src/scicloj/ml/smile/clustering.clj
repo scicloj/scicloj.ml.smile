@@ -83,10 +83,8 @@ The cluster id of each row gets written to the column in `target-column`
            fun (resolve (symbol  "fastmath.clustering" (name clustering-method)))
            data-rows (tc/rows data)
            clusterresult-and-clusters
-
            (case mode
-             :fit (let [fit-result (fit-cluster data clustering-method clustering-method-args)
-                        _ (def fit-result fit-result)]
+             :fit (let [fit-result (fit-cluster data clustering-method clustering-method-args)]
                     {:clusterresult  fit-result
                      :clusters (:clustering fit-result)})
                     
