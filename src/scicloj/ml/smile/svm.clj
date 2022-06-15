@@ -2,6 +2,7 @@
   (:require [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [scicloj.metamorph.ml :as ml]
+            [scicloj.metamorph.ml.gridsearch :as gs]
             [scicloj.ml.smile.model :as model])
   (:import smile.classification.SVM))
 
@@ -38,6 +39,13 @@
   [model-data]
   (model/byte-array->model (:model-as-bytes model-data)))
 
+
+(def ^:private hyperparameters
+  {:C (gs/linear 1 10)
+   :tol (gs/categorical [1e-4 1e-3 1e-2 0.1])})
+
+
+
 (ml/define-model!
   :smile.classification/svm
   train
@@ -53,6 +61,7 @@
               :default 1e-4
               :description "tolerance of convergence test"}]
 
+   :hyperparameters hyperparameters
              
    :documentation {:javadoc "http://haifengl.github.io/api/java/smile/classification/SVM.html"
                    :user-guide "https://haifengl.github.io/classification.html#svm"}})
