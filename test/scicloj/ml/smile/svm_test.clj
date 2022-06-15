@@ -42,8 +42,9 @@
         target-colname (first (ds/column-names (cf/target (:test-ds split))))
         fitted-model (ml/train (:train-ds split) options-map)
         predictions (ml/predict (:test-ds split) fitted-model)]
-    (def predictions predictions)
-    (frequencies (predictions target-colname))))
+    predictions))
+
+    
     
 
 (deftest test-svn
@@ -55,16 +56,22 @@
                   new-names))
                 (ds/add-or-update-column
                  (ds-col/new-column "target"
-                                (map
-                                 #(if  (= 0 %) 1 -1)
-                                 (get src-ds "column-30"))))
+                                    (map
+                                     #(if  (= 0 %) 1 -1)
+                                     (get src-ds "column-30"))))
                                 
                 (ds-mod/set-inference-target "target"))
 
         _ (MathEx/setSeed 1234)
-        pred-freqs
-        (train-split ds {:model-type :smile.classification/svm
-                         :randomize-dataset? false})]
-                     
 
+        predictions-ds
+        (train-split ds {:model-type :smile.classification/svm
+                         :randomize-dataset? false})
+        predictions
+        (get predictions-ds "target")
+
+        pred-freqs
+        (frequencies predictions)]
+
+    (is (not (nil? (cf/prediction predictions-ds))))
     (is (= [-1 1] (keys pred-freqs)))))

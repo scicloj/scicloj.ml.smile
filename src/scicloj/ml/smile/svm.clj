@@ -27,7 +27,8 @@
           (ds/value-reader feature-ds)))
         target-colum (first (:target-columns model))
         predictions (.predict (:model-data model) to-predict-data)]
-    (ds/->dataset {target-colum predictions} )))
+
+    (ds/new-dataset [(ds/new-column target-colum predictions {:column-type :prediction})])))
 
 
 (ml/define-model!
@@ -42,11 +43,11 @@
              {:name :tol
               :type :float32
               :default 1e-4
-              :description "tolerance of convergence test"}
+              :description "tolerance of convergence test"}]
 
-             ]
+             
    :documentation {:javadoc "http://haifengl.github.io/api/java/smile/classification/SVM.html"
-                   :user-guide "https://haifengl.github.io/classification.html#svm"
+                   :user-guide "https://haifengl.github.io/classification.html#svm"}})
 
-                   }}
-  )
+                   
+  
