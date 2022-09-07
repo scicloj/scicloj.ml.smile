@@ -400,8 +400,9 @@
         _ (errors/when-not-error
            (every? all-int?  (ds/columns label-ds))
            "All values in target need to be numbers.")
-
-        target-colname (first (ds/column-names label-ds))
+        target-column-names  (ds/column-names label-ds)
+        _ (errors/when-not-error (= 1 (count target-column-names)) "Only one target column is supported.")
+        target-colname (first target-column-names)
         feature-colnames (ds/column-names feature-ds)
         formula (smile-proto/make-formula (ds-utils/column-safe-name target-colname)
                                           (map ds-utils/column-safe-name
@@ -442,7 +443,7 @@
         n-labels (-> (get target-categorical-maps target-colname)
                      :lookup-table
                      count)
-        _ (errors/when-not-error (pos? n-labels) "n-labels equals 0. Something is wrong with the :lookup-table")
+        _ (errors/when-not-error (pos? n-labels) "n-labels equals 0. Something is wrong with the :lookup-table of the target column.")
         predictor (:predictor entry-metadata)
         predictions (predictor thawed-model feature-ds options n-labels)
         finalised-predictions
@@ -460,12 +461,6 @@
 
   
     
-
-
-
-
-;; (ds/rename-columns (vec (ds/column-names feature-ds)))
-
 
 (doseq [[reg-kwd reg-def] classifier-metadata]
   (ml/define-model! (keyword "smile.classification" (name reg-kwd))
