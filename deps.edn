@@ -4,14 +4,14 @@
                  :ensure "target/classes"}
  :deps {
         org.clojure/clojure           {:mvn/version "1.11.1"}
-        scicloj/tablecloth             {:mvn/version "6.076"}
+        scicloj/tablecloth             {:mvn/version "6.094.1"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
-        scicloj/metamorph.ml           {:mvn/version "0.6.1"}
+        scicloj/metamorph.ml           {:mvn/version "0.6.2"}
 
         org.bytedeco/openblas          {:mvn/version "0.3.10-1.5.4"}
         org.bytedeco/openblas-platform {:mvn/version "0.3.10-1.5.4"}
-        generateme/fastmath            {:mvn/version "2.1.6"}
-        metosin/malli                  {:mvn/version "0.8.4"}}
+        generateme/fastmath            {:mvn/version "2.1.8"}
+        metosin/malli                  {:mvn/version "0.8.9"}}
  :aliases {
            :codox {:extra-deps {codox/codox {:mvn/version "0.10.7"}
                                 codox-theme-rdash/codox-theme-rdash {:mvn/version  "0.1.2"}}
