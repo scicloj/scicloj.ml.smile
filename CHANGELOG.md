@@ -1,7 +1,9 @@
 # ConstantChangeLog
+## unrelease
+  - fixed serialisation for  svm
+  - added tfidf->dense
 
-## unreleased
-
+## v6.2.585
 - added LDA QDA RDA FLD]
 
 ## 6.1.578

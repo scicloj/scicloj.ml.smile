@@ -222,17 +222,29 @@
   (let [bows (get ds bow-column)
         tf-map (tf-map bows)
         tfidf-column (ds-col/new-column tfidf-column
-                                    (ppp/ppmap-with-progress
-                                     "tfidf" 1000
-                                     (fn [bow]
-                                       (let [terms (keys bow)
-                                             tfidfs
-                                             (map
-                                              #(tfidf tf-map % bow bows)
-                                              terms)]
-                                         (zipmap terms tfidfs)))
-                                     bows))]
+                                        (ppp/ppmap-with-progress
+                                         "tfidf" 1000
+                                         (fn [bow]
+                                           (let [terms (keys bow)
+                                                 tfidfs
+                                                 (map
+                                                  #(tfidf tf-map % bow bows)
+                                                  terms)]
+                                             (zipmap terms tfidfs)))
+                                         bows)
+                                        {:tf-map tf-map})]
     (ds/add-or-update-column ds tfidf-column)))
+
+(defn tfidf->dense-array
+  "Converts the sparse tfidf map based representation into
+  dense double arrays"
+  [ds tfidf-column array-column]
+  (let [tf-map (-> (get  ds tfidf-column) meta :tf-map)
+        all-zeros (zipmap (keys tf-map) (repeat 0))
+        tfidf-arrays (map
+                      #(->  (merge all-zeros %) vals double-array)
+                      (get ds tfidf-column))]
+    (ds/add-or-update-column ds array-column tfidf-arrays)))
 
 
 (defn freqs->SparseArray [freq-map vocab->index-map]
