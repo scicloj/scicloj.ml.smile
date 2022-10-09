@@ -147,3 +147,24 @@
              (:metamorph/data ctx)
              bow-column
              tfidf-column)))))
+
+(defn tfidf->dense-array
+   "Converts the sparse tfidf map based representation into
+  dense double arrays
+
+
+  metamorph                            |.
+  -------------------------------------|---------
+  Behaviour in mode :fit               |normal
+  Behaviour in mode :transform         |normal
+  Reads keys from ctx                  |none
+  Writes keys to ctx                   |none
+  "
+  [tfidf-column dense-column]
+  (malli/instrument-mm
+   (fn [ctx]
+     (assoc ctx :metamorph/data
+            (nlp/tfidf->dense-array
+             (:metamorph/data ctx)
+             tfidf-column
+             dense-column)))))

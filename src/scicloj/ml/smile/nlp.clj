@@ -67,46 +67,52 @@
    Takes options:
    `stopwords` being either a keyword naming a
    default Smile dictionary (:default :google :comprehensive :mysql)
-   or a seq of stop words.
+   or a seq of stop words. The stopwords get normalized in the same way
+   as the text itself, so it should contain `full words` (non stemmed)
+   As default, no stopwords are used
    `stemmer` being either :none or :porter for selecting the porter stemmer.
 "
   [text options]
+  (def options options)
   (let [normalizer (SimpleNormalizer/getInstance)
         stemmer (resolve-stemmer options)
         stopwords-option (:stopwords options)
         stopwords  (resolve-stopwords stopwords-option)
         processed-stop-words (map #(word-process stemmer normalizer %)  stopwords)
         tokens (default-tokenize text options)
-        freqs (frequencies tokens)]
+
+        freqs (-> tokens frequencies ((get options :freq-handler-fn identity)))]
+
     (apply dissoc freqs processed-stop-words)))
+
+
 
 (defn- remove-punctuation [sentence]
   (->>
-    sentence
-    (filter #(or (Character/isLetter %)
-                 (Character/isSpace %)
-                 (Character/isDigit %)))
-    (apply str)))
+   sentence
+   (filter #(or (Character/isLetter %)
+                (Character/isSpace %)
+                (Character/isDigit %)))
+   (apply str)))
 
 
 (defn count-vectorize
   "Converts text column `text-col` to bag-of-words representation
-   in the form of a frequency-count map"
+   in the form of a frequency-count map.
+  The default text->bow function is `default-text-bow`.
+  All `options` are passed to it.
+  "
   ([ds text-col bow-col {:keys [text->bow-fn]
                          :or {text->bow-fn default-text->bow}
                          :as options}]
                          
-   ;; (def ds ds)
-   ;; (def text-col text-col)
-   ;; (def bow-col bow-col)
-   ;; (def options options)
    (ds/add-or-update-column
     ds
     (ds-col/new-column
      bow-col
      (ppp/ppmap-with-progress
-       "text->bow"
-       1000
+      "text->bow"
+      1000
       #(text->bow-fn % options)
       (get ds text-col)))))
   ([ds text-col bow-col]
@@ -243,8 +249,11 @@
         all-zeros (zipmap (keys tf-map) (repeat 0))
         tfidf-arrays (map
                       #(->  (merge all-zeros %) vals double-array)
-                      (get ds tfidf-column))]
-    (ds/add-or-update-column ds array-column tfidf-arrays)))
+                      (get ds tfidf-column))
+        tfidf-arrays-col (ds/new-column array-column
+                                        tfidf-arrays
+                                        (select-keys (meta (get ds tfidf-column)) [:tf-map]))]
+    (ds/add-or-update-column ds  tfidf-arrays-col)))
 
 
 (defn freqs->SparseArray [freq-map vocab->index-map]
