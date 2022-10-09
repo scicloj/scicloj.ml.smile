@@ -139,14 +139,16 @@
   Reads keys from ctx                  |none
   Writes keys to ctx                   |none
   "
-  [bow-column tfidf-column]
-  (malli/instrument-mm
-   (fn [ctx]
-     (assoc ctx :metamorph/data
-            (nlp/bow->tfidf
-             (:metamorph/data ctx)
-             bow-column
-             tfidf-column)))))
+  ([bow-column tfidf-column]
+   (malli/instrument-mm
+    (fn [ctx]
+      (assoc ctx :metamorph/data
+             (nlp/bow->tfidf
+              (:metamorph/data ctx)
+              bow-column
+              tfidf-column)))))
+  ([bow-column tfidf-column options]
+   (bow->tfidf bow-column tfidf-column {})))
 
 (defn tfidf->dense-array
    "Converts the sparse tfidf map based representation into

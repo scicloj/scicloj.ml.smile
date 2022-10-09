@@ -29,11 +29,20 @@
     (is (= 6 (count tfidf-v)))
     (is (= 0.12041199826559248 (nth tfidf-v 2)))
     (is (= {"thi" 2, "is" 2, "a" 1, "sampl" 1, "anoth" 1, "exampl" 1}
-         (-> ds :dense meta :tf-map)))
+           (-> ds :dense meta :tf-map)))
 
     (is (= 0.12901285528456338 (get tfidf-2 "exampl")))
     (is (= 0.12041199826559248 (get tfidf-1 "a")))
     (is (= 0.0 (get tfidf-1 "thi")))))
+
+(deftest bow->tfidf->dense-handler
+  (let [ds (->
+            (ds/->dataset {:text ["This is a a sample"  "this is another another example example example"]})
+            (nlp/count-vectorize :text :bow  {:stopwords [""]})
+            (nlp/bow->tfidf :bow :tfidf {:tf-map-handler-fn (partial nlp/tf-map-handler-top-n 3)}))]
+
+    (is  (= ["is" "thi" "exampl"]
+            (-> ds :tfidf second keys)))))
 
 
 (deftest freqs->SparseArray
@@ -59,4 +68,3 @@
 
     (is (= {"This" 1, "is" 1, "a" 2, "sample" 1}
            (-> ds :bow first)))))
-    

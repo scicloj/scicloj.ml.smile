@@ -21,7 +21,13 @@
 
 
 (defn test "Run the tests." [opts]
-  (bb/run-tests opts))
+  (-> opts
+      (assoc :lib lib :version version
+             :aliases [:run-tests])
+      (bb/run-tests)))
+
+
+  
 
 (defn jar [_]
   (compile nil)

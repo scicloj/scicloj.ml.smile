@@ -221,25 +221,43 @@
   (* (tf term bow)  (idf tf-map term bows)))
 
 
+(defn tf-map-handler-top-n [n freqs]
+  (->> freqs
+       (sort-by second)
+       reverse
+       (take n)))
+
 (defn bow->tfidf
   "Calculates the tfidf score from bag-of-words (as token frequency maps)
-   in column `bow-column` and stores them in a new column `tfid-column` as maps of token->tfidf-score."
-  [ds bow-column tfidf-column]
-  (let [bows (get ds bow-column)
-        tf-map (tf-map bows)
-        tfidf-column (ds-col/new-column tfidf-column
-                                        (ppp/ppmap-with-progress
-                                         "tfidf" 1000
-                                         (fn [bow]
-                                           (let [terms (keys bow)
-                                                 tfidfs
-                                                 (map
-                                                  #(tfidf tf-map % bow bows)
-                                                  terms)]
-                                             (zipmap terms tfidfs)))
-                                         bows)
-                                        {:tf-map tf-map})]
-    (ds/add-or-update-column ds tfidf-column)))
+   in column `bow-column` and stores them in a new column `tfid-column` as maps of token->tfidf-score.
+  Possible `options`:
+  - `:tf-map-handler-fn` : If present, it gets applied to the global term-frequency map after creating it.
+     Fn need to take map of terms to frequencies and return such map. Typical use is to prune less frequent terms.
+     Defaults to `identity`, so all terms are retained.
+  "
+  ([ds bow-column tfidf-column options]
+   (let [tf-map-handler-fn (get options :tf-map-handler-fn identity)
+         full-bows (get ds bow-column)
+         global-tf-map (tf-map full-bows)
+         tf-map (->> global-tf-map tf-map-handler-fn (into {}))
+         bows (map #(select-keys % (keys tf-map)) full-bows)
+         tfidf-column (ds-col/new-column tfidf-column
+                                         (ppp/ppmap-with-progress
+                                          "tfidf" 1000
+                                          (fn [bow]
+                                            (let [
+                                                  terms (keys bow)
+                                                  tfidfs
+                                                  (map
+                                                   #(tfidf tf-map % bow bows)
+                                                   terms)]
+                                              (zipmap terms tfidfs)))
+                                          bows)
+                                         {:tf-map tf-map})]
+     (ds/add-or-update-column ds tfidf-column)))
+  ([ds bow-column tfidf-column]
+   (bow->tfidf ds bow-column tfidf-column {})))
+
 
 (defn tfidf->dense-array
   "Converts the sparse tfidf map based representation into

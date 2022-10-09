@@ -2,6 +2,7 @@
 ## unrelease
   - fixed serialisation for  svm
   - added tfidf->dense
+  - added :tf-map-handler-fn to support pruning of the terms for tfidf
 
 ## v6.2.585
 - added LDA QDA RDA FLD]
