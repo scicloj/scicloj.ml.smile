@@ -205,11 +205,11 @@
          (merge-with + m token-present)
          (rest bows))))))
 
-
+;; https://medium.com/analytics-vidhya/tf-idf-term-frequency-technique-easiest-explanation-for-text-classification-in-nlp-with-code-8ca3912e58c3
 (defn idf [tf-map term bows]
   (let [n-t (count bows)
-        n-d (get tf-map term)]
-    (Math/log10 (/ n-t n-d))))
+        n-d (apply + (map #(if (contains? % term) 1 0) bows))]
+    (Math/log (/ n-t n-d))))
 
 
 (defn tf [term bow]

@@ -68,3 +68,11 @@
 
     (is (= {"This" 1, "is" 1, "a" 2, "sample" 1}
            (-> ds :bow first)))))
+
+
+(def x
+  (->
+     (ds/->dataset {:text ["This is a a sample"  "this is another another example"]})
+     (nlp/count-vectorize :text :bow  {:stopwords [""]})
+     (nlp/bow->tfidf :bow :tfidf)
+     (nlp/tfidf->dense-array :tfidf :dense)))
