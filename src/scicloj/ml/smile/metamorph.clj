@@ -16,7 +16,8 @@
 
   `options` can be any of
 
-  `text->bow-fn` A functions which takes as input a
+  * `text->bow-fn` A functions which takes as input a text as string and options.
+     The default is `nlp/default-text->bow`
 
   metamorph                            |.
   -------------------------------------|---------
@@ -127,9 +128,14 @@
   ([bow-col indices-col]
    (bow->something-sparse bow-col indices-col nlp/freqs->SparseArray {})))
 
+
+
+
 (defn bow->tfidf
   "Calculates the tfidf score from bag-of-words (as token frequency maps)
    in column `bow-column` and stores them in a new column `tfid-column` as maps of token->tfidf-score.
+
+  It calculates a global term-frequency map in :fit and reuses it in :transform
 
 
   metamorph                            |.
@@ -139,16 +145,22 @@
   Reads keys from ctx                  |none
   Writes keys to ctx                   |none
   "
-  ([bow-column tfidf-column]
-   (malli/instrument-mm
-    (fn [ctx]
-      (assoc ctx :metamorph/data
-             (nlp/bow->tfidf
-              (:metamorph/data ctx)
-              bow-column
-              tfidf-column)))))
-  ([bow-column tfidf-column options]
-   (bow->tfidf bow-column tfidf-column {})))
+
+  [ bow-column tfidf-column options]
+  (fn [{:metamorph/keys [id data mode] :as ctx}]
+    (case mode
+      :fit (let [ds (nlp/bow->tfidf data bow-column tfidf-column
+                                    options)]
+
+             (assoc ctx
+                    :metamorph/data ds
+                    id (-> ds tfidf-column meta :tf-map)))
+      :transform
+      (assoc ctx
+             :metamorph/data (nlp/bow->tfidf data
+                                             bow-column tfidf-column
+                                             (assoc options :reuse-tf-map (get ctx id)))))))
+
 
 (defn tfidf->dense-array
    "Converts the sparse tfidf map based representation into

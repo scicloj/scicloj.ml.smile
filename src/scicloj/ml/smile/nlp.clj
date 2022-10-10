@@ -69,8 +69,10 @@
    default Smile dictionary (:default :google :comprehensive :mysql)
    or a seq of stop words. The stopwords get normalized in the same way
    as the text itself, so it should contain `full words` (non stemmed)
-   As default, no stopwords are used
+   As default, no stopwords are used.
    `stemmer` being either :none or :porter for selecting the porter stemmer.
+   `freq-handler-fn` A function taking a term-frequency map, and can further manipulate it.
+     Defauklt to `identity`
 "
   [text options]
   (def options options)
@@ -80,7 +82,6 @@
         stopwords  (resolve-stopwords stopwords-option)
         processed-stop-words (map #(word-process stemmer normalizer %)  stopwords)
         tokens (default-tokenize text options)
-
         freqs (-> tokens frequencies ((get options :freq-handler-fn identity)))]
 
     (apply dissoc freqs processed-stop-words)))
@@ -238,7 +239,8 @@
   ([ds bow-column tfidf-column options]
    (let [tf-map-handler-fn (get options :tf-map-handler-fn identity)
          full-bows (get ds bow-column)
-         global-tf-map (tf-map full-bows)
+         global-tf-map (or (:reuse-tf-map options)
+                           (tf-map full-bows))
          tf-map (->> global-tf-map tf-map-handler-fn (into {}))
          bows (map #(select-keys % (keys tf-map)) full-bows)
          tfidf-column (ds-col/new-column tfidf-column
