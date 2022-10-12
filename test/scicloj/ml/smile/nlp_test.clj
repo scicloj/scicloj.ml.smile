@@ -70,13 +70,6 @@
            (-> ds :bow first)))))
 
 
-;; (def x
-;;   (->
-;;      (ds/->dataset {:text ["This is a a sample"  "this is another another example"]})
-;;      (nlp/count-vectorize :text :bow  {:stopwords [""]})
-;;      (nlp/bow->tfidf :bow :tfidf)
-;;      (nlp/tfidf->dense-array :tfidf :dense)))
-
 (deftest test-tf
   (is (= 1.0 (float (nlp/tf :a {:a 1 :b 1}))))
   (is (= 1.0 (nlp/tf :a {:a 1 :b 2})))
@@ -98,18 +91,15 @@
 
 
 (deftest tfidf-from-count
-  "The same result as sklearn:
+;;   The same result as sklearn:)
 
-counts = [[3, 0, 1],
-          [2, 0, 0],
-          [3, 0, 0],
-          [4, 0, 0],
-          [3, 2, 0],
-          [3, 0, 2]]
-TfidfTransformer(norm=None).fit_transform(counts).toarray()
-
-"
-
+;; counts = [[3, 0, 1],
+;;           [2, 0, 0],
+;;           [3, 0, 0],
+;;           [4, 0, 0],
+;;           [3, 2, 0],
+;;           [3, 0, 2]]
+;; TfidfTransformer(norm=None).fit_transform(counts).toarray()
 
   (let [counts [[3 0 1]
                 [2 0 0]

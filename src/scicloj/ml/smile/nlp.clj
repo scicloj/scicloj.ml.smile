@@ -124,8 +124,9 @@
    
   
 
-(defn ->vocabulary-top-n [bows n]
+(defn ->vocabulary-top-n
   "Takes top-n most frequent tokens as vocabulary"
+  [bows n]
   (let [vocabulary
         (->>
          (apply merge-with + bows)
@@ -172,7 +173,10 @@
      :vocab vocabulary}))
     
 
-(defn bow->sparse [ds bow-col indices-col bow->sparse-fn vocabulary]
+(defn bow->sparse
+  "Generic function to convert a colmn to something sparse,
+  using the given vocabulary."
+  [ds bow-col indices-col bow->sparse-fn vocabulary]
   (let [
         vocab->index-map (:vocab->index-map vocabulary)
         ds
@@ -220,8 +224,6 @@
 (defn tf [term bow]
 
   (float (get bow term 0)))
-  ;; (apply + (vals bow))
-
 
 
 (defn idf [term bows]
@@ -235,13 +237,13 @@
                 (+ 1 n_t))))))
   
 
-
-
 (defn tfidf [term bow bows]
   (* (tf term bow)  (idf term bows)))
 
 
-(defn tf-map-handler-top-n [n freqs]
+(defn tf-map-handler-top-n
+  "Keeps the n most frequent terms in teh term-frequency table"
+  [n freqs]
   (->> freqs
        (sort-by second)
        reverse
@@ -295,7 +297,9 @@
     (ds/add-or-update-column ds  tfidf-arrays-col)))
 
 
-(defn freqs->SparseArray [freq-map vocab->index-map]
+(defn freqs->SparseArray
+  "Converts the token-frequency map to s smile SparseArray"
+  [freq-map vocab->index-map]
   (let [sparse-array (SparseArray.)]
     (run!
      (fn [[token freq]]
