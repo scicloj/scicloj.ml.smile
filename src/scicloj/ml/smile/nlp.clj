@@ -226,7 +226,8 @@
   (->> freqs
        (sort-by second)
        reverse
-       (take n)))
+       (take n)
+       (into {})))
 
 (defn bow->tfidf
   "Calculates the tfidf score from bag-of-words (as token frequency maps)
