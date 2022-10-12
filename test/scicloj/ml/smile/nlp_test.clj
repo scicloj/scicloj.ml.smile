@@ -138,3 +138,103 @@ TfidfTransformer(norm=None).fit_transform(counts).toarray()
 
 
 
+
+
+
+
+(comment
+  (use 'criterium.core)
+  (def bows
+    [{:a 3, :b 0, :c 1}
+     {:a 2, :b 0, :c 0}
+     {:a 3, :b 0, :c 0}
+     {:a 4, :b 0, :c 0}
+     {:a 3, :b 2, :c 0}
+     {:a 3, :b 0, :c 2}])
+
+
+  (quick-bench
+   (nlp/tfidf :c (last bows) bows))
+  ;; Evaluation count : 392118 in 6 samples of 65353 calls.
+  ;;  Execution time mean : 1.566292 µs
+  ;;  Execution time std-deviation : 28.904047 ns
+  ;;  Execution time lower quantile : 1.541041 µs ( 2.5%)
+  ;;   Execution time upper quantile : 1.604181 µs (97.5%)
+  ;;                   Overhead used : 6.815656 ns
+  ;;
+  (def bows
+    (map
+     (fn [_] (zipmap (range 10) (repeatedly (fn [] (rand-int 10)))))
+     (range 1000)))
+
+
+
+
+
+  :ok)
+
+
+(comment
+
+  ;; some experiments with StringTable as representation of tokens
+  (require '[tech.v3.dataset.string-table :as st])
+
+  (def string-table-1
+    (->
+     (nlp/default-tokenize "this is a test" {})
+     (st/string-table-from-strings)))
+
+  (def string-table-2
+    (->
+     (nlp/default-tokenize "tests I like football and tests" {})
+     (st/string-table-from-strings)))
+
+  (st/indices string-table-2)
+
+
+  (def ds (ds/->dataset "./test/data/reviews.csv.gz" {:key-fn keyword}))
+
+  (def global-st
+    (->>
+     ds
+     :Text
+     (map nlp/default-tokenize)
+     flatten
+     st/string-table-from-strings))
+
+
+
+  (def str-table (st/get-str-table global-st))
+
+
+  (defn tokenize [])
+
+  (defn tokenize []
+    (let []
+      (->>
+       (map nlp/default-tokenize (:Text ds))
+       (map
+        (fn [tokens] (map (fn [token] (get (:str->int str-table) token)) tokens)))
+       (map frequencies)
+       (mapv #(hash-map :token-indices (dt/make-container :int (keys %))
+                        :token-count (dt/make-container :int (vals %)))))))
+
+
+
+  (quick-bench (nlp/count-vectorize ds :Text :bow))
+ 
+
+
+  (quick-bench (tokenize))
+
+  (criterium.core/benchmark-round-robin [ (tokenize)])
+
+  (def x
+    (tokenize))
+
+
+  (defn tf [term bow]
+
+    (get bow term 0))
+
+  (-> x first))
