@@ -205,21 +205,41 @@
          (merge-with + m token-present)
          (rest bows))))))
 
-;; https://medium.com/analytics-vidhya/tf-idf-term-frequency-technique-easiest-explanation-for-text-classification-in-nlp-with-code-8ca3912e58c3
-(defn idf [tf-map term bows]
-  (let [n-t (count bows)
-        n-d (apply + (map #(if (contains? % term) 1 0) bows))]
-    (Math/log (/ n-t n-d))))
-
-
-(defn tf [term bow]
+;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
+;; variant "term freqency"
+(defn _tf_ [term bow]
   (/
    (get bow term 0)
    (apply + (vals bow))))
 
+;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
+;; variant "raw count"
+(defn tf [term bow]
 
-(defn tfidf [tf-map term bow bows]
-  (* (tf term bow)  (idf tf-map term bows)))
+  (get bow term 0))
+  ;; (apply + (vals bow))
+
+
+;; https://medium.com/analytics-vidhya/tf-idf-term-frequency-technique-easiest-explanation-for-text-classification-in-nlp-with-code-8ca3912e58c3
+(defn idf [term bows]
+  (def term term)
+  (def bows bows)
+  (let [N (count bows)
+        n_t (apply + (map #(if  (pos?  (tf term %))
+                             1
+                             0)
+                          bows))]
+    (+ 1
+       (Math/log (/
+                  (+ 1 N)
+                  (+ 1 n_t))))))
+  
+
+
+
+
+(defn tfidf [term bow bows]
+  (* (tf term bow)  (idf term bows)))
 
 
 (defn tf-map-handler-top-n [n freqs]
@@ -251,7 +271,7 @@
                                                   terms (keys bow)
                                                   tfidfs
                                                   (map
-                                                   #(tfidf tf-map % bow bows)
+                                                   #(tfidf % bow bows)
                                                    terms)]
                                               (zipmap terms tfidfs)))
                                           bows)
