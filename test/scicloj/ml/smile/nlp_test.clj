@@ -79,8 +79,8 @@
 
 (deftest test-tf
   (is (= 1.0 (float (nlp/tf :a {:a 1 :b 1}))))
-  (is (= 1 (nlp/tf :a {:a 1 :b 2})))
-  (is (= 0 (nlp/tf :c {:a 1 :b 2}))))
+  (is (= 1.0 (nlp/tf :a {:a 1 :b 2})))
+  (is (= 0.0 (nlp/tf :c {:a 1 :b 2}))))
 
 (deftest test-idf
   (is (= 1.0 (nlp/idf :a [{:a 1} {:a 2 :b 1 :c 3}])))
@@ -125,12 +125,16 @@ TfidfTransformer(norm=None).fit_transform(counts).toarray()
          counts)]
 
     (is (=
-         [[3.0       0.0               1.8472978603872034]
+         [[3.0       0.0               1.8472978603872037]
           [2.0       0.0               0.0]
           [3.0       0.0               0.0]
           [4.0       0.0               0.0]
           [3.0       4.505525936990736 0.0]
-          [3.0       0.0               3.694595720774407]]
+          [3.0       0.0               3.6945957207744073]]
          (for [bow bows]
            (for [term [:a :b :c]]
              (nlp/tfidf term bow bows)))))))
+
+
+
+
