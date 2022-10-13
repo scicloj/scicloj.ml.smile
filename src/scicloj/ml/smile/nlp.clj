@@ -214,7 +214,7 @@
 
 ;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
 ;; variant "term freqency"
-(defn tf-term-frequency [term bow]
+(defn- tf-term-frequency [term bow]
   (float (/
           (get bow term 0)
           (apply + (vals bow)))))
@@ -222,8 +222,9 @@
 
 ;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
 ;; variant "raw count"
-(defn tf-raw [term bow]
+(defn- tf-raw [term bow]
   (float (get bow term 0)))
+
 
 (defn tf
   ([term bow options]
@@ -233,21 +234,71 @@
   ([term bow] (tf term bow nil)))
 
 
+;;  num docs containing term
+(defn- n_t [term bows options]
+  (apply + (map #(Math/signum ^float (tf term % options))
+                 bows)))
 
-(defn idf
+;;  this is as skleran does it when smooth_idf=True
+;;  idf(t) = log [ (1 + n) / (1 + df(t)) ] + 1.
+;;  does not match precisely any of
+;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Inverse_document_frequency_2
+(defn- idf-smooth-sklearn
   ([term bows options]
-
    (let [N (count bows)
-         n_t (apply + (map #(Math/signum ^float (tf term % options))
-                           bows))]
+         n_t (n_t term bows options)]
      (+ 1
         (Math/log (/
                    (+ 1 N)
-                   (+ 1 n_t))))))
-  ([term bows] (idf term bows nil)))
-  
+                   (+ 1 n_t)))))))
+
+
+;; "inverse document frequeny smooth" from
+;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Inverse_document_frequency_2
+
+(defn- idf-smooth
+  ([term bows options]
+   (let [N (count bows)
+         n_t (n_t term bows options)]
+     (+ 1
+        (Math/log (/
+                   N
+                   (+ 1 n_t)))))))
+
+
+;; "inverse document frequeny" from
+;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Inverse_document_frequency_2
+(defn- idf-idf [term bows options]
+  (let [N (count bows)
+        n_t (n_t term bows options)]
+    (Math/log (/ N n_t))))
+
+
+(defn idf
+  ([term bows options]
+   (case (or (:idf-weighting-scheme options) :smooth-sklearn)
+     :smooth-sklearn (idf-smooth-sklearn term bows options)
+     :idf (idf-idf term bows options)
+     :smooth (idf-smooth term bows options)))
+  ([terms bows] (idf terms bows nil)))
 
 (defn tfidf
+  "Calculates tfidf.
+  `term` : The term for which to calculate the tfidf value
+  `bow`  : bag-of-words representation of the document (= term-frequency map)
+  `bows` : list of bag-of-words representing the corpus (= list of term-frequency maps)
+
+  `options` supported :
+      - `:tf-weighting-scheme` The term-frequency weighting scheme with supported values `:raw-count` , `:term-frequency`
+         Default is: `:raw-count`
+         see here: https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Term_frequency_2
+      - `:idf-weighting-scheme` The inverse term-frequency weighting scheme with supported values `:smooth-sklearn`, `:idf`, `:smooth`
+         Default is: `smooth-sklearn`
+         https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Inverse_document_frequency_2
+         https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfTransformer.html#sklearn.feature_extraction.text.TfidfTransformer
+
+  
+  "
   ([term bow bows options]
    (* (tf term bow options)  (idf term bows options)))
   ([term bow bows] (tfidf term bow bows nil)))
@@ -269,7 +320,10 @@
   - `:tf-map-handler-fn` : If present, it gets applied to the global term-frequency map after creating it.
      Fn need to take map of terms to frequencies and return such map. Typical use is to prune less frequent terms.
      Defaults to `identity`, so all terms are retained.
+  - `:tf-weighting-scheme` See function [[tf-idf]]
+  - `:idf-weighting-scheme` See function [[tf-idf]]
   "
+
   ([ds bow-column tfidf-column options]
    (let [tf-map-handler-fn (get options :tf-map-handler-fn identity)
          full-bows (get ds bow-column)

@@ -11,11 +11,13 @@
         tf-map (nlp/tf-map bows)
         bow-1 (first bows)
         bow-2 (second bows)]
-    (is (= 0.0  (nlp/tfidf :example bow-1  bows)))
+    (is (= 0.0  (nlp/tfidf :example bow-1 bows)))
     (is (= 0.6023421951729453 (nlp/tfidf :example bow-2  bows {:tf-weighting-scheme :term-frequency})))
     (is (= 4.216395324324493  (nlp/tfidf :example bow-2  bows {:tf-weighting-scheme :raw-count})))
-    (is (= 4.216395324324493  (nlp/tfidf :example bow-2  bows)))))
-
+    (is (= 4.216395324324493  (nlp/tfidf :example bow-2  bows)))
+    (is (= 4.216395324324493  (nlp/tfidf :example bow-2  bows {:idf-weighting-scheme :smooth-sklearn})))
+    (is (= 3.0                (nlp/tfidf :example bow-2  bows {:idf-weighting-scheme :smooth})))
+    (is (= 2.0794415416798357 (nlp/tfidf :example bow-2  bows {:idf-weighting-scheme :idf})))))
 
 (deftest bow->tfidf->dense
   (let [ds (->
