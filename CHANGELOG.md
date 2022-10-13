@@ -4,6 +4,7 @@
   - added tfidf->dense
   - added :tf-map-handler-fn to support pruning of the terms for tfidf
   - metamorph'ed  bow->tfidf reuses tf-map from :fit in :transform
+  - 2 weighting schees for tf calculation
 
 
 ## v6.2.585

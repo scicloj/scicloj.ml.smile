@@ -214,31 +214,43 @@
 
 ;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
 ;; variant "term freqency"
-(defn _tf_ [term bow]
-  (/
-   (get bow term 0)
-   (apply + (vals bow))))
+(defn tf-term-frequency [term bow]
+  (float (/
+          (get bow term 0)
+          (apply + (vals bow)))))
+
 
 ;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
 ;; variant "raw count"
-(defn tf [term bow]
-
+(defn tf-raw [term bow]
   (float (get bow term 0)))
 
+(defn tf
+  ([term bow options]
+   (case (or (:tf-weighting-scheme options) :raw-count)
+     :raw-count (tf-raw term bow)
+     :term-frequency (tf-term-frequency term bow)))
+  ([term bow] (tf term bow nil)))
 
-(defn idf [term bows]
-  (def bows bows)
-  (let [N (count bows)
-        n_t (apply + (map #(Math/signum ^float (tf term %))
-                        bows))]
-    (+ 1
-     (Math/log (/
-                (+ 1 N)
-                (+ 1 n_t))))))
+
+
+(defn idf
+  ([term bows options]
+
+   (let [N (count bows)
+         n_t (apply + (map #(Math/signum ^float (tf term % options))
+                           bows))]
+     (+ 1
+        (Math/log (/
+                   (+ 1 N)
+                   (+ 1 n_t))))))
+  ([term bows] (idf term bows nil)))
   
 
-(defn tfidf [term bow bows]
-  (* (tf term bow)  (idf term bows)))
+(defn tfidf
+  ([term bow bows options]
+   (* (tf term bow options)  (idf term bows options)))
+  ([term bow bows] (tfidf term bow bows nil)))
 
 
 (defn tf-map-handler-top-n
@@ -273,7 +285,7 @@
                                                   terms (keys bow)
                                                   tfidfs
                                                   (map
-                                                   #(tfidf % bow bows)
+                                                   #(tfidf % bow bows options)
                                                    terms)]
                                               (zipmap terms tfidfs)))
                                           bows)

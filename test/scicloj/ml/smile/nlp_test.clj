@@ -12,6 +12,8 @@
         bow-1 (first bows)
         bow-2 (second bows)]
     (is (= 0.0  (nlp/tfidf :example bow-1  bows)))
+    (is (= 0.6023421951729453 (nlp/tfidf :example bow-2  bows {:tf-weighting-scheme :term-frequency})))
+    (is (= 4.216395324324493  (nlp/tfidf :example bow-2  bows {:tf-weighting-scheme :raw-count})))
     (is (= 4.216395324324493  (nlp/tfidf :example bow-2  bows)))))
 
 
@@ -124,7 +126,3 @@
          (for [bow bows]
            (for [term [:a :b :c]]
              (nlp/tfidf term bow bows)))))))
-
-
-
-
