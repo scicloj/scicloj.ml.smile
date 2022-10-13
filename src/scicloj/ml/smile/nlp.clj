@@ -3,10 +3,12 @@
             [pppmap.core :as ppp]
             [tech.v3.dataset.column :as ds-col]
             [tech.v3.dataset :as ds]
+            [tech.v3.datatype.functional :as fun]
+            [tech.v3.datatype :as dt]
             [tech.v3.datatype.errors :as errors])
             
   (:import smile.nlp.normalizer.SimpleNormalizer
-           smile.nlp.stemmer.PorterStemmer
+           [smile.nlp.stemmer PorterStemmer Stemmer]
            [smile.nlp.tokenizer SimpleTokenizer BreakIteratorSentenceSplitter]
            [smile.nlp.dictionary EnglishStopWords]
            [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
@@ -18,7 +20,7 @@
     (iterator-seq (.iterator (EnglishStopWords/valueOf (str/upper-case (name stopwords-option)))))
     stopwords-option))
 
-(defn word-process [stemmer ^SimpleNormalizer normalizer ^String word]
+(defn word-process [^Stemmer stemmer ^SimpleNormalizer normalizer ^String word]
   (let [word
         (-> word
             (str/lower-case)
@@ -41,24 +43,25 @@
 (defn default-tokenize
   "Tokenizes text.
   The usage of a stemmer can be configured by options :stemmer "
-  [text options]
-  (let [normalizer (SimpleNormalizer/getInstance)
-        stemmer (resolve-stemmer options)
-        tokenizer (SimpleTokenizer.)
-        sentence-splitter (BreakIteratorSentenceSplitter.)
+  ([text options]
+   (let [normalizer (SimpleNormalizer/getInstance)
+         stemmer (resolve-stemmer options)
+         tokenizer (SimpleTokenizer.)
+         sentence-splitter (BreakIteratorSentenceSplitter.)
 
-        tokens
-        (->> text
-             (.normalize normalizer)
-             (.split sentence-splitter)
-             (map #(.split tokenizer %))
-             (map seq)
-             flatten
-             (remove nil?)
-             (map #(word-process stemmer normalizer %)))]
+         tokens
+         (->> text
+              (.normalize normalizer)
+              (.split sentence-splitter)
+              (map #(.split tokenizer %))
+              (map seq)
+              flatten
+              (remove nil?)
+              (map #(word-process stemmer normalizer %)))]
 
              
-    tokens))
+     tokens))
+  ([text] (default-tokenize text {})))
 
 
 
@@ -72,19 +75,19 @@
    As default, no stopwords are used.
    `stemmer` being either :none or :porter for selecting the porter stemmer.
    `freq-handler-fn` A function taking a term-frequency map, and can further manipulate it.
-     Defauklt to `identity`
+     Defaults to `identity`
 "
-  [text options]
-  (def options options)
-  (let [normalizer (SimpleNormalizer/getInstance)
-        stemmer (resolve-stemmer options)
-        stopwords-option (:stopwords options)
-        stopwords  (resolve-stopwords stopwords-option)
-        processed-stop-words (map #(word-process stemmer normalizer %)  stopwords)
-        tokens (default-tokenize text options)
-        freqs (-> tokens frequencies ((get options :freq-handler-fn identity)))]
+  ([text options]
+   (let [normalizer (SimpleNormalizer/getInstance)
+         stemmer (resolve-stemmer options)
+         stopwords-option (:stopwords options)
+         stopwords  (resolve-stopwords stopwords-option)
+         processed-stop-words (map #(word-process stemmer normalizer %)  stopwords)
+         tokens (default-tokenize text options)
+         freqs (-> tokens frequencies ((get options :freq-handler-fn identity)))]
 
-    (apply dissoc freqs processed-stop-words)))
+     (apply dissoc freqs processed-stop-words)))
+  ([text] (default-text->bow text {})))
 
 
 
@@ -121,8 +124,9 @@
    
   
 
-(defn ->vocabulary-top-n [bows n]
+(defn ->vocabulary-top-n
   "Takes top-n most frequent tokens as vocabulary"
+  [bows n]
   (let [vocabulary
         (->>
          (apply merge-with + bows)
@@ -169,7 +173,10 @@
      :vocab vocabulary}))
     
 
-(defn bow->sparse [ds bow-col indices-col bow->sparse-fn vocabulary]
+(defn bow->sparse
+  "Generic function to convert a colmn to something sparse,
+  using the given vocabulary."
+  [ds bow-col indices-col bow->sparse-fn vocabulary]
   (let [
         vocab->index-map (:vocab->index-map vocabulary)
         ds
@@ -205,24 +212,38 @@
          (merge-with + m token-present)
          (rest bows))))))
 
-
-(defn idf [tf-map term bows]
-  (let [n-t (count bows)
-        n-d (get tf-map term)]
-    (Math/log10 (/ n-t n-d))))
-
-
-(defn tf [term bow]
+;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
+;; variant "term freqency"
+(defn _tf_ [term bow]
   (/
    (get bow term 0)
    (apply + (vals bow))))
 
+;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
+;; variant "raw count"
+(defn tf [term bow]
 
-(defn tfidf [tf-map term bow bows]
-  (* (tf term bow)  (idf tf-map term bows)))
+  (float (get bow term 0)))
 
 
-(defn tf-map-handler-top-n [n freqs]
+(defn idf [term bows]
+  (def bows bows)
+  (let [N (count bows)
+        n_t (apply + (map #(Math/signum ^float (tf term %))
+                        bows))]
+    (+ 1
+     (Math/log (/
+                (+ 1 N)
+                (+ 1 n_t))))))
+  
+
+(defn tfidf [term bow bows]
+  (* (tf term bow)  (idf term bows)))
+
+
+(defn tf-map-handler-top-n
+  "Keeps the n most frequent terms in teh term-frequency table"
+  [n freqs]
   (->> freqs
        (sort-by second)
        reverse
@@ -252,7 +273,7 @@
                                                   terms (keys bow)
                                                   tfidfs
                                                   (map
-                                                   #(tfidf tf-map % bow bows)
+                                                   #(tfidf % bow bows)
                                                    terms)]
                                               (zipmap terms tfidfs)))
                                           bows)
@@ -277,7 +298,9 @@
     (ds/add-or-update-column ds  tfidf-arrays-col)))
 
 
-(defn freqs->SparseArray [freq-map vocab->index-map]
+(defn freqs->SparseArray
+  "Converts the token-frequency map to s smile SparseArray"
+  [freq-map vocab->index-map]
   (let [sparse-array (SparseArray.)]
     (run!
      (fn [[token freq]]
