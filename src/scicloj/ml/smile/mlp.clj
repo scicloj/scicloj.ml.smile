@@ -24,14 +24,14 @@
                     (map
                      double-array
                      (ds/value-reader feature-ds)))
-        y (int-array (seq (get target-ds (first (ds-mod/inference-target-column-names target-ds)))))])
-  (.update mlp train-data y)
-  mlp)
+        y (int-array (seq (get target-ds (first (ds-mod/inference-target-column-names target-ds)))))]
+    (.update mlp train-data y)
+    mlp))
 
   
 
 
-        
+
 
 (defn predict
   "Predict function for MLP model"
@@ -46,7 +46,10 @@
                      count)
         _ (errors/when-not-error (pos? n-labels) "n-labels equals 0. Something is wrong with the :lookup-table")
 
-        predictions (classification/double-array-predict-posterior (:model-data model) feature-ds {} n-labels)
+        predictions (classification/double-array-predict-posterior
+                     thawed-model
+                     ;; (:model-data thawed-model)
+                     feature-ds {} n-labels)
         finalised-predictions
         (-> predictions
             (dtt/->tensor)
