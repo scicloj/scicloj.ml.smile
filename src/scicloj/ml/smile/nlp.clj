@@ -14,21 +14,24 @@
            [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
            smile.util.SparseArray))
 
-
 (defn resolve-stopwords [stopwords-option]
   (if (keyword? stopwords-option)
     (iterator-seq (.iterator (EnglishStopWords/valueOf (str/upper-case (name stopwords-option)))))
     stopwords-option))
 
-(defn word-process [^Stemmer stemmer ^SimpleNormalizer normalizer ^String word]
-  (let [word
-        (-> word
-            (str/lower-case)
-            (#(.normalize normalizer %)))
+(def simple-normalizer (SimpleNormalizer/getInstance))
+
+(defn default-word-normalize [word]
+  (-> word
+      str/lower-case
+      (#(.normalize ^SimpleNormalizer simple-normalizer  ^String %))))
+
+(defn word-process [^Stemmer stemmer word-normalizer-fn ^String word options]
+  (let [word (word-normalizer-fn word)
         word (if (nil? stemmer)
                word
                (.stem stemmer word))]
-     word))
+    word))
 
 (defn resolve-stemmer [options]
   (let [stemmer-type (get options :stemmer :porter)]
@@ -36,28 +39,25 @@
                 :none nil
                 :porter (PorterStemmer.))))
                   
-
-    
-  
-
 (defn default-tokenize
   "Tokenizes text.
   The usage of a stemmer can be configured by options :stemmer "
   ([text options]
-   (let [normalizer (SimpleNormalizer/getInstance)
+   (let [word-normalizer-fn (get options :word-normalizer-fn  default-word-normalize)
          stemmer (resolve-stemmer options)
          tokenizer (SimpleTokenizer.)
          sentence-splitter (BreakIteratorSentenceSplitter.)
 
          tokens
          (->> text
-              (.normalize normalizer)
+              (#(.normalize ^SimpleNormalizer simple-normalizer ^String %))
               (.split sentence-splitter)
               (map #(.split tokenizer %))
               (map seq)
               flatten
               (remove nil?)
-              (map #(word-process stemmer normalizer %)))]
+              (map #(word-process stemmer word-normalizer-fn % options))
+              (remove empty?))]
 
              
      tokens))
@@ -78,11 +78,11 @@
      Defaults to `identity`
 "
   ([text options]
-   (let [normalizer (SimpleNormalizer/getInstance)
+   (let [normalize-fn (get options :word-normalizer-fn  default-word-normalize)
          stemmer (resolve-stemmer options)
          stopwords-option (:stopwords options)
          stopwords  (resolve-stopwords stopwords-option)
-         processed-stop-words (map #(word-process stemmer normalizer %)  stopwords)
+         processed-stop-words (map #(word-process stemmer normalize-fn % options) stopwords)
          tokens (default-tokenize text options)
          freqs (-> tokens frequencies ((get options :freq-handler-fn identity)))]
 
@@ -91,13 +91,7 @@
 
 
 
-(defn- remove-punctuation [sentence]
-  (->>
-   sentence
-   (filter #(or (Character/isLetter %)
-                (Character/isSpace %)
-                (Character/isDigit %)))
-   (apply str)))
+
 
 
 (defn count-vectorize
@@ -331,8 +325,8 @@
          full-bows (get ds bow-column)
          global-tf-map (or (:reuse-tf-map options)
                            (tf-map full-bows))
-         tf-map (->> global-tf-map tf-map-handler-fn (into {}))
-         bows (map #(select-keys % (keys tf-map)) full-bows)
+         used-tf-map (->> global-tf-map tf-map-handler-fn (into {}))
+         bows (map #(select-keys % (keys used-tf-map)) full-bows)
          tfidf-column (ds-col/new-column tfidf-column
                                          (ppp/ppmap-with-progress
                                           "tfidf" 1000
@@ -345,10 +339,11 @@
                                                    terms)]
                                               (zipmap terms tfidfs)))
                                           bows)
-                                         {:tf-map tf-map})]
+                                         {:tf-map used-tf-map})]
      (ds/add-or-update-column ds tfidf-column)))
   ([ds bow-column tfidf-column]
    (bow->tfidf ds bow-column tfidf-column {})))
+
 
 
 (defn tfidf->dense-array

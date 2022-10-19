@@ -6,6 +6,7 @@
   - metamorph'ed  bow->tfidf reuses tf-map from :fit in :transform
   - 2 weighting schees for tf calculation
   - 3 weighting schemes for idf calculation
+  - support :word-normalize-fn in count-vectorizer
 
 
 ## v6.2.585
