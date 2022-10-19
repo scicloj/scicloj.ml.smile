@@ -215,9 +215,11 @@
 ;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
 ;; variant "term freqency"
 (defn- tf-term-frequency [term bow]
-  (float (/
-          (get bow term 0)
-          (apply + (vals bow)))))
+  (if (empty? bow)
+    0
+    (float (/
+            (get bow term 0)
+            (apply + (vals bow))))))
 
 
 ;; https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition
