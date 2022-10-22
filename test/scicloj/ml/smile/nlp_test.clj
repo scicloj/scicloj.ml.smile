@@ -1,8 +1,12 @@
 (ns scicloj.ml.smile.nlp-test
-  (:require [scicloj.ml.smile.nlp :as nlp]
-            [clojure.string :as str]
-            [tech.v3.dataset :as ds]
-            [clojure.test :refer [deftest is] :as t]))
+  (:require
+   [clojure.string :as str]
+   [clojure.test :as t :refer [deftest is]]
+   [scicloj.ml.smile.nlp :as nlp]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.tensor]
+   [tech.v3.datatype :as dtt]
+   [tech.v3.tensor :as tensor]))
 
 (deftest calculate-tfidf
 
@@ -28,7 +32,14 @@
 
         tfidf-1 (first (:tfidf ds))
         tfidf-2 (second (:tfidf ds))
-        tfidf-v (-> ds :dense first)]
+        tfidf-v (-> ds :dense first)
+
+        tfidf-ds
+        (->
+         (dtt/concat-buffers (:dense ds))
+         (tensor/reshape [2 6])
+         (tech.v3.dataset.tensor/tensor->dataset))]
+
 
     (is (= 6 (count tfidf-v)))
     (is (= 2.8109302162163288 (nth tfidf-v 2)))
@@ -37,7 +48,14 @@
 
     (is (= 4.216395324324493 (get tfidf-2 "exampl")))
     (is (= 2.8109302162163288 (get tfidf-1 "a")))
-    (is (= 1.0 (get tfidf-1 "thi")))))
+    (is (= 1.0 (get tfidf-1 "thi")))
+    (is  (=
+          (-> tfidf-ds ds/rowvecs first)
+          (-> ds :dense first vec)))
+    (is  (=
+          (-> tfidf-ds ds/rowvecs second)
+          (-> ds :dense second vec)))))
+
 
 (deftest bow->tfidf->dense-handler
   (let [ds (->
