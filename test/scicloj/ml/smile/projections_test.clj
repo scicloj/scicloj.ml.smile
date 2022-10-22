@@ -2,7 +2,7 @@
   (:require [scicloj.ml.smile.projections :as projections]
             [clojure.test :refer [deftest is]]
             [scicloj.ml.smile.test-tools :as tt]
-            [tablecloth.api :refer [dataset]]
+            [tablecloth.api :as tc]
             [tech.v3.dataset.column-filters :as cf]
             [scicloj.metamorph.core :as mm]
             [scicloj.metamorph.ml :as ml]
@@ -12,11 +12,13 @@
 
 
 (def data
-  (dataset {:f1 [1 5 1 5 8]
-            :f2 [2 5 4 3 1]
-            :f3 [3 6 2 2 2]
-            :f4 [4 7 3 1 2]}))
-            
+  (tc/dataset {:f1 [1 5 1 5 8]
+               :f2 [2 5 4 3 1]
+               :f3 [3 6 2 2 2]
+               :f4 [4 7 3 1 2]}))
+
+
+
 (deftest train-pca-model
   (let [train-result
         (ml/train data  {:model-type :smile.projections

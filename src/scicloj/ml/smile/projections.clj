@@ -1,12 +1,11 @@
 (ns scicloj.ml.smile.projections
 
-  (:require [tablecloth.api.utils :refer [column-names]]
-            [tablecloth.api.dataset :refer [rows dataset columns]]
-            [tablecloth.api.columns :refer [select-columns drop-columns add-or-replace-columns]]
-            [fastmath.kernel :as k]
-            [scicloj.ml.smile.malli :as malli]
-            [scicloj.metamorph.ml :as ml]
-            [scicloj.ml.smile.registration :refer [class->smile-url]])
+  (:require
+   [tablecloth.api :as tc]
+   [fastmath.kernel :as k]
+   [scicloj.ml.smile.malli :as malli]
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.registration :refer [class->smile-url]])
   (:import [smile.projection PCA ProbabilisticPCA KPCA GHA RandomProjection Projection]
            [smile.math.kernel MercerKernel]))
 
@@ -96,14 +95,14 @@
 (defn- rows->array
   [ds names]
   (-> ds
-      (select-columns names)
-      (rows :as-double-arrays)))
+      (tc/select-columns names)
+      (tc/rows :as-double-arrays)))
 
 (defn- array->ds
   [arr target-columns]
   (->> arr
        (map (partial zipmap target-columns))
-       (dataset)))
+       (tc/dataset)))
 
 (defn process-reduction-fit
   [ds algorithm target-dims cnames opts]
@@ -113,20 +112,19 @@
         ds-res (array->ds (.project model #^"[[D" rows) target-columns)]
     {:dataset
      (-> ds
-         (add-or-replace-columns (columns ds-res :as-map)))
+         (tc/add-or-replace-columns (tc/columns ds-res :as-map)))
      :model model
      :cnames cnames
      :target-columns target-columns}))
-     
+
 
 (defn process-reduction-transform
   [ds model cnames target-columns]
   (let [rows (rows->array ds cnames)
         ds-res (array->ds (.project model #^"[[D" rows) target-columns)]
     (-> ds
-        (add-or-replace-columns (columns ds-res :as-map)))))
+        (tc/add-or-replace-columns (tc/columns ds-res :as-map)))))
     
-
 
 
 
@@ -213,7 +211,7 @@
 
 
 
-(malli/instrument-ns *ns*
+(malli/instrument-ns *ns*)
 ;; (mi/collect! {:ns 'scicloj.ml.smile.projections})
 ;; (mi/instrument! {:report (pretty/thrower) :scope #{:input}})
- )
+ 
