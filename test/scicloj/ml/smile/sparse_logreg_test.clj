@@ -26,12 +26,12 @@
         (ml/train reviews {:model-type :smile.classification/sparse-logistic-regression
                            :n-sparse-columns 100
                            :sparse-column :sparse})
-        prediction (ml/predict reviews trained-model)
-        ]
-    (is (= 0.737
+        prediction (ml/predict reviews trained-model)]
+        
+    (is (= 0.742
            (loss/classification-accuracy (:Score prediction)
-                                         (:Score reviews) )))
-    ))
+                                         (:Score reviews))))))
+    
 
 (deftest  accurate-disrete-naive-bayes
   (let [reviews (get-reviews)
@@ -41,12 +41,12 @@
                            :p 100
                            :k 5
                            :sparse-column :sparse})
-        prediction (ml/predict reviews trained-model)
-        ]
+        prediction (ml/predict reviews trained-model)]
+        
     (is (= 0.631
            (loss/classification-accuracy (:Score prediction)
-                                         (:Score reviews) )))
-    ))
+                                         (:Score reviews))))))
+    
 
 
 (deftest  accurate-disrete-naive-bayes
@@ -57,9 +57,9 @@
                            :p 100
                            :k 5
                            :sparse-column :sparse})
-        prediction (ml/predict reviews trained-model)
-        ]
-    (is (= 0.633
+        prediction (ml/predict reviews trained-model)]
+        
+    (is (= 0.629
            (loss/classification-accuracy (:Score prediction)
-                                         (:Score reviews) )))
-    ))
+                                         (:Score reviews))))))
+    
