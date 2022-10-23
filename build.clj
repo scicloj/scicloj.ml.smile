@@ -35,6 +35,9 @@
                 :lib lib
                 :version version
                 :basis basis
+                :src-pom "template/pom.xml"
+                :scm {:connection "scm:git:https://github.com/scicloj/scicloj.ml.smile.git"
+                      :url "https://github.com/scicloj/scicloj.ml.smile"}
                 :src-dirs ["src"]})
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
@@ -45,6 +48,7 @@
   (-> opts
       (assoc :lib lib :version version
              :aliases [:run-tests])
+             
       (bb/run-tests)
       (bb/clean)
       (jar)))
