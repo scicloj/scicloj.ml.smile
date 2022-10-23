@@ -1,12 +1,13 @@
 # ConstantChangeLog
-## unrelease
+
+## v7.0.632
   - fixed serialisation for  svm
   - added tfidf->dense
   - added :tf-map-handler-fn to support pruning of the terms for tfidf
   - metamorph'ed  bow->tfidf reuses tf-map from :fit in :transform
-  - 2 weighting schees for tf calculation
-  - 3 weighting schemes for idf calculation
-  - support :word-normalize-fn in count-vectorizer
+  - added 2 weighting schemes for tf calculation
+  - added 3 weighting schemes for idf calculation
+  - support :word-normalize-fn in count-vectorizer to configure tokenisation
 
 
 ## v6.2.585
