@@ -1,5 +1,10 @@
 # ConstantChangeLog
 
+## unreleased
+
+- allow configuration of ppmap grain size
+
+
 ## v7.0.632
   - fixed serialisation for  svm
   - added tfidf->dense

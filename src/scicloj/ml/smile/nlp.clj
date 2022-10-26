@@ -110,7 +110,7 @@
      bow-col
      (ppp/ppmap-with-progress
       "text->bow"
-      1000
+      (get :ppmap-grain-size options 1000)
       #(text->bow-fn % options)
       (get ds text-col)))))
   ([ds text-col bow-col]
@@ -233,7 +233,7 @@
 ;;  num docs containing term
 (defn- n_t [term bows options]
   (apply + (map #(Math/signum ^float (tf term % options))
-                 bows)))
+                bows)))
 
 ;;  this is as skleran does it when smooth_idf=True
 ;;  idf(t) = log [ (1 + n) / (1 + df(t)) ] + 1.
@@ -329,7 +329,7 @@
          bows (map #(select-keys % (keys used-tf-map)) full-bows)
          tfidf-column (ds-col/new-column tfidf-column
                                          (ppp/ppmap-with-progress
-                                          "tfidf" 1000
+                                          "tfidf" (get :ppmap-grain-size options 1000)
                                           (fn [bow]
                                             (let [
                                                   terms (keys bow)
@@ -352,7 +352,8 @@
   [ds tfidf-column array-column]
   (let [tf-map (-> (get  ds tfidf-column) meta :tf-map)
         all-zeros (zipmap (keys tf-map) (repeat 0))
-        tfidf-arrays (map
+        tfidf-arrays (ppp/ppmap-with-progress
+                      "->dense-array" 100
                       #(->  (merge all-zeros %) vals double-array)
                       (get ds tfidf-column))
         tfidf-arrays-col (ds/new-column array-column
