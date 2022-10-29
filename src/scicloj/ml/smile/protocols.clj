@@ -1,14 +1,14 @@
 (ns scicloj.ml.smile.protocols
-  (:require [tech.v3.libs.smile.data :as smile-data]
-            [tech.v3.datatype :as dtype]
-            [tech.v3.dataset.utils :as ds-utils])
-  (:import [smile.data.formula Formula]
-           [smile.data.type StructType]
-           [smile.regression DataFrameRegression]
-           [smile.classification DataFrameClassifier]
-           [java.util Properties List]
-           [smile.data.formula Formula TechFactory Variable]))
-
+  (:require
+   [tech.v3.dataset.utils :as ds-utils]
+   [tech.v3.datatype :as dtype]
+   [tech.v3.libs.smile.data :as smile-data])
+  (:import
+   (java.util List Properties)
+   (smile.classification DataFrameClassifier)
+   (smile.data.formula Formula TechFactory Variable)
+   (smile.data.type StructType)
+   (smile.regression DataFrameRegression)))
 
 (set! *warn-on-reflection* true)
 
@@ -61,8 +61,8 @@
                                    (or (get lookup-table default)
                                        default))
                          value (get options name)
-                         value (get lookup-table value value)
-                         ]
+                         value (get lookup-table value value)]
+                         
                      (.put props (format "%s.%s"
                                          pname-stem
                                          (.replace ^String (clojure.core/name name)
@@ -81,4 +81,4 @@
   (Formula. (TechFactory/variable response)
             ^"[Lsmile.data.formula.Variable;" (->> features
                                                    (map #(TechFactory/variable %))
-                                                   (into-array Variable ))))
+                                                   (into-array Variable))))

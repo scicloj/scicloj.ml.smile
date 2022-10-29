@@ -1,38 +1,25 @@
 (ns scicloj.ml.smile.regression
   "Namespace to require to enable a set of smile regression models"
-  (:require [scicloj.metamorph.ml :as ml]
-            [scicloj.ml.smile.model :as model]
-            [tech.v3.dataset :as ds]
-            [tech.v3.dataset.column :as ds-col]
-            [tech.v3.tensor :as dtt]
-            [tech.v3.dataset.utils :as ds-utils]
-            [tech.v3.datatype :as dtype]
-            [scicloj.metamorph.ml.gridsearch :as ml-gs]
-            [tech.v3.libs.smile.data :as smile-data]
-            [scicloj.ml.smile.protocols :as smile-proto]
-            [scicloj.ml.smile.malli :as malli]
-            [scicloj.ml.smile.registration :refer [class->smile-url]])
-            
-  (:import [smile.regression
-            OLS
-            Regression
-            DataFrameRegression
-            GradientTreeBoost
-            RandomForest
-            ;; NeuralNetwork$ActivationFunction
-            RidgeRegression
-            ElasticNet
-            LASSO
-            LinearModel]
-            ;; OnlineRegression
-            
-           [smile.data.formula Formula TechFactory Variable]
-           [smile.data DataFrame]
-           [java.lang.reflect Field]
-           [java.util Properties List]))
+  (:require
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.metamorph.ml.gridsearch :as ml-gs]
+   [scicloj.ml.smile.malli :as malli]
+   [scicloj.ml.smile.model :as model]
+   [scicloj.ml.smile.protocols :as smile-proto]
+   [scicloj.ml.smile.registration :refer [class->smile-url]]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.column :as ds-col]
+   [tech.v3.dataset.utils :as ds-utils]
+   [tech.v3.datatype :as dtype]
+   [tech.v3.libs.smile.data :as smile-data]
+   [tech.v3.tensor :as dtt])
+  (:import
+   (java.util List Properties)
+   (smile.data DataFrame)
+   (smile.data.formula Formula)
+   (smile.regression DataFrameRegression ElasticNet GradientTreeBoost LASSO LinearModel OLS RandomForest RidgeRegression)))
 
 
-(set! *warn-on-reflection* true)
 
 
 (def ^:private cart-loss-table
@@ -354,7 +341,6 @@
   (do
     (require '[tech.v3.dataset.column-filters :as cf])
     (require '[tech.v3.dataset.modelling :as ds-mod])
-    (require '[scicloj.metamorph.ml.loss :as loss])
     (def src-ds (ds/->dataset "test/data/iris.csv"))
     (def ds (->  src-ds
                  (ds/categorical->number cf/categorical)

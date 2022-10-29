@@ -1,14 +1,7 @@
 (ns scicloj.ml.smile.metamorph
-
   (:require
-   [scicloj.ml.smile.nlp :as nlp]
-   [tech.v3.dataset :as ds]
-   [pppmap.core :as ppp]
-   [scicloj.ml.smile.malli :as malli]))
-
-
-   
-
+   [scicloj.ml.smile.malli :as malli]
+   [scicloj.ml.smile.nlp :as nlp]))
 
 (defn count-vectorize
   "Transforms the text column `text-col` into a map of token frequencies in column

@@ -1,12 +1,12 @@
 (ns scicloj.ml.smile.clustering
   (:require
-   [scicloj.metamorph.ml :as ml]
    [fastmath.clustering :as clustering]
-   [tablecloth.api :as tc]
+   [scicloj.metamorph.ml :as ml]
    [scicloj.ml.smile.malli :as malli]
-   [scicloj.ml.smile.registration :refer [class->smile-url]])
-  (:import [smile.clustering SpectralClustering DBSCAN KMeans MEC
-            CLARANS GMeans XMeans DeterministicAnnealing DENCLUE]))
+   [scicloj.ml.smile.registration :refer [class->smile-url]]
+   [tablecloth.api :as tc])
+  (:import
+   (smile.clustering CLARANS DBSCAN DENCLUE DeterministicAnnealing GMeans KMeans MEC SpectralClustering XMeans)))
 
 (def model-keywords
   {

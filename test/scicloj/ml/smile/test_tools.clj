@@ -1,9 +1,4 @@
-(ns scicloj.ml.smile.test-tools
-  (:require  [clojure.test :as t]))
-
-
-
-
+(ns scicloj.ml.smile.test-tools)
 
 (defn fuzzy=? [tolerance x y]
   (let [diff (Math/abs (- x y))]

@@ -1,15 +1,14 @@
 (ns scicloj.ml.smile.maxent
-  (:require [pppmap.core :as ppp]
-            [tech.v3.dataset :as ds]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [scicloj.ml.smile.nlp :as nlp]
-            [scicloj.metamorph.ml :as ml]
-            [tech.v3.datatype.errors :as errors]
-            [scicloj.ml.smile.model :as model]
-
-            [tech.v3.tensor :as dtt])
-            
-  (:import smile.classification.Maxent))
+  (:require
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.model :as model]
+   [scicloj.ml.smile.nlp :as nlp]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.datatype.errors :as errors]
+   [tech.v3.tensor :as dtt])
+  (:import
+   (smile.classification Maxent)))
 
 (def maxent-default-parameters
   {
@@ -18,18 +17,12 @@
    :max-iter 500})
    
 
-
-
-
 (defn bow->sparse-array
   "Converts a bag-of-word column `bow-col` to sparse indices column `indices-col`,
    as needed by the Maxent model.
    `vocab size` is the size of vocabluary used, sorted by token frequency "
   [ds bow-col indices-col options]
   (nlp/bow->something-sparse ds bow-col indices-col  nlp/bow->sparse-indices options))
-
-
-
 
 
 
@@ -49,7 +42,6 @@ See tech.v3.dataset/categorical->number.
 
   (let [train-array (into-array ^"[[Ljava.lang.Integer"
                                 (get feature-ds (:sparse-column options)))
-        _ (def train-array train-array)
         train-score-array (into-array Integer/TYPE
                                       (get target-ds (first (ds-mod/inference-target-column-names target-ds))))
         p (int  (or  (:p options) 0))

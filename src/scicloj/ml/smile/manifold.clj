@@ -1,9 +1,11 @@
 (ns scicloj.ml.smile.manifold
-  (:require [smile.manifold :as smile-mf]
-            [scicloj.metamorph.ml :as ml]
-            [tablecloth.api :as tc]
-            [scicloj.ml.smile.registration :refer [class->smile-url]])
-  (:import (smile.manifold IsoMap LaplacianEigenmap LLE TSNE UMAP)))
+  (:require
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.registration :refer [class->smile-url]]
+   [smile.manifold :as smile-mf]
+   [tablecloth.api :as tc])
+  (:import
+   (smile.manifold IsoMap LaplacianEigenmap LLE TSNE UMAP)))
 
 (def definitions
   {

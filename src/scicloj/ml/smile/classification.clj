@@ -1,40 +1,28 @@
 (ns scicloj.ml.smile.classification
   "Namespace to require to enable a set of smile classification models."
-  (:require [tech.v3.datatype :as dtype]
-            [tech.v3.datatype.protocols :as dtype-proto]
-            [tech.v3.dataset :as ds]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.dataset.column-filters :as ds-cf]
-            [tech.v3.dataset.utils :as ds-utils]
-            [tech.v3.tensor :as dtt]
-            [scicloj.ml.smile.model :as model]
-            [scicloj.metamorph.ml.gridsearch :as ml-gs]
-            [scicloj.metamorph.ml :as ml]
-            [scicloj.ml.smile.protocols :as smile-proto]
-            [tech.v3.libs.smile.data :as smile-data]
-            [tech.v3.datatype.errors :as errors]
-            [scicloj.ml.smile.discrete-nb]
-            [scicloj.ml.smile.maxent]
-            [scicloj.ml.smile.sparse-logreg]
-            [scicloj.ml.smile.sparse-svm]
-            [scicloj.ml.smile.svm]
-            [clojure.string :as str]
-            [scicloj.ml.smile.malli :as malli]
-            [scicloj.ml.smile.registration :refer [class->smile-url]]
-            [scicloj.ml.smile.model-examples :as examples]
-            [malli.util :as mu])
+  (:require
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.metamorph.ml.gridsearch :as ml-gs]
+   [scicloj.ml.smile.malli :as malli]
+   [scicloj.ml.smile.model :as model]
+   [scicloj.ml.smile.model-examples :as examples]
+   [scicloj.ml.smile.protocols :as smile-proto]
+   [scicloj.ml.smile.registration :refer [class->smile-url]]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.dataset.utils :as ds-utils]
+   [tech.v3.datatype :as dtype]
+   [tech.v3.datatype.errors :as errors]
+   [tech.v3.datatype.protocols :as dtype-proto]
+   [tech.v3.libs.smile.data :as smile-data]
+   [tech.v3.tensor :as dtt])
   (:import
-   [smile.base.rbf RBF]
-   [smile.classification Classifier SoftClassifier AdaBoost LogisticRegression
-    DecisionTree RandomForest KNN GradientTreeBoost LDA QDA RDA FLD]
-   [smile.base.cart SplitRule]
-   [smile.data.formula Formula]
-   [smile.data DataFrame]
-   [java.util Properties List]
-   [tech.v3.datatype ObjectReader]))
-
-
-(set! *warn-on-reflection* true)
+   (java.util Properties)
+   (smile.base.cart SplitRule)
+   (smile.classification AdaBoost Classifier DecisionTree FLD GradientTreeBoost KNN LDA LogisticRegression QDA RandomForest RDA SoftClassifier)
+   (smile.data DataFrame)
+   (smile.data.formula Formula)
+   (tech.v3.datatype ObjectReader)))
 
 (defn- tuple-predict-posterior
   [^SoftClassifier model ds options n-labels]

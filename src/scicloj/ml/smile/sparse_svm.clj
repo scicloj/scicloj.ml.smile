@@ -1,17 +1,13 @@
 (ns scicloj.ml.smile.sparse-svm
   (:require
-   [tech.v3.datatype :as dt]
-   [tech.v3.datatype.errors :as errors]
+   [scicloj.metamorph.ml :as ml]
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]
-   [scicloj.ml.smile.discrete-nb :as nb]
-   [scicloj.ml.smile.nlp :as nlp]
-   [scicloj.metamorph.ml :as ml])
-  (:import [smile.classification SVM]
-           [smile.data SparseDataset]
-           [smile.util SparseArray]))
-
-
+   [tech.v3.datatype :as dt]
+   [tech.v3.datatype.errors :as errors])
+  (:import
+   (smile.classification SVM)
+   (smile.util SparseArray)))
 
 (defn train
   "Training function of sparse SVM model.

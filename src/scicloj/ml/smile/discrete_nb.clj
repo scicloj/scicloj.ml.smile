@@ -1,18 +1,17 @@
 (ns scicloj.ml.smile.discrete-nb
-  (:require [tech.v3.dataset :as ds]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [scicloj.ml.smile.nlp :as nlp]
-            [tech.v3.datatype.errors :as errors]
-            [scicloj.metamorph.ml :as ml]
-            [scicloj.ml.smile.model :as model]
-            [tech.v3.tensor :as dtt]
-            [scicloj.ml.smile.registration :refer [class->smile-url]]
-            [scicloj.ml.smile.utils :refer :all])
-            
-  (:import [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
-           smile.util.SparseArray))
-
-
+  (:require
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.model :as model]
+   [scicloj.ml.smile.nlp :as nlp]
+   [scicloj.ml.smile.registration :refer [class->smile-url]]
+   [scicloj.ml.smile.utils :refer :all]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.datatype.errors :as errors]
+   [tech.v3.tensor :as dtt])
+  (:import
+   (smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model)
+   (smile.util SparseArray)))
 
 (defn bow->SparseArray
   "Converts a bag-of-word column `bow-col` to sparse indices column `indices-col`,
@@ -61,10 +60,6 @@ See tech.v3.dataset/categorical->number.")
 (defn predict
   "Predict function for discrete naive bayes"
   [feature-ds thawed-model model]
-  (def model model)
-  (def feature-ds feature-ds)
-  (def thawed-model thawed-model)
-
   (let [
         sparse-col (get-in model [:options :sparse-column])
 

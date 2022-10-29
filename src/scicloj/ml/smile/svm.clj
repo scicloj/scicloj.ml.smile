@@ -1,10 +1,12 @@
 (ns scicloj.ml.smile.svm
-  (:require [tech.v3.dataset :as ds]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [scicloj.metamorph.ml :as ml]
-            [scicloj.metamorph.ml.gridsearch :as gs]
-            [scicloj.ml.smile.model :as model])
-  (:import smile.classification.SVM))
+  (:require
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.metamorph.ml.gridsearch :as gs]
+   [scicloj.ml.smile.model :as model]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.modelling :as ds-mod])
+  (:import
+   (smile.classification SVM)))
 
 (defn train
   "Training function of SVM model. "

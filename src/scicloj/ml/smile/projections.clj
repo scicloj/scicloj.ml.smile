@@ -1,13 +1,13 @@
 (ns scicloj.ml.smile.projections
-
   (:require
-   [tablecloth.api :as tc]
    [fastmath.kernel :as k]
-   [scicloj.ml.smile.malli :as malli]
    [scicloj.metamorph.ml :as ml]
-   [scicloj.ml.smile.registration :refer [class->smile-url]])
-  (:import [smile.projection PCA ProbabilisticPCA KPCA GHA RandomProjection Projection]
-           [smile.math.kernel MercerKernel]))
+   [scicloj.ml.smile.malli :as malli]
+   [scicloj.ml.smile.registration :refer [class->smile-url]]
+   [tablecloth.api :as tc])
+  (:import
+   (smile.math.kernel MercerKernel)
+   (smile.projection GHA KPCA PCA ProbabilisticPCA Projection RandomProjection)))
 
 (require '[malli.instrument :as mi])
 (require '[malli.dev.pretty :as pretty])
@@ -28,7 +28,7 @@
 
    :kpca
    {:class KPCA
-    :documentation {:user-guide "https://haifengl.github.io/feature.html#kpca"}}
+    :documentation {:user-guid "https://haifengl.github.io/feature.html#kpca"}}
 
    :gha
    {:class GHA

@@ -1,14 +1,13 @@
 (ns scicloj.ml.smile.model
   "Internal namespace of helper functions used to implement models."
-  (:require [tech.v3.datatype :as dtype]
-            [tech.v3.tensor :as dtt]
-            [tech.v3.dataset.tensor :as ds-tens]
-            [tech.v3.dataset :as ds]
-            [clojure.set :as set])
-  (:import [java.io ByteArrayInputStream ByteArrayOutputStream
-            ObjectOutputStream ObjectInputStream
-            InputStream OutputStream]))
-
+  (:require
+   [clojure.set :as set]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.tensor :as ds-tens]
+   [tech.v3.datatype :as dtype]
+   [tech.v3.tensor :as dtt])
+  (:import
+   (java.io ByteArrayInputStream ByteArrayOutputStream ObjectInputStream ObjectOutputStream)))
 
 (defn options->model-type
   [{:keys [model-type]}]

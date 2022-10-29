@@ -1,16 +1,16 @@
 (ns scicloj.ml.smile.mlp
-  (:require [tech.v3.dataset :as ds]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.dataset.categorical :as ds-cat]
-            [scicloj.metamorph.ml :as ml]
-            [scicloj.ml.smile.model :as model]
-            [tech.v3.tensor :as dtt]
-            [tech.v3.datatype.errors :as errors]
-
-            [scicloj.ml.smile.classification :as classification])
-  (:import smile.classification.MLP
-           [smile.base.mlp HiddenLayerBuilder OutputLayerBuilder ActivationFunction OutputFunction Cost LayerBuilder]))
-
+  (:require
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.classification :as classification]
+   [scicloj.ml.smile.model :as model]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.categorical :as ds-cat]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.datatype.errors :as errors]
+   [tech.v3.tensor :as dtt])
+  (:import
+   (smile.base.mlp ActivationFunction Cost HiddenLayerBuilder LayerBuilder OutputFunction OutputLayerBuilder)
+   (smile.classification MLP)))
 
 (defn train
   "Training function of MLP model. "
@@ -26,9 +26,6 @@
         y (int-array (seq (get target-ds (first (ds-mod/inference-target-column-names target-ds)))))]
     (.update mlp train-data y)
     mlp))
-
-  
-
 
 
 

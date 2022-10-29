@@ -1,18 +1,16 @@
 (ns scicloj.ml.smile.nlp
-  (:require [clojure.string :as str]
-            [pppmap.core :as ppp]
-            [tech.v3.dataset.column :as ds-col]
-            [tech.v3.dataset :as ds]
-            [tech.v3.datatype.functional :as fun]
-            [tech.v3.datatype :as dt]
-            [tech.v3.datatype.errors :as errors])
-            
-  (:import smile.nlp.normalizer.SimpleNormalizer
-           [smile.nlp.stemmer PorterStemmer Stemmer]
-           [smile.nlp.tokenizer SimpleTokenizer BreakIteratorSentenceSplitter]
-           [smile.nlp.dictionary EnglishStopWords]
-           [smile.classification DiscreteNaiveBayes DiscreteNaiveBayes$Model]
-           smile.util.SparseArray))
+  (:require
+   [clojure.string :as str]
+   [pppmap.core :as ppp]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.column :as ds-col]
+   [tech.v3.datatype.errors :as errors])
+  (:import
+   (smile.nlp.dictionary EnglishStopWords)
+   (smile.nlp.normalizer SimpleNormalizer)
+   (smile.nlp.stemmer PorterStemmer Stemmer)
+   (smile.nlp.tokenizer BreakIteratorSentenceSplitter SimpleTokenizer)
+   (smile.util SparseArray)))
 
 (defn resolve-stopwords [stopwords-option]
   (if (keyword? stopwords-option)
