@@ -1,7 +1,7 @@
 # ConstantChangeLog
 
 ## unreleased
-
+- fixed arrity exception in `reduce-dimensions` transform
 - allow configuration of ppmap grain size
 
 

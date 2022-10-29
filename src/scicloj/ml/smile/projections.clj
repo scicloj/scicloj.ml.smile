@@ -174,6 +174,7 @@
        (let [fit-result (get-in ctx [id :fit-result])]
          (assoc ctx :metamorph/data (process-reduction-transform
                                      (:metamorph/data ctx)
+                                     (:model fit-result)
                                      (:cnames fit-result)
                                      (:target-columns fit-result))))))))
 
