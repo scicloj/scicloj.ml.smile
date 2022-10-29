@@ -12,10 +12,9 @@
            [smile.base.mlp HiddenLayerBuilder OutputLayerBuilder ActivationFunction OutputFunction Cost LayerBuilder]))
 
 
-(defn train [feature-ds target-ds options]
-
+(defn train
   "Training function of MLP model. "
-
+  [feature-ds target-ds options]
   (let [mlp (MLP. (ds/column-count feature-ds)
                   (into-array LayerBuilder (:layer-builders options)))
         ;;

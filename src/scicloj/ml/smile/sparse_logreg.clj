@@ -16,10 +16,7 @@
 
 
 
-(defn train [feature-ds target-ds options]
-  ;; (def feature-ds feature-ds)
-  ;; (def target-ds target-ds)
-  ;; (def options options)
+(defn train
   "Training function of sparse logistic regression model.
    The column of name `(options :sparse-column)` of `feature-ds` needs to contain the text as SparseArrays
    over the vocabulary.
@@ -29,6 +26,7 @@
    * `:n-sparse-columns`: Number of columns / dimensions of the sparse vectors
 
 "
+  [feature-ds target-ds options]
   (errors/when-not-error
    (ds-mod/inference-target-label-map target-ds)
    "In classification, the target column needs to be categorical and having been transformed to numeric.
@@ -47,10 +45,9 @@ See tech.v3.dataset/categorical->number.")
                                   (get options :tolerance 1e-5)
                                   (get options :max-iterations 500))))
                                   
-(defn predict [feature-ds
-               thawed-model
-               model]
+(defn predict
   "Predict function for sparse logistic regression model."
+  [feature-ds thawed-model model]
   (nb/predict feature-ds thawed-model model))
 
 

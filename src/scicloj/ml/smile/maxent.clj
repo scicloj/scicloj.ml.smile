@@ -21,10 +21,11 @@
 
 
 
-(defn bow->sparse-array [ds bow-col indices-col options]
+(defn bow->sparse-array
   "Converts a bag-of-word column `bow-col` to sparse indices column `indices-col`,
    as needed by the Maxent model.
    `vocab size` is the size of vocabluary used, sorted by token frequency "
+  [ds bow-col indices-col options]
   (nlp/bow->something-sparse ds bow-col indices-col  nlp/bow->sparse-indices options))
 
 
@@ -34,15 +35,14 @@
 
 
 
-(defn maxent-train [feature-ds target-ds options maxent-type]
+(defn maxent-train
   "Training function of Maxent model
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as a sparce vector
    agains the vocabulary."
-
-
-   (errors/when-not-error
-           (ds-mod/inference-target-label-map target-ds)
-           "In classification, the target column needs to be categorical and having been transformed to numeric.
+  [feature-ds target-ds options maxent-type]
+  (errors/when-not-error
+          (ds-mod/inference-target-label-map target-ds)
+          "In classification, the target column needs to be categorical and having been transformed to numeric.
 See tech.v3.dataset/categorical->number.
 ")
            
@@ -74,35 +74,30 @@ See tech.v3.dataset/categorical->number.
        (:tol options)
        (:max-iter options)))))
 
-(defn maxent-train-multinomial [feature-ds target-ds options]
+(defn maxent-train-multinomial
   "Training function of Maxent/multinomial model
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as a sparse vector
    agains the vocabulary."
+  [feature-ds target-ds options]
   (maxent-train feature-ds target-ds options :multinomial))
 
 
-(defn maxent-train-binomial [feature-ds target-ds options]
+(defn maxent-train-binomial
   "Training function of Maxent/binomial model
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as a sparse vector
    agains the vocabulary."
+  [feature-ds target-ds options]
   (maxent-train feature-ds target-ds options :binomial))
 
 
-(defn maxent-predict [feature-ds
-                      thawed-model
-                      model]
+(defn maxent-predict
 
   "Predict function for Maxent"
-  ;; (def feature-ds feature-ds)
-  ;; (def model model)
-  ;; (def thawed-model thawed-model)
+  [feature-ds thawed-model model]
   (let [predict-array
         (into-array ^"[[Ljava.lang.Integer"
                     (get feature-ds (get-in model [:options :sparse-column])))
         target-colum (first (:target-columns model))
-        ;; _ (def predictions predictions)
-        ;; _ (def predict-array predict-array)
-        ;; _ (def target-colum target-colum)
         n-labels (-> model :target-categorical-maps target-colum :lookup-table count)
         _ (errors/when-not-error (pos-int? n-labels) (str  "No labels found for target column" target-colum))
 
@@ -124,8 +119,7 @@ See tech.v3.dataset/categorical->number.
             (ds/update-column target-colum
                               #(vary-meta % assoc :column-type :prediction)))]
     mapped-prediction))
-                                 ;; _ (def predictions predictions)
-        
+
     
      
     

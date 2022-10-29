@@ -6,25 +6,25 @@
             [scicloj.ml.smile.model :as model])
   (:import smile.classification.SVM))
 
-(defn train [feature-ds target-ds options]
+(defn train
   "Training function of SVM model. "
+  [feature-ds target-ds options]
   (let [train-data
         (into-array
          (map
           double-array
           (ds/value-reader feature-ds)))
         trained-model (SVM/fit train-data
-                       (into-array Integer/TYPE (seq (get target-ds (first (ds-mod/inference-target-column-names target-ds)))))
-                       ^double (get options :C 1.0)
-                       ^double (get options :tol 1e-4))]
+                               (into-array Integer/TYPE (seq (get target-ds (first (ds-mod/inference-target-column-names target-ds)))))
+                               ^double (get options :C 1.0)
+                               ^double (get options :tol 1e-4))]
 
     {:model-as-bytes (model/model->byte-array trained-model)}))
      
 
-(defn predict [feature-ds
-               thawed-model
-               model]
-  "Predict function for SVM model"
+(defn predict
+ "Predict function for SVM model"
+  [feature-ds thawed-model model]
   (let [to-predict-data
         (into-array
          (map
