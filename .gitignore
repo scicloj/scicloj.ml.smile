@@ -13,3 +13,5 @@ example/results.nippy
 .cpcache
 /.calva/
 /deps.local.edn
+/.clj-kondo/
+/.lsp/

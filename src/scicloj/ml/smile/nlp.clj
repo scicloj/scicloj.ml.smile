@@ -1,5 +1,6 @@
 (ns scicloj.ml.smile.nlp
   (:require
+   [clojure.set :as set]
    [clojure.string :as str]
    [pppmap.core :as ppp]
    [tech.v3.dataset :as ds]
@@ -147,7 +148,7 @@
         vocab->index-map (zipmap vocabulary-list  (range))
         vocabulary {:vocab vocabulary-list
                     :vocab->index-map vocab->index-map
-                    :index->vocab-map (clojure.set/map-invert vocab->index-map)}
+                    :index->vocab-map (set/map-invert vocab->index-map)}
                     
         vocab->index-map (:vocab->index-map vocabulary)
         ds
