@@ -109,7 +109,7 @@
      bow-col
      (ppp/ppmap-with-progress
       "text->bow"
-      (get :ppmap-grain-size options 1000)
+      (get options :ppmap-grain-size 1000)
       #(text->bow-fn % options)
       (get ds text-col)))))
   ([ds text-col bow-col]
@@ -328,7 +328,8 @@
          bows (map #(select-keys % (keys used-tf-map)) full-bows)
          tfidf-column (ds-col/new-column tfidf-column
                                          (ppp/ppmap-with-progress
-                                          "tfidf" (get :ppmap-grain-size options 1000)
+                                          "tfidf"
+                                          (get options :ppmap-grain-size 1000)
                                           (fn [bow]
                                             (let [
                                                   terms (keys bow)
