@@ -1,11 +1,10 @@
 (ns scicloj.ml.smile.categorical-test
-  (:require  [clojure.test :as t]
-             [scicloj.metamorph.ml :as ml]
-             [tech.v3.dataset :as ds]
-             [tech.v3.dataset.modelling :as ds-mod]
-             [tech.v3.dataset.categorical :as ds-cat]
-
-             [scicloj.ml.smile.classification]))
+  (:require
+   [clojure.test :as t]
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.classification]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.modelling :as ds-mod]))
 
 
 
@@ -84,20 +83,3 @@
 
     (throw "failed")
     (catch Exception e (t/is true))))
-
-
-
-(comment
-
-
-  
-  (->
-   (ml/predict (->  (ds/->dataset {:col-1 [:a]})
-                    (ds/categorical->number [:col-1]))
-               trained)
-   (ds/select-columns [:y])
-   (ds-cat/reverse-map-categorical-xforms))
-
-
-
-  (def r (ml/train (first work) {:model-type :smile.classification/decision-tree})))
