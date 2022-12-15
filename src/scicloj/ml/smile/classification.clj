@@ -377,7 +377,7 @@
                      :available-types (keys classifier-metadata)}))))
 
 
-(defn- all-int? [v]
+(defn- all-number? [v]
   (every? number? v))
   
 
@@ -388,7 +388,7 @@
                         (model/options->model-type options))
         _ (malli/check-schema (:options entry-metadata) options)
         _ (errors/when-not-error
-           (every? all-int?  (ds/columns label-ds))
+           (every? all-number?  (ds/columns label-ds))
            "All values in target need to be numbers.")
         target-column-names  (ds/column-names label-ds)
         _ (errors/when-not-error (= 1 (count target-column-names)) "Only one target column is supported.")
