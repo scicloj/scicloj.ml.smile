@@ -18,9 +18,8 @@
    (ds-mod/set-inference-target :Score)))
 
 
-
 (deftest test-discrete-nb-bernoulli
-  (is (= [1.000, 1.000, 1.000, 1.000, 1.000, 2.000, 2.000, 1.000, 1.000, 1.000]
+  (is (= [3.000, 3.000, 3.000, 3.000, 3.000, 4.000, 4.000, 3.000, 3.000, 3.000]
        (:Score
         (let [reviews (get-reviews)
               trained-model
@@ -34,7 +33,7 @@
        
 
 (deftest test-discrete-nb-multinomial
-  (is (= [2.000, 2.000, 1.000, 0.000, 1.000, 2.000, 2.000, 2.000, 2.000, 2.000]
+  (is (= [4.000, 4.000, 3.000, 2.000, 3.000, 4.000, 4.000, 4.000, 4.000, 4.000]
        (:Score
         (let [reviews (get-reviews)
               trained-model

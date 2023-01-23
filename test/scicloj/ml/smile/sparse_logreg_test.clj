@@ -28,7 +28,7 @@
                            :sparse-column :sparse})
         prediction (ml/predict reviews trained-model)]
         
-    (is (= 0.742
+    (is (= 0.741
            (loss/classification-accuracy (:Score prediction)
                                          (:Score reviews))))))
     

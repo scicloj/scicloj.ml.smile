@@ -21,7 +21,6 @@
   (->> (ml/model-definition-names)
        (filter #(= "smile.regression" (namespace %)))))
 
-
 (deftest smile-regression-test
   (doseq [reg-model smile-regression-models]
     (verify/basic-regression {:model-type reg-model})))
@@ -46,7 +45,6 @@
   (doseq [classify-model smile-classification-models]
     (verify/basic-classification {:model-type classify-model})))
 
-
 (defn ->malli [[k def]]
   (let [
         option (:options def)]
@@ -57,8 +55,6 @@
        (mapv
         ->malli
         @ml/model-definitions*))))
-
-
 
 
 
@@ -79,6 +75,6 @@
                     (ds/categorical->number tech.v3.dataset.column-filters/categorical)
                     (ds-mod/set-inference-target "Survived"))]
 
-    (is map?
-        (ml/train titanic {:model-type :smile.classification/random-forest
-                           :trees 10}))))
+    (is (map?
+         (ml/train titanic {:model-type :smile.classification/random-forest
+                            :trees 10})))))
