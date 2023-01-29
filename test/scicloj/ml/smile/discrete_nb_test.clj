@@ -20,16 +20,16 @@
 
 (deftest test-discrete-nb-bernoulli
   (is (= [3.000, 3.000, 3.000, 3.000, 3.000, 4.000, 4.000, 3.000, 3.000, 3.000]
-       (:Score
-        (let [reviews (get-reviews)
-              trained-model
-              (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
-                                 :discrete-naive-bayes-model :bernoulli
-                                 :sparse-column :sparse
-                                 :p 100
-                                 :k 5})
-              prediction (ml/predict (ds/head reviews 10) trained-model)]
-          prediction)))))
+         (:Score
+          (let [reviews (get-reviews)
+                trained-model
+                (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
+                                   :discrete-naive-bayes-model :bernoulli
+                                   :sparse-column :sparse
+                                   :p 100
+                                   :k 5})
+                prediction (ml/predict (ds/head reviews 10) trained-model)]
+            prediction)))))
        
 
 (deftest test-discrete-nb-multinomial
