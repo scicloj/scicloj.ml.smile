@@ -121,8 +121,8 @@ The cluster id of each row gets written to the column in `target-column`
      {:documentation
       {:javadoc (class->smile-url (:class reg-def))
        :user-guide (-> reg-def :documentation :user-guide)
-       :code-example nil ;; (-> reg-def :documentation :code-example)
-       :description ""}
+       :code-example nil} ;; (-> reg-def :documentation :code-example)
+       
       :unsupervised? true}))
  model-keywords)
 

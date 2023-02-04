@@ -47,7 +47,6 @@
    :tol (gs/categorical [1e-4 1e-3 1e-2 0.1])})
 
 
-
 (ml/define-model!
   :smile.classification/svm
   train

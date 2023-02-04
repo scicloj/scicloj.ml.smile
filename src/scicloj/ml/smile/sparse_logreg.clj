@@ -12,7 +12,7 @@
    (smile.data SparseDataset)
    (smile.util SparseArray)))
 
-(defn train
+(defn- train
   "Training function of sparse logistic regression model.
    The column of name `(options :sparse-column)` of `feature-ds` needs to contain the text as SparseArrays
    over the vocabulary.
@@ -41,7 +41,7 @@ See tech.v3.dataset/categorical->number.")
                                   (get options :tolerance 1e-5)
                                   (get options :max-iterations 500))))
                                   
-(defn predict
+(defn- predict
   "Predict function for sparse logistic regression model."
   [feature-ds thawed-model model]
   (nb/predict feature-ds thawed-model model))

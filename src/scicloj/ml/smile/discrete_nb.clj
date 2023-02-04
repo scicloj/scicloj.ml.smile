@@ -4,7 +4,7 @@
    [scicloj.ml.smile.model :as model]
    [scicloj.ml.smile.nlp :as nlp]
    [scicloj.ml.smile.registration :refer [class->smile-url]]
-   [scicloj.ml.smile.utils :refer :all]
+   [scicloj.ml.smile.utils :as utils]
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.datatype.errors :as errors]
@@ -45,9 +45,9 @@ See tech.v3.dataset/categorical->number.")
         train-score-array (into-array Integer/TYPE
                                       (get target-ds (first (ds-mod/inference-target-column-names target-ds))))
         p (:p options)
-        _ (when-not-pos-error p "p needs to be specified in options and greater 0")
+        _ (utils/when-not-pos-error p "p needs to be specified in options and greater 0")
         k (:k options)
-        - (when-not-pos-error k "k needs to be specified in options and greater 0")
+        _ (utils/when-not-pos-error k "k needs to be specified in options and greater 0")
         nb-model
         (get nb-lookup-table (get options :discrete-naive-bayes-model :multinomial))
         _ (errors/when-not-error nb-model ":discrete-naive-bayes-model contains invalid model")

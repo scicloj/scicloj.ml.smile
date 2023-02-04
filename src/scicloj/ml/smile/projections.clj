@@ -9,8 +9,6 @@
    (smile.math.kernel MercerKernel)
    (smile.projection GHA KPCA PCA ProbabilisticPCA Projection RandomProjection)))
 
-(require '[malli.instrument :as mi])
-(require '[malli.dev.pretty :as pretty])
 
 (def model-keywords
   {

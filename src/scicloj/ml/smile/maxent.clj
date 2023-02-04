@@ -28,7 +28,7 @@
 
 
 
-(defn maxent-train
+(defn- maxent-train
   "Training function of Maxent model
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as a sparce vector
    agains the vocabulary."
@@ -66,7 +66,7 @@ See tech.v3.dataset/categorical->number.
        (:tol options)
        (:max-iter options)))))
 
-(defn maxent-train-multinomial
+(defn- maxent-train-multinomial
   "Training function of Maxent/multinomial model
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as a sparse vector
    agains the vocabulary."
@@ -74,7 +74,7 @@ See tech.v3.dataset/categorical->number.
   (maxent-train feature-ds target-ds options :multinomial))
 
 
-(defn maxent-train-binomial
+(defn- maxent-train-binomial
   "Training function of Maxent/binomial model
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as a sparse vector
    agains the vocabulary."
@@ -82,7 +82,7 @@ See tech.v3.dataset/categorical->number.
   (maxent-train feature-ds target-ds options :binomial))
 
 
-(defn maxent-predict
+(defn- maxent-predict
 
   "Predict function for Maxent"
   [feature-ds thawed-model model]
@@ -97,7 +97,7 @@ See tech.v3.dataset/categorical->number.
         (into-array
          (repeatedly (ds/row-count feature-ds)
                      #(double-array n-labels)))
-        predictions (seq  (.predict (:model-data model) predict-array posteriori))
+        _ (.predict (:model-data model) predict-array posteriori)
 
         finalised-predictions
         (model/finalize-classification

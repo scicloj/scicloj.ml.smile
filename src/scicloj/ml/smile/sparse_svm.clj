@@ -2,8 +2,10 @@
   (:require
    [scicloj.metamorph.ml :as ml]
    [tech.v3.dataset :as ds]
+   [scicloj.ml.smile.registration :refer [class->smile-url]]
    [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.datatype :as dt]
+   [scicloj.metamorph.ml.gridsearch :as gs]
    [tech.v3.datatype.errors :as errors])
   (:import
    (smile.classification SVM)
@@ -26,7 +28,7 @@
              ^double (get options :tol 1e-4))))
 
 
-(defn predict
+(defn- predict
   "Predict function for sparse SVM model"
   [feature-ds thawed-model model]
   (let [sparse-arrays (into-array ^SparseArray  (get feature-ds (get-in model [:options :sparse-column])))
@@ -34,9 +36,24 @@
         predictions (.predict (:model-data model) sparse-arrays)]
     (ds/->dataset {target-colum predictions})))
 
+(def ^:private hyperparameters
+  {:C (gs/linear 1 10)
+   :tol (gs/categorical [1e-4 1e-3 1e-2 0.1])})
+
 (ml/define-model!
   :smile.classification/sparse-svm
   train
   predict
-  {})
+  {
+   :options [{:name :C
+              :type :float32
+              :default 1.0
+              :description "soft margin penalty parameter"}
+             {:name :tol
+              :type :float32
+              :default 1e-4
+              :description "tolerance of convergence test"}]
 
+   :hyperparameters hyperparameters
+   :documentation {:javadoc (class->smile-url SVM)
+                   :user-guide "https://haifengl.github.io/classification.html#svm"}})
