@@ -463,18 +463,9 @@
                                    
 
 
-
-
-
-
-
-
-
 (comment
   (do
     (require '[tech.v3.dataset.column-filters :as cf])
-    (require '[tech.v3.dataset.modelling :as ds-mod])
-    (require '[scicloj.metamorph.ml.loss :as loss])
     (def src-ds (ds/->dataset "test/data/iris.csv"))
     (def ds (->  src-ds
                  (ds/categorical->number cf/categorical)
@@ -487,35 +478,3 @@
     (def prediction (ml/predict test-ds model)))
 
   :ok)
-
-  
-
-(comment
-  (require '[tech.v3.dataset.metamorph :as ds-mm])
-  (require '[scicloj.metamorph.ml  :as mm-ml])
-  (require '[tech.v3.dataset.column-filters :as cf])
-
-  ;; (require '[scicloj.metamorph.ml  :as mm-ml-mm])
-
-  (def src-ds (ds/->dataset "test/data/iris.csv"))
-
-  (def predicted-ctx
-    (-> {:metamorph/data src-ds
-         :metamorph/mode :fit
-         :metamorph/id :the-model}
-         
-        ((ds-mm/categorical->number cf/categorical))
-        ((ds-mm/set-inference-target "species"))
-        ((mm-ml/model {:model-type :smile.classification/fld}))))
-
-  (->
-   (merge predicted-ctx
-
-          {:metamorph/data src-ds
-           :metamorph/mode :transform
-           :metamorph/id :the-model})
-
-   ((ds-mm/categorical->number cf/categorical))
-   ((ds-mm/set-inference-target "species"))
-   ((mm-ml/model {:model-type :smile.classification/fld})))
- :ok)
