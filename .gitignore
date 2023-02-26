@@ -15,3 +15,4 @@ example/results.nippy
 /deps.local.edn
 /.clj-kondo/
 /.lsp/
+/.clerk/

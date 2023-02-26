@@ -37,5 +37,5 @@
                         :exec-fn kaocha.runner/exec-fn
                         :exec-args {:watch? true}
                         :skip-meta :slow
-                        :fail-fast? true}
-           }}
+                        :fail-fast? true}}}
+           
