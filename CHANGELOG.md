@@ -1,4 +1,6 @@
 # ConstantChangeLog
+## v7.0.650
+- fixed pom.xml in release
 
 ## v7.0.642
 - fixed arrity exception in `reduce-dimensions` transform
