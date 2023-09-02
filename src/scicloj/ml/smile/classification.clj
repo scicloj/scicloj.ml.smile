@@ -19,13 +19,13 @@
   (:import
    (java.util Properties)
    (smile.base.cart SplitRule)
-   (smile.classification AdaBoost Classifier DecisionTree FLD GradientTreeBoost KNN LDA LogisticRegression QDA RandomForest RDA SoftClassifier)
+   (smile.classification AdaBoost Classifier DecisionTree FLD GradientTreeBoost KNN LDA LogisticRegression QDA RandomForest RDA)
    (smile.data DataFrame)
    (smile.data.formula Formula)
    (tech.v3.datatype ObjectReader)))
 
 (defn- tuple-predict-posterior
-  [^SoftClassifier model ds options n-labels]
+  [^Classifier model ds options n-labels]
   (let [df (smile-data/dataset->smile-dataframe ds)
         n-rows (ds/row-count ds)]
     (smile-proto/initialize-model-formula! model ds)
@@ -65,7 +65,7 @@
 
 
 (defn double-array-predict-posterior
-  [^SoftClassifier model ds options n-labels]
+  [^Classifier model ds options n-labels]
   (let [value-reader (ds/value-reader ds)
         n-rows (ds/row-count ds)]
     (reify

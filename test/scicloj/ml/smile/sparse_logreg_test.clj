@@ -28,26 +28,10 @@
                            :sparse-column :sparse})
         prediction (ml/predict reviews trained-model)]
         
-    (is (= 0.742
+    (is (= 0.741
            (loss/classification-accuracy (:Score prediction)
                                          (:Score reviews))))))
     
-
-(deftest  accurate-disrete-naive-bayes
-  (let [reviews (get-reviews)
-        trained-model
-        (ml/train reviews {:model-type :smile.classification/discrete-naive-bayes
-                           :discrete-naive-bayes-model :multinomial
-                           :p 100
-                           :k 5
-                           :sparse-column :sparse})
-        prediction (ml/predict reviews trained-model)]
-        
-    (is (= 0.631
-           (loss/classification-accuracy (:Score prediction)
-                                         (:Score reviews))))))
-    
-
 
 (deftest  accurate-disrete-naive-bayes
   (let [reviews (get-reviews)

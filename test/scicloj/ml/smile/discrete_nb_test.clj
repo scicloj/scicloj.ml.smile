@@ -3,6 +3,7 @@
             [scicloj.metamorph.ml :as ml]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
+            [tech.v3.dataset.categorical :as ds-cat]
             [scicloj.ml.smile.discrete-nb :as nb]
             [scicloj.ml.smile.nlp :as nlp]))
 
@@ -20,7 +21,7 @@
 
 
 (deftest test-discrete-nb-bernoulli
-  (is (= [1.000, 1.000, 1.000, 1.000, 1.000, 2.000, 2.000, 1.000, 1.000, 1.000]
+  (is (= ["4" "4" "4" "4" "4" "5" "5" "4" "4" "4"]
        (:Score
         (let [reviews (get-reviews)
               trained-model
@@ -29,12 +30,14 @@
                                  :sparse-column :sparse
                                  :p 100
                                  :k 5})
-              prediction (ml/predict (ds/head reviews 10) trained-model)]
+              prediction (-> (ml/predict (ds/head reviews 10) trained-model)
+                             (ds-cat/reverse-map-categorical-xforms))]
           prediction)))))
        
 
+
 (deftest test-discrete-nb-multinomial
-  (is (= [2.000, 2.000, 1.000, 0.000, 1.000, 2.000, 2.000, 2.000, 2.000, 2.000]
+  (is (= ["5" "5" "4" "3" "4" "5" "5" "5" "5" "5"]
        (:Score
         (let [reviews (get-reviews)
               trained-model
@@ -43,7 +46,10 @@
                                  :sparse-column :sparse
                                  :p 100
                                  :k 5})
-              prediction (ml/predict (ds/head reviews 10) trained-model)]
+              prediction 
+              (->
+               (ml/predict (ds/head reviews 10) trained-model)
+               (ds-cat/reverse-map-categorical-xforms))]
           prediction)))))
        
 
@@ -58,3 +64,6 @@
                             :sparse-column :sparse
                             :p 100
                             :k 5})))))
+
+
+  
