@@ -3,7 +3,7 @@
                  :fn compile
                  :ensure "target/classes"}
  :deps {org.clojure/clojure           {:mvn/version "1.11.1"}
-        scicloj/tablecloth             {:mvn/version "7.000-beta-51"}
+        scicloj/tablecloth             {:mvn/version "7.007"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
         scicloj/metamorph.ml           {:mvn/version "0.6.4"}
