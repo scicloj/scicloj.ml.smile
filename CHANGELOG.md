@@ -1,4 +1,7 @@
 # ConstantChangeLog
+## v7.1.656
+- adapted to tablecloth 7.x
+
 ## v7.0.650
 - fixed pom.xml in release
 
