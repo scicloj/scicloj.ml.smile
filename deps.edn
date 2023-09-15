@@ -6,7 +6,7 @@
         scicloj/tablecloth             {:mvn/version "7.007"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
-        scicloj/metamorph.ml           {:mvn/version "0.6.4"}
+        scicloj/metamorph.ml           {:mvn/version "0.7"}
 
         org.bytedeco/openblas          {:mvn/version "0.3.23-1.5.9"}
         org.bytedeco/openblas-platform {:mvn/version "0.3.23-1.5.9"}
