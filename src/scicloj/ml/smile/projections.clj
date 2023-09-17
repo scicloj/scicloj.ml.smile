@@ -195,13 +195,15 @@
 
 
 (ml/define-model! :smile.projections
-  train nil {:unsupervised? true})
+  train
+  (fn [_] (throw (Exception. "prediction not supported"))) 
+  {:unsupervised? true})
 
 (doseq [[reg-kwd reg-def] model-keywords]
   (ml/define-model!
     (keyword (str "smile.projections/" (name  reg-kwd)))
     (partial train-algorithm reg-kwd)
-    nil
+    (fn [_] (throw (Exception. "prediction not supported"))) 
     {:unsupervised? true
      :documentation {:javadoc (class->smile-url (:class reg-def))
                      :user-guide (-> reg-def :documentation :user-guide)

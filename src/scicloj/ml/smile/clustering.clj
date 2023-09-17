@@ -109,15 +109,18 @@ The cluster id of each row gets written to the column in `target-column`
                           (options :clustering-method-args)))
 
 
-(ml/define-model! :fastmath/cluster train-fn nil {:unsupervised? true})
+(ml/define-model! 
+  :fastmath/cluster 
+  train-fn
+  (fn [_] (throw (Exception. "prediction not supported"))) 
+  {:unsupervised? true})
 
 (run!
  (fn [[kwf reg-def]]
    (ml/define-model!
-
      (keyword (str "fastmath.cluster/" (name  kwf)))
      (partial train-fn-method kwf)
-     nil
+     (fn [_] (throw (Exception. "prediction not supported"))) 
      {:documentation
       {:javadoc (class->smile-url (:class reg-def))
        :user-guide (-> reg-def :documentation :user-guide)

@@ -46,4 +46,6 @@
 
 (doseq [[reg-kwd reg-def] definitions]
   (ml/define-model! (keyword "smile.manifold" (name reg-kwd))
-    (train reg-kwd) nil (make-options reg-kwd reg-def)))
+    (train reg-kwd) 
+    (fn [_] (throw (Exception. "prediction not supported"))) 
+    (make-options reg-kwd reg-def)))

@@ -1,4 +1,8 @@
 # ConstantChangeLog
+
+## v7.2
+- use latest metamorph.ml
+
 ## v7.1.657
 - use latest metamorph.ml
 

@@ -4,12 +4,10 @@
                  :ensure "target/classes"}
  :deps {org.clojure/clojure           {:mvn/version "1.11.1"}
         scicloj/tablecloth             {:mvn/version "7.007"}
-        org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
-        scicloj/metamorph.ml           {:mvn/version "0.7"}
+        org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
+        scicloj/metamorph.ml           {:mvn/version "0.7.2"}
 
-        org.bytedeco/openblas          {:mvn/version "0.3.23-1.5.9"}
-        org.bytedeco/openblas-platform {:mvn/version "0.3.23-1.5.9"}
         generateme/fastmath            {:mvn/version "2.2.1"}
         metosin/malli                  {:mvn/version "0.11.0"}}
  :aliases {
