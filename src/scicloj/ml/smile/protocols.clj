@@ -41,6 +41,8 @@
                                    (ds-utils/column-safe-name name)
                                    datatype))))
         struct-type (StructType. fields)]
+    (println :formula formula)
+    (println :struct-type struct-type)
     (.bind formula struct-type)))
 
 
