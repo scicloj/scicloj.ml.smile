@@ -9,5 +9,4 @@ Smile models for [metamorph.ml](https://github.com/scicloj/metamorph.ml) and [sc
 
 Copyright © Scicloj
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the GPL
