@@ -52,7 +52,7 @@
 (defn finalize-classification
   ;; attention: this function might be smile specific
   ;; it assumes a certain relation in the order of prediction probbalilities in `cls-tens`
-  ;; and teh categoricla map
+  ;; and the categorical map
 
   [cls-tens n-rows target-cname target-categorical-maps]
   (let [rename-map (-> (get-in target-categorical-maps
