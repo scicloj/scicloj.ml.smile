@@ -393,6 +393,7 @@
         target-column-names  (ds/column-names label-ds)
         _ (errors/when-not-error (= 1 (count target-column-names)) "Only one target column is supported.")
         target-colname (first target-column-names)
+        _ (errors/when-not-error (ds-mod/inference-target-label-map label-ds target-column-names) "target-categorical-maps not found. Target column need to be categorical.")
         feature-colnames (ds/column-names feature-ds)
         formula (smile-proto/make-formula (ds-utils/column-safe-name target-colname)
                                           (map ds-utils/column-safe-name
