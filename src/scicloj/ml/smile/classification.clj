@@ -393,7 +393,7 @@
         target-column-names  (ds/column-names label-ds)
         _ (errors/when-not-error (= 1 (count target-column-names)) "Only one target column is supported.")
         target-colname (first target-column-names)
-        _ (errors/when-not-error (ds-mod/inference-target-label-map label-ds target-column-names) "target-categorical-maps not found. Target column need to be categorical.")
+        ;; _ (errors/when-not-error (ds-mod/inference-target-label-map label-ds target-column-names) "target-categorical-maps not found. Target column need to be categorical.")
         feature-colnames (ds/column-names feature-ds)
         formula (smile-proto/make-formula (ds-utils/column-safe-name target-colname)
                                           (map ds-utils/column-safe-name
@@ -410,7 +410,8 @@
         properties (smile-proto/options->properties entry-metadata dataset options)
         ctor (:constructor entry-metadata)
         model (ctor formula data properties)]
-    {:smile-df-used data
+    {:n-labels (-> label-ds (get target-colname) distinct count)
+     :smile-df-used data
      :smile-props-used properties
      :smile-formula-used formula
      :model-as-bytes
@@ -425,15 +426,13 @@
 (defn- predict
   [feature-ds thawed-model {:keys [target-columns
                                    target-categorical-maps
-                                   options]}]
-  (errors/when-not-error target-categorical-maps "target-categorical-maps not found. Target column need to be categorical.")
-
-  (let [entry-metadata (model-type->classification-model
+                                   options
+                                   model-data]}]
+  ;; (errors/when-not-error target-categorical-maps "target-categorical-maps not found. Target column need to be categorical.")
+  (let [n-labels (model-data :n-labels)
+        entry-metadata (model-type->classification-model
                         (model/options->model-type options))
         target-colname (first target-columns)
-        n-labels (-> (get target-categorical-maps target-colname)
-                     :lookup-table
-                     count)
         _ (errors/when-not-error (pos? n-labels) "n-labels equals 0. Something is wrong with the :lookup-table of the target column.")
         predictor (:predictor entry-metadata)
         predictions (predictor thawed-model feature-ds options n-labels)
@@ -442,12 +441,12 @@
             (dtt/->tensor)
             (model/finalize-classification (ds/row-count feature-ds)
                                            target-colname
+                                           n-labels
                                            target-categorical-maps))
         mapped-predictions
         (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colname)
             (ds/update-column target-colname
                               #(vary-meta % assoc :column-type :prediction)))]
-
     mapped-predictions))
 
   

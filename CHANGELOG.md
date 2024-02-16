@@ -1,5 +1,7 @@
 # ConstantChangeLog
 
+## unreleased
+allow classificaion of already numeric targets
 ## v7.2
 - use latest metamorph.ml
 

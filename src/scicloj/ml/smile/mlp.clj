@@ -51,6 +51,7 @@
             (dtt/->tensor)
             (model/finalize-classification (ds/row-count feature-ds)
                                            target-colname
+                                           n-labels
                                            target-categorical-maps))
         mapped-predictions
         (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colname)

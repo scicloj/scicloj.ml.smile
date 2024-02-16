@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
+            [tech.v3.dataset.categorical :as ds-cat]
             [scicloj.ml.smile.discrete-nb :as nb]
             [scicloj.ml.smile.nlp :as nlp]
             [scicloj.metamorph.ml :as ml]
@@ -26,12 +27,14 @@
         (ml/train reviews {:model-type :smile.classification/sparse-logistic-regression
                            :n-sparse-columns 100
                            :sparse-column :sparse})
-        prediction (ml/predict reviews trained-model)]
-        
+        prediction (-> (ml/predict reviews trained-model)
+                       (ds-cat/reverse-map-categorical-xforms))]
+
+
     (is (= 0.741
            (loss/classification-accuracy (:Score prediction)
-                                         (:Score reviews))))))
-    
+                                         (:Score (ds-cat/reverse-map-categorical-xforms reviews)))))))
+
 
 (deftest  accurate-disrete-naive-bayes
   (let [reviews (get-reviews)
@@ -41,9 +44,9 @@
                            :p 100
                            :k 5
                            :sparse-column :sparse})
-        prediction (ml/predict reviews trained-model)]
+        prediction (-> (ml/predict reviews trained-model)
+                       (ds-cat/reverse-map-categorical-xforms))]
         
     (is (= 0.629
            (loss/classification-accuracy (:Score prediction)
-                                         (:Score reviews))))))
-    
+                                         (:Score (ds-cat/reverse-map-categorical-xforms reviews)))))))

@@ -42,3 +42,47 @@
                  frequencies
                  keys
                  set)))))
+
+
+(t/deftest test-iris
+  (let [plain-iris
+        (-> (datasets/iris-ds)
+            (ds/update-column :species (fn [col]
+                                         (map
+                                          #(case %
+                                             0 :a
+                                             1 :b
+                                             2 :c)
+
+                                          col)))
+
+            (dsmod/set-inference-target :species))
+
+
+        species-map
+        (dscat/fit-categorical-map plain-iris :species {} :int64)
+
+        train-ds (-> plain-iris (ds/shuffle {:seed 123}) (ds/head 100))
+        test-ds  (-> plain-iris (ds/shuffle {:seed 123}) (ds/head 100))
+
+
+
+
+        model
+        (-> train-ds
+            (dscat/transform-categorical-map species-map)
+            (ml/train {:model-type :smile.classification/logistic-regression}))
+
+
+        _
+        (-> train-ds
+            (dscat/transform-categorical-map species-map))
+
+        prediction
+        (-> test-ds
+            (dscat/transform-categorical-map species-map)
+            (ml/predict model)
+            (dscat/invert-categorical-map species-map))]
+
+    (t/is (= {:b 39 :c 29 :a 32}
+             (-> prediction :species frequencies))))) ;; =>

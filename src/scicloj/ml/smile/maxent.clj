@@ -104,6 +104,7 @@ See tech.v3.dataset/categorical->number.
          (dtt/->tensor posteriori)
          (ds/row-count feature-ds)
          target-colum
+         n-labels
          (-> model :target-categorical-maps))
 
         mapped-prediction

@@ -83,3 +83,48 @@
 
     (throw "failed")
     (catch Exception e (t/is true))))
+
+(t/deftest cat-label
+
+  (let [model
+        (-> (ds/->dataset {:col-1 [:a :a :b :b :a :a :b :b]
+                           :label     [:x :y :x :y :x :y :x :y]})
+
+            (ds/categorical->number [:col-1] [:a :b])
+            (ds/categorical->number [:label] [:x :y])
+            (ds-mod/set-inference-target :label)
+            (ml/train {:model-type :smile.classification/decision-tree}))
+
+
+        prediction
+        (ml/predict
+         (->
+          (ds/->dataset {:col-1 [:a :a :b :b :a :a :b :b]})
+          (ds/categorical->number [:col-1] [:a :b]))
+         model)]
+
+    (t/is (= (repeat 8 0.0)
+             (-> prediction :label)))))
+
+
+(t/deftest cat-label-numerc
+
+  (let [model
+        (-> (ds/->dataset {:col-1 [:a :a :b :b :a :a :b :b]
+                           :label     [0 1 0 1 0 1 0 1]})
+
+
+            (ds/categorical->number [:col-1] [:a :b])
+
+            (ds-mod/set-inference-target :label)
+            (ml/train {:model-type :smile.classification/decision-tree}))
+
+
+        prediction
+        (ml/predict
+         (->
+          (ds/->dataset {:col-1 [:a :a :b :b :a :a :b :b]})
+          (ds/categorical->number [:col-1] [:a :b]))
+         model)]
+    (t/is (= (repeat 8 0.0)
+             (-> prediction :label)))))
