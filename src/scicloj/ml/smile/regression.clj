@@ -12,7 +12,12 @@
    [tech.v3.dataset.utils :as ds-utils]
    [tech.v3.datatype :as dtype]
    [tech.v3.libs.smile.data :as smile-data]
-   [tech.v3.tensor :as dtt])
+   [tech.v3.tensor :as dtt]
+   [fastmath.stats :as stats]
+   [fastmath.core :as m]
+   [fastmath.random :as r])
+
+
   (:import
    (java.util List Properties)
    (smile.data DataFrame)
@@ -90,6 +95,16 @@
                         (sort-by (comp second) >))}))
 
 
+(defn- log-likelihood-ols
+  [y yhat]
+  (let [sigma (-> (stats/rss y yhat)
+                  (/ (count y))
+                  (m/sqrt))
+        ldnorm (map (fn [vy vyhat]
+                      (let [d (r/distribution :normal {:mu vyhat :sd sigma})]
+                        (r/lpdf d vy))) y yhat)]
+    (stats/sum ldnorm)))
+
 (def ^:private regression-metadata
   {:ordinary-least-square 
    {:class OLS
@@ -108,7 +123,8 @@
                :default true}]
     :property-name-stem "smile.ols"
     :constructor #(OLS/fit %1 %2 %3)
-    :predictor predict-ols}
+    :predictor predict-ols
+    :loglik-fn log-likelihood-ols}
 
    :elastic-net 
    {:class ElasticNet
@@ -324,15 +340,19 @@
 
 
 (doseq [[reg-kwd reg-def] regression-metadata]
-  (ml/define-model! (keyword "smile.regression" (name reg-kwd))
-    train predict {:thaw-fn thaw
-                   :explain-fn (case reg-kwd
-                                 :ordinary-least-square explain-ols
-                                 explain)
-                   :hyperparameters (:gridsearch-options reg-def)
-                   :options (:options reg-def)
-                   :documentation {:javadoc (class->smile-url (:class reg-def))
-                                   :user-guide (-> reg-def :documentation :user-guide)}}))
+  (let [model-opts {:thaw-fn thaw
+                    :explain-fn (case reg-kwd
+                                  :ordinary-least-square explain-ols
+                                  explain)
+                    :hyperparameters (:gridsearch-options reg-def)
+                    :options (:options reg-def)
+                    :documentation {:javadoc (class->smile-url (:class reg-def))
+                                    :user-guide (-> reg-def :documentation :user-guide)}}
+        model-opts (if (:loglik-fn reg-def)
+                     (assoc  model-opts :loglik-fn  (:loglik-fn reg-def))
+                     model-opts)]
+    (ml/define-model! (keyword "smile.regression" (name reg-kwd))
+      train predict model-opts)))
 
                    
 
