@@ -86,3 +86,28 @@
 
     (t/is (= {:b 39 :c 29 :a 32}
              (-> prediction :species frequencies))))) ;; =>
+
+
+(t/deftest allow-numeric-target
+  (let [iris-ds-traget-is-non-categorical
+        (-> (datasets/iris-ds)
+            (ds/assoc-metadata [:species]
+                               :categorical-map nil
+                               :categorical? nil))]
+    ;; should not crash
+    (ml/train
+     iris-ds-traget-is-non-categorical
+     {:model-type :smile.classification/logistic-regression})))
+
+
+(t/deftest fail-on-string-target
+  (let [iris-ds-traget-is-string
+        (-> (datasets/iris-ds)
+            (dscat/reverse-map-categorical-xforms))]
+
+    ;; should not crash
+    (t/is
+     (thrown-with-msg? Exception #"All values in target need to be numbers."
+                       (ml/train
+                        iris-ds-traget-is-string
+                        {:model-type :smile.classification/logistic-regression})))))
