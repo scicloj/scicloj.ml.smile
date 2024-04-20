@@ -289,7 +289,9 @@
               {:name :tolerance
                :default 1e-4
                :type :float64
-               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]}
+               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]
+    :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])}}
+
 
    :quadratic-discriminant-analysis
    {:class QDA
@@ -305,7 +307,9 @@
               {:name :tolerance
                :default 1e-4
                :type :float64
-               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]}
+               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]
+    :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])}}
+
 
    :regularized-discriminant-analysis
    {:class RDA
@@ -325,8 +329,12 @@
               {:name :tolerance
                :default 1e-4
                :type :float64
-               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]}
+               :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]
+    :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])
+                         :alpha (ml-gs/linear [0.0 1.0])}}
 
+
+    
 
    :random-forest {:class RandomForest
                    :name :random-forest
