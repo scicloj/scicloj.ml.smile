@@ -1,6 +1,8 @@
 # ConstantChangeLog
 
 ## unreleased
+
+## v7.3
 - allow classificaion of already numeric targets
 - re-added some gridsearch options
 - added loglikelihood calculatin for OLS
