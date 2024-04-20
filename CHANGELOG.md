@@ -4,6 +4,7 @@
 - allow classificaion of already numeric targets
 - re-added some gridsearch options
 - added loglikelihood calculatin for OLS
+- added one-line linear regression
 
 ## v7.2
 - use latest metamorph.ml

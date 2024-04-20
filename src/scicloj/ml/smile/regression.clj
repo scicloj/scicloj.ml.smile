@@ -3,18 +3,23 @@
   (:require
    [scicloj.metamorph.ml :as ml]
    [scicloj.metamorph.ml.gridsearch :as ml-gs]
+   [scicloj.metamorph.ml.toydata :as toydata]
    [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.model :as model]
    [scicloj.ml.smile.protocols :as smile-proto]
    [scicloj.ml.smile.registration :refer [class->smile-url]]
    [tech.v3.dataset :as ds]
+   [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.dataset.column :as ds-col]
    [tech.v3.dataset.utils :as ds-utils]
    [tech.v3.datatype :as dtype]
    [tech.v3.libs.smile.data :as smile-data]
    [tech.v3.tensor :as dtt]
+   [scicloj.metamorph.ml.metrics :as metrics]
    [fastmath.stats :as stats]
+
    [fastmath.core :as m]
+   [fastmath.vector :as v]
    [fastmath.random :as r])
 
 
@@ -355,6 +360,42 @@
       train predict model-opts)))
 
                    
+(defn linear-regression
+  ([ds options]
+
+   (let [
+         inference-target (first  (ds-mod/inference-target-column-names ds))
+         m
+         (ml/train ds (assoc options :model-type :smile.regression/ordinary-least-square))
+
+         ols (ml/thaw-model m)
+         prediction-ds (ml/predict ds m)
+         y (seq (get ds inference-target))
+         y_hat (seq (.fittedValues ols))
+
+         metrics-map {:r-squared (.RSquared ols)
+                      :adjusted-r-squared (.adjustedRSquared ols)
+                      :f-test (.ftest ols)
+                      :df (.df ols)
+                      :error (.error ols)
+                      :t-test (.ttest ols)
+                      :coefficients (seq (.coefficients ols))
+                      :intercept (.intercept ols)
+                      :residuals (seq (.residuals ols))
+                      :fitted-values y_hat
+                      :rss (.RSS ols)
+                      :p-value (.pvalue ols)}]
+     (assoc metrics-map
+            :mse  (stats/mse y y_hat)
+            :rmse (stats/rmse y y_hat)
+            :model m
+            :loglik (ml/loglik m y y_hat)
+            :bic
+            (metrics/BIC m ds prediction-ds)
+            :aic
+            (metrics/AIC m ds prediction-ds))))
+  ([ds] (linear-regression ds {})))
+
 
 
 (comment
