@@ -95,9 +95,11 @@
                                :categorical-map nil
                                :categorical? nil))]
     ;; should not crash
-    (ml/train
-     iris-ds-traget-is-non-categorical
-     {:model-type :smile.classification/logistic-regression})))
+    (t/is (= [:model-data :options :id :feature-columns :target-columns]
+             (keys
+              (ml/train
+               iris-ds-traget-is-non-categorical
+               {:model-type :smile.classification/logistic-regression}))))))
 
 
 (t/deftest fail-on-string-target
