@@ -3,6 +3,7 @@
 ## unreleased
 - allow classificaion of already numeric targets
 - re-added some gridsearch options
+- added loglikelihood calculatin for OLS
 
 ## v7.2
 - use latest metamorph.ml

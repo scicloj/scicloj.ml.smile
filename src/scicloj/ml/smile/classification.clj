@@ -290,7 +290,7 @@
                :default 1e-4
                :type :float64
                :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]
-    :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])}}
+    :gridsearch-options {:tolerance (ml-gs/linear 1e-9 1e-2)}}
 
 
    :quadratic-discriminant-analysis
@@ -308,7 +308,7 @@
                :default 1e-4
                :type :float64
                :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]
-    :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])}}
+    :gridsearch-options {:tolerance (ml-gs/linear 1e-9 1e-2)}}
 
 
    :regularized-discriminant-analysis
@@ -330,8 +330,8 @@
                :default 1e-4
                :type :float64
                :description "A tolerance to decide if a covariance matrix is singular; it will reject variables whose variance is less than tol"}]
-    :gridsearch-options {:tolerance (ml-gs/linear [1e-9 1e-2])
-                         :alpha (ml-gs/linear [0.0 1.0])}}
+    :gridsearch-options {:tolerance (ml-gs/linear 1e-9 1e-2)
+                         :alpha (ml-gs/linear 0.0 1.0)}}
 
 
     
