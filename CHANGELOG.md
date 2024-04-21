@@ -1,8 +1,11 @@
 # ConstantChangeLog
 
-## unreleased
+# unreleased
 
-## v7.3
+- added function to easly retrieve datasets from Smile Github data folder
+   
+# v7.3
+
 - allow classificaion of already numeric targets
 - re-added some gridsearch options
 - added loglikelihood calculatin for OLS
