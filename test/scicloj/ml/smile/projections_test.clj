@@ -7,6 +7,7 @@
             [scicloj.metamorph.core :as mm]
             [scicloj.metamorph.ml :as ml]
             [tech.v3.dataset.math :as math]
+            [same.core :refer [ish?]]
             [scicloj.metamorph.ml.preprocessing :as preprocessing]))
             
 
@@ -70,10 +71,10 @@
                           (get-in fit-context [:metamorph/data "pca-cov-1"]))
                          0.0001))
 
-    (is (= [ 0.628948310202486
-            0.8952704360795221
-            0.9937421970301336
-            1.0]
+    (is (ish? [ 0.628948310202486
+               0.8952704360795221
+               0.9937421970301336
+               1.0]
            (-> (vals fit-context)
                (nth 3)
                :fit-result :model

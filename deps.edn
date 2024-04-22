@@ -31,6 +31,7 @@
 
                   :extra-deps {lambdaisland/kaocha {:mvn/version "1.85.1342"}
                                org.clojure/test.check {:mvn/version "1.1.1"}
+                               same/ish               {:mvn/version "0.1.6"}
                                criterium/criterium {:mvn/version "0.4.6"}}}
            :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.85.1342"}}
                         :exec-fn kaocha.runner/exec-fn
