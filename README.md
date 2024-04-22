@@ -5,8 +5,9 @@
 Smile models for [metamorph.ml](https://github.com/scicloj/metamorph.ml) and [scicloj.ml](https://github.com/scicloj/scicloj.ml) (where symbols from a number of scicloj.ml.smile namespaces are re-exported under the `scicloj.ml.metamorph` namespace.)
 
 
-This project depends on Smile 2.6.0 and will likely stay on this version for licence reasons.
-Smile 3.0.0 has changed the licence from LGPL to GPL
+This project depends on Smile 2.6.0  for licence reasons.
+Smile 3.0.0 has changed the licence from LGPL to GPL and no decision was taken if to upgrade `scicloj.ml.smile` to Smile 3.0.0 and therefore change licence to GPL.
+
 
 ## License
 
