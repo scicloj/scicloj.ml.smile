@@ -2,7 +2,9 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [tablecloth.api :as tc]
+            [tech.v3.dataset :as ds]
             [camel-snake-kebab.core :as csf]
+            [charred.api :as charred]
             [tech.v3.libs.smile.data :as smile-data])
   (:import
    [smile.io Arff]))
@@ -21,26 +23,35 @@
   The passed `data-file-name` is added as suffix to
   'https://raw.githubusercontent.com/haifengl/smile/v2.6.0/shell/src/universal/data/'
 
+  `options` are passed to the underlying ->dataset function (except for `arff`)
+
   The data file is returned as a tech.ml dataset.
 
-  It support currently '.csv' and '.arff' files.
+  It support currently '.arff'  and all filetypes natively support bye `tech.ml.dataset/->dataset`.
+  (some file types require special library dependencies to get imported by `tech.ml.dataset`)
   "
 
-  [data-file-name]
-  (let [data-url
-        (format
-         "https://raw.githubusercontent.com/haifengl/smile/v2.6.0/shell/src/universal/data/%s"
-         data-file-name)]
+  ([data-file-name options]
+   (let [data-url
+         (format
+          "https://raw.githubusercontent.com/haifengl/smile/v2.6.0/shell/src/universal/data/%s"
+          data-file-name)]
 
 
-    (cond (str/ends-with? data-file-name ".arff") (arff->ds data-url)
-          (str/ends-with? data-file-name ".csv") (tc/dataset data-url {:key-fn csf/->kebab-case-keyword})
-          true (Exception. (format "Not supported file name extension: %s" data-file-name)))))
+
+     (cond (str/ends-with? data-file-name ".arff") (arff->ds data-url)
+           true (tc/dataset data-url (assoc options :key-fn csf/->kebab-case-keyword)))))
+
+           
+  ([data-file-name] (get-smile-data data-file-name {})))
 
 
 
 (comment
+  (get-smile-data "json/books2.json")
   (get-smile-data "classification/breastcancer.csv")
   (get-smile-data "weka/regression/cal_housing.arff")
   (get-smile-data
    "weka/weather.arff"))
+
+
