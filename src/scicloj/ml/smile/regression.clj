@@ -422,9 +422,9 @@
 
 
 (defn linear-regression
-  "Does a linear regression of withe the give tech.ml.dataset.
+  "Does a linear regression with the given tech.ml.dataset.
 
-  It should have teh inference-target column makred as such.
+  It should have the inference-target column marked as such.
   It uses model :smile.regression/ordinary-least-square
 
   It returns a result map with
