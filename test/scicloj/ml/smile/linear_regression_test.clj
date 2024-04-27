@@ -14,5 +14,6 @@
          (ds/drop-columns [:model])
          (ds-mod/set-inference-target :mpg))
         result (sut/linear-regression ds)]
-       (is (= 181.29864126807638 (:bic result)))
-       (is  (= 0.8690157644777647 (:r-squared result)))))
+
+    (is (= 181.29864126807638 (:bic result)))
+    (is  (= 0.8690157644777647 (:r.squared result)))))

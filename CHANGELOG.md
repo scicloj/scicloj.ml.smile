@@ -3,6 +3,8 @@
 # unreleased
 
 - added function to easly retrieve datasets from Smile Github data folder
+- upgraded deps
+- added tidy and glance for OLS
    
 # v7.3
 

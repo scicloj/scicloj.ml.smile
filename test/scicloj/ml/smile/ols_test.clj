@@ -2,9 +2,8 @@
   (:require [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [scicloj.ml.smile.regression]
-            [scicloj.ml.smile.nlp :as nlp]
             [scicloj.metamorph.ml :as ml]
-            [scicloj.metamorph.ml.gridsearch :as ml-gs]
+            [scicloj.metamorph.ml.toydata]
             [clojure.test :refer (deftest is)]))
 
 (def interest-rate  [2.75 2.5 2.5 2.5 2.5 2.5 2.5 2.25 2.25 2.25 2 2 2 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75])
@@ -17,14 +16,14 @@
 (defn close? [tolerance x y]
   (< (absolute-difference x y) tolerance))
 
-(deftest explain
-  (let [ds (-> (ds/->dataset {:interest-rate interest-rate
+
+(def ds (-> (ds/->dataset {:interest-rate interest-rate
                               :unemployment-rate unemployment-rate
                               :stoc-index-price stock-index-price})
-               (ds-mod/set-inference-target :stoc-index-price))
+            (ds-mod/set-inference-target :stoc-index-price)))
 
-
-        ols
+(deftest explain
+  (let [ols
         (ml/train ds {:model-type :smile.regression/ordinary-least-square})
 
         prediction
@@ -35,7 +34,19 @@
         ols-model
         (ml/thaw-model ols
                        (ml/options->model-def (:options ols)))
+
         weights (ml/explain ols)]
+
+    (is (= [{:r.squared 0.8976335894170215
+             :adj.r.squared 0.8878844074567379
+             :df 21
+             :logLik -134.60792266677416
+             :bic 281.9280606549401
+             :aic 277.2158453335483
+             :p-value 4.042532223561903E-11}]
+           (ds/rows
+            (ml/glance ols))))
+
 
     (is (close? 0.1 -134.60792266677416 loglik))
     (is (close? 0.1 1798.4  (:bias weights)))
@@ -43,12 +54,33 @@
     (is (close? 0.1 -250.1  (-> weights :coefficients second second)))))
 
 
+
+
+
+(deftest tidy-fns
+
+  (let [ds (scicloj.metamorph.ml.toydata/iris-ds)
+        ols
+        (->
+         ds
+         (ds/drop-columns [:species])
+         (ds-mod/set-inference-target :sepal_length)
+         (ml/train {:model-type :smile.regression/ordinary-least-square}))]
+
+
+    (is (= [5 4]
+           (ds/shape
+            (ml/tidy ols))))
+    (is (= [7 1]
+           (ds/shape
+            (ml/glance ols))))
+    (is (= [5 150]
+           (ds/shape
+            (ml/augment ols ds))))))
+
+
+
+
 (deftest fail-on-wrong-params
-  (let [ds (-> (ds/->dataset {:interest-rate interest-rate
-                              :unemployment-rate unemployment-rate
-                              :stoc-index-price stock-index-price})
-               (ds-mod/set-inference-target :stoc-index-price))]
-
-
-    (is (thrown? IllegalArgumentException (ml/train ds {:model-type :smile.regression/ordinary-least-square
-                                                        :blub false})))))
+  (is (thrown? IllegalArgumentException (ml/train ds {:model-type :smile.regression/ordinary-least-square
+                                                      :blub false}))))

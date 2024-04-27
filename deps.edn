@@ -6,8 +6,10 @@
         scicloj/tablecloth             {:mvn/version "7.029"}
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
+        dev.weavejester/medley         {:mvn/version "1.8.0"}
 
-        scicloj/metamorph.ml           {:mvn/version "0.7.9"}
+
+         scicloj/metamorph.ml           {:mvn/version "0.8.2"}
         ;; {:local/root "../metamorph.ml/"}
         generateme/fastmath            {:mvn/version "2.4.0"}
         metosin/malli                  {:mvn/version "0.11.0"}}

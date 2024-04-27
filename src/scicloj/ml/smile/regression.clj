@@ -1,36 +1,55 @@
 (ns scicloj.ml.smile.regression
   "Namespace to require to enable a set of smile regression models"
   (:require
+   [fastmath.core :as m]
+   [fastmath.random :as r]
+   [fastmath.stats :as stats]
+   [medley.core :refer [assoc-some]]
    [scicloj.metamorph.ml :as ml]
    [scicloj.metamorph.ml.gridsearch :as ml-gs]
-   [scicloj.metamorph.ml.toydata :as toydata]
+   [scicloj.metamorph.ml.metrics :as metrics]
    [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.model :as model]
    [scicloj.ml.smile.protocols :as smile-proto]
    [scicloj.ml.smile.registration :refer [class->smile-url]]
    [tech.v3.dataset :as ds]
-   [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.dataset.column :as ds-col]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.dataset.tensor :as ds-tens]
    [tech.v3.dataset.utils :as ds-utils]
    [tech.v3.datatype :as dtype]
    [tech.v3.libs.smile.data :as smile-data]
-   [tech.v3.tensor :as dtt]
-   [scicloj.metamorph.ml.metrics :as metrics]
-   [fastmath.stats :as stats]
-
-   [fastmath.core :as m]
-   [fastmath.vector :as v]
-   [fastmath.random :as r])
+   [tech.v3.tensor :as dtt])
 
 
   (:import
    (java.util List Properties)
    (smile.data DataFrame)
    (smile.data.formula Formula)
-   (smile.regression DataFrameRegression ElasticNet GradientTreeBoost LASSO LinearModel OLS RandomForest RidgeRegression)))
+   (smile.regression
+    DataFrameRegression
+    ElasticNet
+    GradientTreeBoost
+    LASSO
+    LinearModel
+    OLS
+    RandomForest
+    RidgeRegression)))
 
 
-
+(defn- ols-standard-metric-maps [model]
+  (let [
+        ols (ml/thaw-model model)
+        y (-> model :model-data :label-ds ds/columns first)
+        sample-size (-> model :model-data :sample-size)
+        y_hat (seq (.fittedValues ols))]
+    {:r.squared (.RSquared ols)
+     :adj.r.squared (.adjustedRSquared ols)
+     :df (.df ols)
+     :logLik (ml/loglik model y y_hat)
+     :bic (metrics/BIC model y y_hat sample-size (count  (:feature-columns model)))
+     :aic (metrics/AIC model y y_hat (count  (:feature-columns model)))
+     :p-value (.pvalue ols)}))
 
 (def ^:private cart-loss-table
   {
@@ -99,7 +118,6 @@
                              (rest weights))
                         (sort-by (comp second) >))}))
 
-
 (defn- log-likelihood-ols
   [y yhat]
   (let [sigma (-> (stats/rss y yhat)
@@ -109,6 +127,8 @@
                       (let [d (r/distribution :normal {:mu vyhat :sd sigma})]
                         (r/lpdf d vy))) y yhat)]
     (stats/sum ldnorm)))
+
+
 
 (def ^:private regression-metadata
   {:ordinary-least-square 
@@ -129,7 +149,31 @@
     :property-name-stem "smile.ols"
     :constructor #(OLS/fit %1 %2 %3)
     :predictor predict-ols
+    :tidy-fn (fn [model]
+               (let [
+                     ttest
+                     (->
+                      (ml/thaw-model model)
+                      .ttest
+                      tech.v3.tensor/->tensor
+                      ds-tens/tensor->dataset)]
+
+                 (->
+                  (ds/->dataset
+                   {
+                    :term (concat [:intercept] (:feature-columns model))})
+                  (ds/append-columns ttest)
+                  (ds/rename-columns {0 :estimate
+                                      1 :std-error
+                                      2 :t-value
+                                      3 :pr>t}))))
+    :glance-fn
+    (fn [model]
+      (ds/->dataset
+       (ols-standard-metric-maps model)))
+
     :loglik-fn log-likelihood-ols}
+
 
    :elastic-net 
    {:class ElasticNet
@@ -288,6 +332,12 @@
   [model-type]
   (get regression-metadata :elastic-net))
 
+(defn do-predict [predictor model feature-ds target-cname]
+  (-> (predictor model feature-ds)
+      (dtype/clone)
+      (dtt/->tensor)
+      (model/finalize-regression target-cname)))
+
 (defn- train
   [feature-ds label-ds options]
   (let [entry-metadata (model-type->regression-model
@@ -304,8 +354,12 @@
         data (smile-data/dataset->smile-dataframe full-ds)
         properties (smile-proto/options->properties entry-metadata full-ds options)
         ctor (:constructor entry-metadata)
-        model (ctor formula data properties)]
-    {:smile-df-used data
+        model (ctor formula data properties)
+        predictor (:predictor entry-metadata)]
+    {:sample-size (ds/row-count feature-ds)
+     :label-ds label-ds
+     :prediction-on-train (do-predict predictor model feature-ds (first target-colnames))
+     :smile-df-used data
      :smile-props-used properties
      :smile-formula-used formula
      :model-as-bytes
@@ -318,6 +372,8 @@
   (model/byte-array->model (:model-as-bytes model-data)))
 
 
+
+
 (defn- predict
   [feature-ds thawed-model {:keys [target-columns options]}]
   (let [entry-metadata (model-type->regression-model
@@ -325,10 +381,8 @@
         predictor (:predictor entry-metadata)
         target-cname (first target-columns)]
 
-    (-> (predictor thawed-model feature-ds)
-        (dtype/clone)
-        (dtt/->tensor)
-        (model/finalize-regression target-cname))))
+    (do-predict predictor thawed-model feature-ds target-cname)))
+    
 
 
 (defn- explain
@@ -353,13 +407,20 @@
                     :options (:options reg-def)
                     :documentation {:javadoc (class->smile-url (:class reg-def))
                                     :user-guide (-> reg-def :documentation :user-guide)}}
-        model-opts (if (:loglik-fn reg-def)
-                     (assoc  model-opts :loglik-fn  (:loglik-fn reg-def))
-                     model-opts)]
+        model-opts (assoc-some model-opts
+                               :loglik-fn (:loglik-fn reg-def)
+                               :glance-fn (:glance-fn reg-def)
+                               :tidy-fn (:tidy-fn reg-def)
+                               :augment-fn (:augment-fn reg-def))]
+
+
+
     (ml/define-model! (keyword "smile.regression" (name reg-kwd))
       train predict model-opts)))
 
-                   
+
+
+
 (defn linear-regression
   "Does a linear regression of withe the give tech.ml.dataset.
 
@@ -383,32 +444,32 @@
          (ml/train ds (assoc options :model-type :smile.regression/ordinary-least-square))
 
          ols (ml/thaw-model m)
-         prediction-ds (ml/predict ds m)
+
          y (seq (get ds inference-target))
          y_hat (seq (.fittedValues ols))
 
-         metrics-map {:r-squared (.RSquared ols)
-                      :adjusted-r-squared (.adjustedRSquared ols)
-                      :f-test (.ftest ols)
-                      :df (.df ols)
-                      :error (.error ols)
-                      :t-test (.ttest ols)
-                      :coefficients (seq (.coefficients ols))
-                      :intercept (.intercept ols)
-                      :residuals (seq (.residuals ols))
-                      :fitted-values y_hat
-                      :rss (.RSS ols)
-                      :p-value (.pvalue ols)}]
-     (assoc metrics-map
+         standard-metrics-map (ols-standard-metric-maps m)]
+     (assoc standard-metrics-map
+
+            :rss (.RSS ols)
+            :coefficients (seq (.coefficients ols))
+            :intercept (.intercept ols)
+            :residuals (seq (.residuals ols))
+            :fitted-values y_hat
+
+            :f-test (.ftest ols)
+            :error (.error ols)
+            :t-test (.ttest ols)
             :mse  (stats/mse y y_hat)
             :rmse (stats/rmse y y_hat)
-            :model m
-            :loglik (ml/loglik m y y_hat)
-            :bic
-            (metrics/BIC m ds prediction-ds)
-            :aic
-            (metrics/AIC m ds prediction-ds))))
+            :model m)))
+
+      
   ([ds] (linear-regression ds {})))
+
+
+
+
 
 
 

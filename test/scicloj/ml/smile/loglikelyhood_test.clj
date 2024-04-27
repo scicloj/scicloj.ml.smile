@@ -27,14 +27,7 @@
         prediction-ds (ml/predict mtcars m)]
 
     (is (= 181.29864126807638
-           (metric/BIC m mtcars prediction-ds)))
+           (metric/BIC m (seq (:mpg  mtcars)) (seq (:mpg  prediction-ds)) 32 10)))
     (is (= 163.70981043447966
-           (metric/AIC m mtcars prediction-ds)))))
+           (metric/AIC m (seq (:mpg  mtcars)) (seq (:mpg  prediction-ds) ) 10)))))
 
-
-
-
-
-;; =>
-
-;; =>
