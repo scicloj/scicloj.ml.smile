@@ -1,10 +1,10 @@
 # ConstantChangeLog
 
-# unreleased
+# 7.4
 
 - added function to easly retrieve datasets from Smile Github data folder
 - upgraded deps
-- added tidy and glance for OLS
+- added tidy,glance and augment for OLS
    
 # v7.3
 
