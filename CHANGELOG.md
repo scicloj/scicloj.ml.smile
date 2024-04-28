@@ -1,5 +1,8 @@
 # ConstantChangeLog
 
+# 7.4.1
+- added misisng files
+
 # 7.4
 
 - added function to easly retrieve datasets from Smile Github data folder
