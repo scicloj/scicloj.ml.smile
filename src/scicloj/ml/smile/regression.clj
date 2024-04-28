@@ -149,6 +149,22 @@
     :property-name-stem "smile.ols"
     :constructor #(OLS/fit %1 %2 %3)
     :predictor predict-ols
+    :augment-fn (fn [model dataset]
+
+                  (let [fitted
+                        (->
+                         (ml/thaw-model model)
+                         (.fittedValues))
+
+                        residuals
+                        (->
+                         (ml/thaw-model model)
+                         (.residuals))]
+
+                    (-> dataset
+                        (ds/add-column (ds/new-column :.fitted fitted))
+                        (ds/add-column (ds/new-column :.residuals residuals)))))
+
     :tidy-fn (fn [model]
                (let [
                      ttest

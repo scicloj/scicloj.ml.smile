@@ -68,15 +68,17 @@
          (ml/train {:model-type :smile.regression/ordinary-least-square}))]
 
 
+
     (is (= [5 4]
            (ds/shape
             (ml/tidy ols))))
     (is (= [7 1]
            (ds/shape
             (ml/glance ols))))
-    (is (= [5 150]
+    (is (= [7 150]
            (ds/shape
             (ml/augment ols ds))))))
+
 
 
 
