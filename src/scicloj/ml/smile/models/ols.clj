@@ -35,7 +35,10 @@
      :logLik (ml/loglik model y y_hat)
      :bic (metrics/BIC model y y_hat sample-size (count  (:feature-columns model)))
      :aic (metrics/AIC model y y_hat (count  (:feature-columns model)))
-     :p-value (.pvalue ols)}))
+     :p-value (.pvalue ols)
+     :rss (.RSS ols)
+     :rmse (stats/rmse y y_hat)
+     :mse  (stats/mse y y_hat)}))
 
 (defn predict [thawed-model ds]
   (let [ds-with-bias
@@ -136,7 +139,7 @@
          standard-metrics-map (standard-metric-maps m)]
      (assoc standard-metrics-map
 
-            :rss (.RSS ols)
+
             :coefficients (seq (.coefficients ols))
             :intercept (.intercept ols)
             :residuals (seq (.residuals ols))
@@ -145,8 +148,8 @@
             :f-test (.ftest ols)
             :error (.error ols)
             :t-test (.ttest ols)
-            :mse  (stats/mse y y_hat)
-            :rmse (stats/rmse y y_hat)
+
+
             :model m)))
 
 
