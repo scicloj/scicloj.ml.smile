@@ -1,55 +1,27 @@
 (ns scicloj.ml.smile.regression
   "Namespace to require to enable a set of smile regression models"
   (:require
-   [fastmath.core :as m]
-   [fastmath.random :as r]
    [fastmath.stats :as stats]
    [medley.core :refer [assoc-some]]
    [scicloj.metamorph.ml :as ml]
    [scicloj.metamorph.ml.gridsearch :as ml-gs]
-   [scicloj.metamorph.ml.metrics :as metrics]
    [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.model :as model]
+   [scicloj.ml.smile.models.general]
+   [scicloj.ml.smile.models.ols :as ols]
    [scicloj.ml.smile.protocols :as smile-proto]
    [scicloj.ml.smile.registration :refer [class->smile-url]]
    [tech.v3.dataset :as ds]
-   [tech.v3.dataset.column :as ds-col]
    [tech.v3.dataset.modelling :as ds-mod]
-   [tech.v3.dataset.tensor :as ds-tens]
    [tech.v3.dataset.utils :as ds-utils]
    [tech.v3.datatype :as dtype]
    [tech.v3.libs.smile.data :as smile-data]
    [tech.v3.tensor :as dtt])
-
-
   (:import
-   (java.util List Properties)
+   (java.util Properties)
    (smile.data DataFrame)
    (smile.data.formula Formula)
-   (smile.regression
-    DataFrameRegression
-    ElasticNet
-    GradientTreeBoost
-    LASSO
-    LinearModel
-    OLS
-    RandomForest
-    RidgeRegression)))
-
-
-(defn- ols-standard-metric-maps [model]
-  (let [
-        ols (ml/thaw-model model)
-        y (-> model :model-data :label-ds ds/columns first)
-        sample-size (-> model :model-data :sample-size)
-        y_hat (seq (.fittedValues ols))]
-    {:r.squared (.RSquared ols)
-     :adj.r.squared (.adjustedRSquared ols)
-     :df (.df ols)
-     :logLik (ml/loglik model y y_hat)
-     :bic (metrics/BIC model y y_hat sample-size (count  (:feature-columns model)))
-     :aic (metrics/AIC model y y_hat (count  (:feature-columns model)))
-     :p-value (.pvalue ols)}))
+   (smile.regression DataFrameRegression ElasticNet GradientTreeBoost LASSO LinearModel OLS RandomForest RidgeRegression)))
 
 (def ^:private cart-loss-table
   {
@@ -73,23 +45,7 @@
    ;; efficency for normally distributed errors.
    :huber "Huber"})
 
-(def ^:private ols-method-table
-  {
-   :qr "qr"
-   :svd "svd"})
-   
 
-
-
-(defn- predict-linear-model
-  [^LinearModel thawed-model ds]
-  (let [^List val-rdr (ds/value-reader ds)]
-    (->> (dtype/make-reader
-          :float64
-          (ds/row-count ds)
-          (.predict thawed-model
-                    ^doubles (dtype/->double-array (val-rdr idx))))
-         (dtype/make-container :java-array :float64))))
 
 
 
@@ -100,35 +56,6 @@
     (.predict thawed-model df)))
 
 
-(defn- predict-ols [thawed-model ds]
-  (let [ds-with-bias
-        (ds/append-columns
-         (ds/new-dataset
-          [(ds-col/new-column :intercept (repeat (ds/row-count ds) 1))])
-         (ds/columns ds))]
-    (predict-linear-model thawed-model ds-with-bias)))
-
-(defn- explain-ols
-  [thawed-model {:keys [feature-columns]} _options]
-  (let [^LinearModel model thawed-model
-        weights (seq (.coefficients model))]
-    {:bias (first weights)
-     :coefficients (->> (map vector
-                             feature-columns
-                             (rest weights))
-                        (sort-by (comp second) >))}))
-
-(defn- log-likelihood-ols
-  [y yhat]
-  (let [sigma (-> (stats/rss y yhat)
-                  (/ (count y))
-                  (m/sqrt))
-        ldnorm (map (fn [vy vyhat]
-                      (let [d (r/distribution :normal {:mu vyhat :sd sigma})]
-                        (r/lpdf d vy))) y yhat)]
-    (stats/sum ldnorm)))
-
-
 
 (def ^:private regression-metadata
   {:ordinary-least-square 
@@ -136,7 +63,7 @@
     :documentation {:user-guide "https://haifengl.github.io/regression.html#ols"}
     :options [{:name :method
                :type :enumeration
-               :lookup-table ols-method-table
+               :lookup-table ols/method-table
                :default :qr}
 
               {:name :standard-error
@@ -148,47 +75,13 @@
                :default true}]
     :property-name-stem "smile.ols"
     :constructor #(OLS/fit %1 %2 %3)
-    :predictor predict-ols
-    :augment-fn (fn [model dataset]
 
-                  (let [fitted
-                        (->
-                         (ml/thaw-model model)
-                         (.fittedValues))
-
-                        residuals
-                        (->
-                         (ml/thaw-model model)
-                         (.residuals))]
-
-                    (-> dataset
-                        (ds/add-column (ds/new-column :.fitted fitted))
-                        (ds/add-column (ds/new-column :.residuals residuals)))))
-
-    :tidy-fn (fn [model]
-               (let [
-                     ttest
-                     (->
-                      (ml/thaw-model model)
-                      .ttest
-                      tech.v3.tensor/->tensor
-                      ds-tens/tensor->dataset)]
-
-                 (->
-                  (ds/->dataset
-                   {
-                    :term (concat [:intercept] (:feature-columns model))})
-                  (ds/append-columns ttest)
-                  (ds/rename-columns {0 :estimate
-                                      1 :std-error
-                                      2 :t-value
-                                      3 :pr>t}))))
-    :glance-fn
-    (fn [model]
-      (ds/->dataset
-       (ols-standard-metric-maps model)))
-
-    :loglik-fn log-likelihood-ols}
+    :predictor ols/predict
+    :explain-fn ols/explain
+    :augment-fn ols/augment
+    :tidy-fn ols/tidy
+    :glance-fn ols/glance
+    :loglik-fn ols/log-likelihood}
 
 
    :elastic-net 
@@ -218,7 +111,7 @@
                          :max-iterations (ml-gs/linear 1e4 1e7)}
     :property-name-stem "smile.elastic.net"
     :constructor #(ElasticNet/fit %1 %2 %3)
-    :predictor predict-linear-model}
+    :predictor scicloj.ml.smile.models.general/predict-linear-model}
 
    :lasso
    {:class LASSO
@@ -244,7 +137,7 @@
                          :max-iterations (ml-gs/linear 1e4 1e7 100 :int64)}
     :property-name-stem "smile.lasso"
     :constructor #(LASSO/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
-    :predictor predict-linear-model}
+    :predictor scicloj.ml.smile.models.general/predict-linear-model}
     
 
 
@@ -258,7 +151,7 @@
     :gridsearch-options {:lambda (ml-gs/linear 1e-4 1e4)}
     :property-name-stem "smile.ridge"
     :constructor #(RidgeRegression/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
-    :predictor predict-linear-model}
+    :predictor scicloj.ml.smile.models.general/predict-linear-model}
 
 
    :gradient-tree-boost
@@ -416,14 +309,12 @@
 
 (doseq [[reg-kwd reg-def] regression-metadata]
   (let [model-opts {:thaw-fn thaw
-                    :explain-fn (case reg-kwd
-                                  :ordinary-least-square explain-ols
-                                  explain)
                     :hyperparameters (:gridsearch-options reg-def)
                     :options (:options reg-def)
                     :documentation {:javadoc (class->smile-url (:class reg-def))
                                     :user-guide (-> reg-def :documentation :user-guide)}}
         model-opts (assoc-some model-opts
+                               :explain-fn (:explain-fn reg-def)
                                :loglik-fn (:loglik-fn reg-def)
                                :glance-fn (:glance-fn reg-def)
                                :tidy-fn (:tidy-fn reg-def)
@@ -453,35 +344,8 @@
 
 "
   ([ds options]
-
-   (let [
-         inference-target (first  (ds-mod/inference-target-column-names ds))
-         m
-         (ml/train ds (assoc options :model-type :smile.regression/ordinary-least-square))
-
-         ols (ml/thaw-model m)
-
-         y (seq (get ds inference-target))
-         y_hat (seq (.fittedValues ols))
-
-         standard-metrics-map (ols-standard-metric-maps m)]
-     (assoc standard-metrics-map
-
-            :rss (.RSS ols)
-            :coefficients (seq (.coefficients ols))
-            :intercept (.intercept ols)
-            :residuals (seq (.residuals ols))
-            :fitted-values y_hat
-
-            :f-test (.ftest ols)
-            :error (.error ols)
-            :t-test (.ttest ols)
-            :mse  (stats/mse y y_hat)
-            :rmse (stats/rmse y y_hat)
-            :model m)))
-
-      
-  ([ds] (linear-regression ds {})))
+   (ols/linear-regression [ds options]))
+  ([ds] (ols/linear-regression ds {})))
 
 
 
