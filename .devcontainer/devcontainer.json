@@ -1,0 +1,31 @@
+{
+  "remoteUser" : "vscode",
+  "updateContentCommand" : "clojure -P -Sthreads 1",
+  "forwardPorts" : [ "12345", "7777" ],
+  "name" : "dummy",
+  "build" : {
+    "dockerfile" : "Dockerfile"
+  },
+  "remoteEnv" : {
+    "PATH" : "${containerEnv:PATH}:/home/vscode/.asdf/shims"
+  },
+  "customizations" : {
+    "vscode" : {
+      "settings" : { },
+      "extensions" : [ "vscjava.vscode-java-pack", "borkdude.clj-kondo", "betterthantomorrow.calva" ]
+    }
+  },
+  "features" : {
+    "ghcr.io/devcontainers-contrib/features/clojure-asdf:2" : {"version": "1.11.3.1456" },
+    "ghcr.io/devcontainers-contrib/features/bash-command:1" : {
+      "command" : "apt-get update && apt-get install -y rlwrap"
+    },
+    "ghcr.io/rocker-org/devcontainer-features/r-apt:0" : { },
+     "ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
+       "packages": "tidymodels"
+     }
+
+
+  },
+  "postCreateCommand" : "sudo ln -fs /home/vscode/.asdf/shims/clojure /usr/local/bin/"
+}
