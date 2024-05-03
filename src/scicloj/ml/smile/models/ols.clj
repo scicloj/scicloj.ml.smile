@@ -32,10 +32,10 @@
     {:r.squared (.RSquared ols)
      :adj.r.squared (.adjustedRSquared ols)
      :df (.df ols)
-     :logLik (ml/loglik model y y_hat)
+     :log-lik (ml/loglik model y y_hat)
      :bic (metrics/BIC model y y_hat sample-size (count  (:feature-columns model)))
      :aic (metrics/AIC model y y_hat (count  (:feature-columns model)))
-     :p-value (.pvalue ols)
+     :p.value (.pvalue ols)
      :rss (.RSS ols)
      :rmse (stats/rmse y y_hat)
      :mse  (stats/mse y y_hat)}))
@@ -82,26 +82,26 @@
 
       (-> dataset
           (ds/add-column (ds/new-column :.fitted fitted))
-          (ds/add-column (ds/new-column :.residuals residuals)))))
+          (ds/add-column (ds/new-column :.resid residuals)))))
 
 (defn tidy [model]
-    (let [
-          ttest
-          (->
-           (ml/thaw-model model)
-           .ttest
-           tech.v3.tensor/->tensor
-           ds-tens/tensor->dataset)]
+  (let [
+        ttest
+        (->
+         (ml/thaw-model model)
+         .ttest
+         tech.v3.tensor/->tensor
+         ds-tens/tensor->dataset)]
 
-      (->
-       (ds/->dataset
-        {
-         :term (concat [:intercept] (:feature-columns model))})
-       (ds/append-columns ttest)
-       (ds/rename-columns {0 :estimate
-                           1 :std-error
-                           2 :t-value
-                           3 :pr>t}))))
+    (->
+     (ds/->dataset
+      {
+       :term (concat [:intercept] (:feature-columns model))})
+     (ds/append-columns ttest)
+     (ds/rename-columns {0 :estimate
+                         1 :std.error
+                         2 :statistic
+                         3 :p.value}))))
 
 (defn glance [model]
     (ds/->dataset
@@ -142,7 +142,7 @@
 
             :coefficients (seq (.coefficients ols))
             :intercept (.intercept ols)
-            :residuals (seq (.residuals ols))
+            :resid (seq (.residuals ols))
             :fitted-values y_hat
 
             :f-test (.ftest ols)

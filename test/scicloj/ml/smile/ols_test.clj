@@ -42,12 +42,12 @@
             {:adj.r.squared 0.8878844074567379
              :mse 4356.611357123131
              :rss 104558.67257095512
-             :p-value 4.042532223561903E-11
+             :p.value 4.042532223561903E-11
              :df 21, :aic 277.2158453335483
              :bic 281.9280606549401
              :rmse 66.00463133086292
              :r.squared 0.8976335894170215
-             :logLik -134.60792266677416}]
+             :log-lik -134.60792266677416}]
 
            (ds/rows
             (ml/glance ols))))
@@ -71,7 +71,6 @@
          (ds/drop-columns [:species])
          (ds-mod/set-inference-target :sepal_length)
          (ml/train {:model-type :smile.regression/ordinary-least-square}))]
-
 
 
     (is (= [5 4]
