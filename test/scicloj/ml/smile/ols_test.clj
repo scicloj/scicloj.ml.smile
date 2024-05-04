@@ -50,9 +50,9 @@
 
 
     (is (ish? -134.60792266677416 loglik))
-    (is (ish? 0.1 1798.4  (:bias weights)))
-    (is (ish? 0.1 345.5  (-> weights :coefficients first second)))
-    (is (ish? 0.1 -250.1  (-> weights :coefficients second second)))))
+    (is (ish? 1798.4039776258396  (:bias weights)))
+    (is (ish?  345.54008701056785   (-> weights :coefficients first second)))
+    (is (ish? -250.14657136937868  (-> weights :coefficients second second)))))
 
 (deftest tidy-fns
 
