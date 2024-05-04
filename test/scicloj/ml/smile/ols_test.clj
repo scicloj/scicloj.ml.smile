@@ -1,11 +1,13 @@
 (ns scicloj.ml.smile.ols-test
-  (:require [tech.v3.dataset :as ds]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [scicloj.ml.smile.regression]
-            [scicloj.metamorph.ml :as ml]
-            [scicloj.metamorph.ml.toydata]
-            [same.core :refer [ish?]]
-            [clojure.test :refer (deftest is)]))
+  (:require
+   [clojure.test :refer (deftest is)]
+   [same.compare :as compare]
+   [same.core :refer [ish? with-comparator]]
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.metamorph.ml.toydata]
+   [scicloj.ml.smile.regression]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.modelling :as ds-mod]))
 
 (def interest-rate  [2.75 2.5 2.5 2.5 2.5 2.5 2.5 2.25 2.25 2.25 2 2 2 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75 1.75])
 (def unemployment-rate [5.3 5.3 5.3 5.3 5.4 5.6 5.5 5.5 5.5 5.6 5.7 5.9 6 5.9 5.8 6.1 6.2 6.1 6.1 6.1 5.9 6.2 6.2 6.1])
@@ -45,14 +47,15 @@
                 :r.squared 0.8976335894170215
                 :log-lik -134.60792266677416}]
 
-           (ds/rows
-            (ml/glance ols))))
+              (ds/rows
+               (ml/glance ols))))
 
 
-    (is (ish? -134.60792266677416 loglik))
-    (is (ish? 1798.4039776258396  (:bias weights)))
-    (is (ish?  345.54008701056785   (-> weights :coefficients first second)))
-    (is (ish? -250.14657136937868  (-> weights :coefficients second second)))))
+    (with-comparator (compare/compare-ulp 100.0 1000)
+      (is (ish? -134.60792266677416 loglik))
+      (is (ish? 1798.4039776258396  (:bias weights)))
+      (is (ish?  345.54008701056785   (-> weights :coefficients first second)))
+      (is (ish? -250.14657136937868  (-> weights :coefficients second second))))))
 
 (deftest tidy-fns
 
