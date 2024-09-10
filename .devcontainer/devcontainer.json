@@ -1,6 +1,6 @@
 {
   "remoteUser" : "vscode",
-  "updateContentCommand" : "clojure -P -Sthreads 1",
+  
   "forwardPorts" : [ "12345", "7777" ],
   "name" : "dummy",
   "build" : {
@@ -12,7 +12,7 @@
   "customizations" : {
     "vscode" : {
       "settings" : { },
-      "extensions" : [ "vscjava.vscode-java-pack", "borkdude.clj-kondo", "betterthantomorrow.calva" ]
+      "extensions" : [ "vscjava.vscode-java-pack",  "betterthantomorrow.calva" ]
     }
   },
   "features" : {
@@ -27,5 +27,6 @@
 
 
   },
-  "postCreateCommand" : "sudo ln -fs /home/vscode/.asdf/shims/clojure /usr/local/bin/"
+  "postCreateCommand" : "sudo ln -fs /home/vscode/.asdf/shims/clojure /usr/local/bin/",
+  "postStartCommand" : "clojure -P -Sthreads 1"
 }
