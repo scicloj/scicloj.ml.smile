@@ -7,10 +7,7 @@
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
         dev.weavejester/medley         {:mvn/version "1.8.0"}
-
-
-         scicloj/metamorph.ml           {:mvn/version "0.8.2"}
-         ;{:local/root "../metamorph.ml/"}
+        scicloj/metamorph.ml           {:mvn/version "0.8.2"}
         generateme/fastmath            {:mvn/version "2.4.0"}
         metosin/malli                  {:mvn/version "0.11.0"}}
  :aliases {
@@ -21,11 +18,12 @@
 
            :run-tests {:main-opts ["-m" "kaocha.runner"]}
            :test {:extra-paths ["test"]
-
-                  :extra-deps {lambdaisland/kaocha {:mvn/version "1.85.1342"}
+                  :extra-deps {lambdaisland/kaocha    {:mvn/version "1.85.1342"}
                                org.clojure/test.check {:mvn/version "1.1.1"}
                                same/ish               {:mvn/version "0.1.6"}
-                               criterium/criterium {:mvn/version "0.4.6"}}}
+                               criterium/criterium    {:mvn/version "0.4.6"}
+                               cheshire/cheshire      {:mvn/version "5.13.0"}}}
+           
            :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.85.1342"}}
                         :exec-fn kaocha.runner/exec-fn
                         :exec-args {:watch? true}

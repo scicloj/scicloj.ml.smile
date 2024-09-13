@@ -1,7 +1,6 @@
 (ns scicloj.ml.smile.regression
   "Namespace to require to enable a set of smile regression models"
   (:require
-   [fastmath.stats :as stats]
    [medley.core :refer [assoc-some]]
    [scicloj.metamorph.ml :as ml]
    [scicloj.metamorph.ml.gridsearch :as ml-gs]
