@@ -1,6 +1,5 @@
 (ns scicloj.ml.smile.clustering-test
   (:require  [clojure.test :refer [deftest is] :as t]
-             [fastmath.clustering :as clustering]
              [tablecloth.api :as tc]
              [tablecloth.pipeline :as tc-mm]
              [scicloj.ml.smile.clustering :refer [cluster]]
@@ -20,7 +19,7 @@
    (tc/split->seq data :holdout)))
 
 
-(t/deftest cluster-test
+(t/deftest cluster-test-1
   (let [pipeline (mm/pipeline
                   {:metamorph/id :cluster} (cluster :k-means [3] :cluster-row))
         fittex-ctx
@@ -38,7 +37,7 @@
    (tc/dataset
     "https://raw.githubusercontent.com/scicloj/metamorph.ml/main/test/data/iris.csv" {:key-fn keyword})))
 
-(deftest cluster-test
+(deftest cluster-test-2
   (let [
         pipe-fn
         (mm/pipeline
@@ -51,7 +50,7 @@
            (-> fitted-ctx :cluster :clusters)))))
 
 
-(deftest cluster-model-test
+(deftest cluster-model-test-1
   (is (= :g-means
          (get-in
           (mm/fit iris
@@ -62,7 +61,7 @@
                                   :clustering-method-args [5]}))
           [:cluster :model-data :type]))))
 
-(deftest cluster-model-test
+(deftest cluster-model-test-2
   (is (= :g-means
          (get-in
           (mm/fit iris

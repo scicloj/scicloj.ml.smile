@@ -2,7 +2,6 @@
   (:require  [clojure.test :as t]
              [scicloj.ml.smile.classification]
              [scicloj.metamorph.ml :as ml]
-             [scicloj.metamorph.ml.loss :as loss]
              [tech.v3.dataset :as ds]
              [tech.v3.dataset.modelling :as dsmod]
              [tech.v3.dataset.column-filters :as cf]

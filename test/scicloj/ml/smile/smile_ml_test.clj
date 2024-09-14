@@ -30,7 +30,8 @@
 (def smile-classification-models
   (->> (ml/model-definition-names)
        (filter #(= "smile.classification" (namespace %)))
-       (remove #{:smile.classification/maxent-binomial
+       (remove #{:smile.classification/mlp
+                 :smile.classification/maxent-binomial
                  :smile.classification/maxent-multinomial
                  :smile.classification/sparse-svm
                  :smile.classification/svm

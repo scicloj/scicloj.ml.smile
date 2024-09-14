@@ -470,6 +470,11 @@
                                    :code-example (-> reg-def :documentation :code-example)}}))
                                    
 
+(require '[scicloj.ml.smile.svm]
+         '[scicloj.ml.smile.maxent]
+         '[scicloj.ml.smile.mlp]
+         '[scicloj.ml.smile.sparse-svm]
+         '[scicloj.ml.smile.sparse-logreg])
 
 (comment
   (do

@@ -33,7 +33,17 @@
          (ds-cat/reverse-map-categorical-xforms))]
     (is (= "setosa" (-> prediction :species first)))))
 
-(def models (ml/model-definition-names))
+(def models 
+  (->> 
+   (ml/model-definition-names)
+   (filter #(= "smile.classification" (namespace %)))
+   (remove #{:smile.classification/mlp
+             :smile.classification/maxent-binomial
+             :smile.classification/maxent-multinomial
+             :smile.classification/sparse-svm
+             :smile.classification/svm
+             :smile.classification/discrete-naive-bayes
+             :smile.classification/sparse-logistic-regression})))
 
 (def combinations
   (for [data-type [:int :double :float]

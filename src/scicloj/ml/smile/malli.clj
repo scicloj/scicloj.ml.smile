@@ -16,7 +16,8 @@
     :float64 'double?
     :boolean 'boolean?
     :keyword 'keyword?
-    :enumeration 'any?))
+    :enumeration 'any?
+    :seq :sequential))
 
 
 (defn options->malli [options]

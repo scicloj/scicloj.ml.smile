@@ -88,7 +88,7 @@
      (HiddenLayerBuilder. 1 (ActivationFunction/linear)))
 
    (def output-layer-builder
-     (OutputLayerBuilder. 3 (OutputFunction/LINEAR) (Cost/MEAN_SQUARED_ERROR)))
+     (OutputLayerBuilder. 3  OutputFunction/LINEAR  Cost/MEAN_SQUARED_ERROR))
 
    (def src-ds (ds/->dataset "test/data/iris.csv"))
    (def ds (->  src-ds

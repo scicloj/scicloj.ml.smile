@@ -2,9 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [tablecloth.api :as tc]
-            [tech.v3.dataset :as ds]
             [camel-snake-kebab.core :as csf]
-            [charred.api :as charred]
             [tech.v3.libs.smile.data :as smile-data])
   (:import
    [smile.io Arff]))

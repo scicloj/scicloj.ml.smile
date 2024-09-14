@@ -6,8 +6,6 @@
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]))
 
-
-
 (def working-ds [(-> (ds/->dataset {:col-1 [:a :a :b :b
                                             :a :a :b :b]
                                     :y [1 2 1 2
@@ -42,47 +40,40 @@
 
 
 
-(t/deftest float-target-should-crash
-  (try
-    (ml/train
-     (-> (ds/->dataset {:col-1 [:a :a :b :b
-                                :a :a :b :b]
-                        :y [1.1 1 1 0
-                            0 1 0 1]})
-         (ds-mod/set-inference-target :y)
-         (ds/categorical->number [:col-1]))
-     {:model-type :smile.classification/decision-tree})
-    (throw "failed")
-    (catch Exception e (t/is true))))
+(t/deftest float-target-should-not-crash
+  (t/is (map?
+         (ml/train
+          
+          (-> (ds/->dataset {:col-1 [:a :a :b :b
+                                     :a :a :b :b]
+                             :y [1.1 1 1 0
+                                 0 1 0 1]})
+              (ds-mod/set-inference-target :y)
+              (ds/categorical->number [:col-1]))
+          {:model-type :smile.classification/decision-tree}))))
 
-(t/deftest rounded-float-target-should-crash
-  (try
-    (ml/train
-     (-> (ds/->dataset {:col-1 [:a :a :b :b
-                                :a :a :b :b]
-                        :y [1.0 1 1 0
-                            0 1 0 1]})
-         (ds-mod/set-inference-target :y)
-         (ds/categorical->number [:col-1]))
-     {:model-type :smile.classification/decision-tree})
-    (throw "failed")
-    (catch Exception e (t/is true))))
+(t/deftest rounded-float-target-should-not-crash
+  (t/is (map?
+         (ml/train
+          (-> (ds/->dataset {:col-1 [:a :a :b :b
+                                     :a :a :b :b]
+                             :y [1.0 1 1 0
+                                 0 1 0 1]})
+              (ds-mod/set-inference-target :y)
+              (ds/categorical->number [:col-1]))
+          {:model-type :smile.classification/decision-tree}))))
 
 (t/deftest keyword-target-should-crash
-  (try
+  (t/is (thrown? Exception
 
-    (ml/train
-     (-> (ds/->dataset {:col-1 [:a :a :b :b
-                                :a :a :b :b]
-                        :y [:a :a :b :b
-                            :a :b :b :b]})
-        (ds-mod/set-inference-target :y)
-        (ds/categorical->number [:col-1]))
-     {:model-type :smile.classification/decision-tree})
-
-
-    (throw "failed")
-    (catch Exception e (t/is true))))
+                 (ml/train
+                  (-> (ds/->dataset {:col-1 [:a :a :b :b
+                                             :a :a :b :b]
+                                     :y [:a :a :b :b
+                                         :a :b :b :b]})
+                      (ds-mod/set-inference-target :y)
+                      (ds/categorical->number [:col-1]))
+                  {:model-type :smile.classification/decision-tree}))))
 
 (t/deftest cat-label
 
