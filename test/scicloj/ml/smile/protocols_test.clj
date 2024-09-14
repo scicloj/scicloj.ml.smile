@@ -44,7 +44,7 @@
           "A")))
 
 
-(deftest lookup-enum-option []
+(deftest lookup-enum-option-1 []
   (is (=  (.getProperty
            (proto/options->properties
             {:property-name-stem "prefix"
@@ -59,7 +59,7 @@
 
            ) "GINI")))
 
-(deftest lookup-enum-option []
+(deftest lookup-enum-option-2 []
   (is (=  (.getProperty
            (proto/options->properties
             {:property-name-stem "prefix"

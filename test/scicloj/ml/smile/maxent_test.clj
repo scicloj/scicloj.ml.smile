@@ -54,7 +54,6 @@
         trained-model (ml/train binom-reviews {:model-type :smile.classification/maxent-binomial
                                                :sparse-column :bow-sparse
                                                :p 1000})
-        _ (def trained-model trained-model)
         prediction (ml/predict (ds/head binom-reviews) trained-model)]
 
 

@@ -68,8 +68,6 @@ See tech.v3.dataset/categorical->number.")
         target-colum (first (:target-columns model))
         n-labels (-> model :target-categorical-maps target-colum :lookup-table count)
         _ (errors/when-not-error (pos-int? n-labels) (str  "No labels found for target column" target-colum))
-        posteriori (double-array n-labels)
-
         predictions (map
                      #(let [posteriori (double-array n-labels)
                             _ (.predict thawed-model % posteriori)]

@@ -3,10 +3,8 @@
             [clojure.test :refer [deftest is]]
             [scicloj.ml.smile.test-tools :as tt]
             [tablecloth.api :as tc]
-            [tech.v3.dataset.column-filters :as cf]
             [scicloj.metamorph.core :as mm]
             [scicloj.metamorph.ml :as ml]
-            [tech.v3.dataset.math :as math]
             [same.core :refer [ish?]]
             [scicloj.metamorph.ml.preprocessing :as preprocessing]))
             
@@ -51,7 +49,6 @@
         fit-context
         (pipe-fn {:metamorph/data data
                   :metamorph/mode :fit})]
-    (def fit-context fit-context)
     (is (tt/seq-fuzzy=?  [ 0.01400330784019062
                           -2.556533994286818
                           -0.0514801918647123
