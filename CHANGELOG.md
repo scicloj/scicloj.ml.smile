@@ -1,6 +1,7 @@
 # ConstantChangeLog
-
+# 7.4.2
 - more OLS metrices in glance
+- more tidy models functions
 
 # 7.4.1
 - added misisng files
