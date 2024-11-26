@@ -1,5 +1,7 @@
 # ConstantChangeLog
-updated for fastmath 3
+
+# 7.4.3
+updated to fastmath 3
 
 # 7.4.2
 - more OLS metrices in glance
