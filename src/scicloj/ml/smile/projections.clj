@@ -6,9 +6,24 @@
    [scicloj.ml.smile.registration :refer [class->smile-url]]
    [tablecloth.api :as tc])
   (:import
+   [clojure.lang IFn]
    (smile.math.kernel MercerKernel)
-   (smile.projection GHA KPCA PCA ProbabilisticPCA Projection RandomProjection)))
+   (smile.projection
+    GHA
+    KPCA
+    PCA
+    ProbabilisticPCA
+    Projection
+    RandomProjection)))
 
+(defn smile-mercer
+  "Create Smile Mercer Kernel object
+
+  Used to pass to Smile constructors/functions."
+  [k]
+  (reify
+    MercerKernel (k [_ x y] (k x y))
+    IFn (invoke ^double [_ x y] (k x y))))
 
 (def model-keywords
   {
@@ -54,8 +69,8 @@
   [kernel kernel-params]
   (cond
     (instance? MercerKernel kernel) kernel
-    (fn? kernel) (k/smile-mercer kernel)
-    :else (k/smile-mercer (apply k/kernel kernel kernel-params))))
+    (fn? kernel) (smile-mercer kernel)
+    :else (smile-mercer (apply k/kernel kernel kernel-params))))
 
 (defn- kpca
   [rows target-dims kernel kernel-params threshold]

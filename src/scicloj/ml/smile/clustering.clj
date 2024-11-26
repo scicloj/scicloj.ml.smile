@@ -1,6 +1,6 @@
 (ns scicloj.ml.smile.clustering
   (:require
-   [fastmath.clustering :as clustering]
+   [fastmath-clustering.core :as clustering]
    [scicloj.metamorph.ml :as ml]
    [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.registration :refer [class->smile-url]]
@@ -34,7 +34,7 @@
 
 (defn fit-cluster [data clustering-method clustering-method-args]
   (let [
-        fun (resolve (symbol  "fastmath.clustering" (name clustering-method)))
+        fun (resolve (symbol  "fastmath-clustering.core" (name clustering-method)))
         data-rows (tc/rows data)]
     (apply fun data-rows clustering-method-args)))
 
@@ -80,7 +80,6 @@ The cluster id of each row gets written to the column in `target-column`
      (let [mode (:metamorph/mode ctx)
            id (:metamorph/id ctx)
            data (:metamorph/data ctx)
-           fun (resolve (symbol  "fastmath.clustering" (name clustering-method)))
            data-rows (tc/rows data)
            clusterresult-and-clusters
            (case mode

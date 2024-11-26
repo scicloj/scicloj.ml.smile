@@ -61,12 +61,27 @@
                                   :clustering-method-args [5]}))
           [:cluster :model-data :type]))))
 
-(deftest cluster-model-test-2
-  (is (= :g-means
+(defn valid-cluster-model-test-2[model-type args]
+  (is (= (keyword (name model-type))
          (get-in
           (mm/fit iris
                   (tc-mm/drop-columns [:species])
                   {:metamorph/id :cluster}
-                  (morphml/model {:model-type :fastmath.cluster/g-means
-                                  :clustering-method-args [5]}))
+                  (morphml/model {:model-type model-type
+                                  :clustering-method-args args}))
           [:cluster :model-data :type]))))
+
+(deftest cluster-model-test-2
+  (valid-cluster-model-test-2 :fastmath.cluster/clarans [5])
+  (valid-cluster-model-test-2  :fastmath.cluster/dbscan [5 1] )
+  (valid-cluster-model-test-2  :fastmath.cluster/denclue [5 2])
+  (valid-cluster-model-test-2  :fastmath.cluster/deterministic-annealing [5])
+  (valid-cluster-model-test-2  :fastmath.cluster/g-means [5])
+  (valid-cluster-model-test-2  :fastmath.cluster/k-means [5])
+  (valid-cluster-model-test-2  :fastmath.cluster/lloyd [5])
+  (valid-cluster-model-test-2  :fastmath.cluster/mec [5 1])
+  (valid-cluster-model-test-2  :fastmath.cluster/spectral [5 1])
+  (valid-cluster-model-test-2  :fastmath.cluster/x-means [5])
+
+  )
+
