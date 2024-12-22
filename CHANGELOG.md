@@ -1,5 +1,8 @@
 # ConstantChangeLog
 
+# unreleased
+- more complete hyperparameter for classification
+
 # 7.4.3
 updated to fastmath 3
 

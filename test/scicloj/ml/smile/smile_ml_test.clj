@@ -6,11 +6,10 @@
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset.utils :as ds-utils]
-            [tech.v3.datatype :as dtype]
             [tech.v3.dataset.column-filters :as cf]
             [scicloj.ml.smile.malli :as malli]
-            ;; [tablecloth.api :as]
-            [clojure.test :refer [deftest is]]))
+            [clojure.test :refer [deftest is]]
+            [scicloj.metamorph.ml.gridsearch :as ml-gs]))
 
 
 ;;shut that shit up.
@@ -37,10 +36,23 @@
                  :smile.classification/svm
                  :smile.classification/discrete-naive-bayes
                  :smile.classification/sparse-logistic-regression})))
-                 
-       
 
-  
+(defn- one-gs-option [model-type]
+  (let [options       
+        (->>
+         (ml/hyperparameters model-type)
+         (ml-gs/sobol-gridsearch)
+         (take 1)
+         first)]
+    (assoc options
+           :model-type model-type)))
+
+
+
+(deftest smile-classification-hyperparameters-test
+  (doseq [classify-model smile-classification-models]
+    ;(println :classify-model classify-model)
+    (verify/basic-classification (one-gs-option classify-model))))
 
 
 (deftest smile-classification-test

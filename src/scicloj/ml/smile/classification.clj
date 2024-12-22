@@ -114,7 +114,10 @@
                :type :int32
                :default 1}]
     :gridsearch-options {:trees (ml-gs/linear 2 50 10 :int64)
-                         :max-nodes (ml-gs/linear 4 1000 20 :int64)}
+                         :max-depth (ml-gs/linear 50 500 100 :int64)
+                         :max-nodes (ml-gs/linear 4 1000 20 :int64)
+                         :node-size (ml-gs/linear 1 10 10 :int64)
+                         }
     :property-name-stem "smile.adaboost"
     :constructor #(AdaBoost/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
     :predictor tuple-predict-posterior}
@@ -163,9 +166,9 @@
                :lookup-table split-rule-lookup-table
                :default :gini
                :description "the splitting rule"}]
-    :gridsearch-options {:max-nodes (ml-gs/linear 10 1000 30)
-                         :node-size (ml-gs/linear 1 20 20)
-                         :max-depth (ml-gs/linear 1 50 20)
+    :gridsearch-options {:max-nodes (ml-gs/linear 10 1000 30 :int32)
+                         :node-size (ml-gs/linear 1 20 20 :int32)
+                         :max-depth (ml-gs/linear 1 50 20 :int32)
                          :split-rule (ml-gs/categorical [:gini :entropy :classification-error])}
 
                          
@@ -219,9 +222,16 @@
                :type :float64
                :default 0.7
                :description "the sampling fraction for stochastic tree boosting"}]
-    :property-name-stem "smile.gbt"
-    :constructor #(GradientTreeBoost/fit ^Formula %1 ^DataFrame %2  ^Properties %3)
-    :predictor tuple-predict-posterior}
+    :gridsearch-options 
+    {:ntrees (ml-gs/linear 10 1000 100 :int32)
+     :max-depth (ml-gs/linear 10 100 100 :int32)
+     :max-nodes (ml-gs/linear 10 100 100 :int32)
+     :node-size (ml-gs/linear 1 100 100 :int32)
+     :shrinkage (ml-gs/linear 0.01 1 100 :float64)}
+
+     :property-name-stem "smile.gbt"
+     :constructor #(GradientTreeBoost/fit ^Formula %1 ^DataFrame %2  ^Properties %3)
+     :predictor tuple-predict-posterior}
 
    :knn {:class KNN
          :name :knn
@@ -360,6 +370,15 @@
                              {:name :class-weight :type :string :default nil
                               :description "Priors of the classes. The weight of each class is roughly the ratio of samples in each class. For example, if there are 400 positive samples and 100 negative samples, the classWeight should be [1, 4] (assuming label 0 is of negative, label 1 is of positive)"}]
                              
+                   :gridsearch-options 
+                   {:trees (ml-gs/linear 10 1000 100 :int32)
+                    :max-depth (ml-gs/linear 10 100 100 :int32)
+                    :max-nodes (ml-gs/linear 10 100 100 :int32)
+                    :node-size (ml-gs/linear 1 100 100 :int32)
+                    :sample-rate (ml-gs/linear 0.1 1.0 100)
+                    :split-rule (ml-gs/categorical [:gini
+                                                 :entropy
+                                                 :classification-error])}
                    :property-name-stem "smile.random.forest"}})
 ;; fix when this is released:
 ;; https://github.com/haifengl/smile/blob/2352cff6880056eb9a03dbe2556acdbd8f07ddda/core/src/main/java/smile/regression/RBFNetwork.java#L165
