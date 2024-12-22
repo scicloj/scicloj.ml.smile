@@ -76,7 +76,7 @@
       (readObject [rdr idx]
         (let [posterior (double-array n-labels)]
           (.predict model (double-array (value-reader idx)) posterior)
-          (errors/when-not-error (not (some #(Double/isNaN %) posterior)) "Model prediction returned NaN")
+          (errors/when-not-error (not (some #(Double/isNaN %) posterior)) (str "Model prediction returned NaN. Options: " options))
           posterior)))))
 
 
@@ -224,10 +224,12 @@
                :description "the sampling fraction for stochastic tree boosting"}]
     :gridsearch-options 
     {:ntrees (ml-gs/linear 10 1000 100 :int32)
-     :max-depth (ml-gs/linear 10 100 100 :int32)
-     :max-nodes (ml-gs/linear 10 100 100 :int32)
-     :node-size (ml-gs/linear 1 100 100 :int32)
-     :shrinkage (ml-gs/linear 0.01 1 100 :float64)}
+     :max-depth (ml-gs/linear 2 50 50 :int32)
+     :max-nodes (ml-gs/linear 2 50 50 :int32)
+     :node-size (ml-gs/linear 1 20 20 :int32)
+     :shrinkage (ml-gs/linear 0.05 0.3 100 :float64)
+     :sampling-rate (ml-gs/linear 0.1 0.9 100 :float64)}
+                      
 
      :property-name-stem "smile.gbt"
      :constructor #(GradientTreeBoost/fit ^Formula %1 ^DataFrame %2  ^Properties %3)
