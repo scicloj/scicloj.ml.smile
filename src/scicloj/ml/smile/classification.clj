@@ -37,7 +37,7 @@
       (readObject [rdr idx]
         (let [posterior (double-array n-labels)]
           (.predict model (.get df idx) posterior)
-          (errors/when-not-error (not (some #(Double/isNaN %) posterior)) "Model prediction returned NaN")
+          (errors/when-not-error (not (some #(Double/isNaN %) posterior)) (str "Model prediction returned NaN. Options: options "))
           posterior)))))
 
 (defn- ds->doubles [ds]
