@@ -1,6 +1,8 @@
 # ConstantChangeLog
 
 # unreleased
+
+# 7.4.4
 - more complete hyperparameter for classification
 
 # 7.4.3
