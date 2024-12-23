@@ -3,31 +3,32 @@
                  :fn compile
                  :ensure "target/classes"}
  :deps {org.clojure/clojure           {:mvn/version "1.12.0"}
-        scicloj/tablecloth             {:mvn/version "7.029"}
+        scicloj/tablecloth             {:mvn/version "7.029.2"}
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
-        dev.weavejester/medley         {:mvn/version "1.8.0"}
+        dev.weavejester/medley         {:mvn/version "1.8.1"}
         scicloj/metamorph.ml           {:mvn/version "0.8.2"}
         generateme/fastmath            {:mvn/version "3.0.0-alpha3"}
         org.clojars.generateme/fastmath-clustering {:mvn/version "1.0.0"}
-        metosin/malli                  {:mvn/version "0.11.0"}}
- :aliases {
-           
-           :build {:deps {io.github.seancorfield/build-clj
+        metosin/malli                  {:mvn/version "0.17.0"}}
+ :aliases {:build {:deps {io.github.seancorfield/build-clj
                           {:git/tag "v0.9.2" :git/sha "9c9f078"}}
                    :ns-default build}
 
            :run-tests {:main-opts ["-m" "kaocha.runner"]}
            :test {:extra-paths ["test"]
-                  :extra-deps {lambdaisland/kaocha    {:mvn/version "1.85.1342"}
+                  :extra-deps {lambdaisland/kaocha    {:mvn/version "1.91.1392"}
                                org.clojure/test.check {:mvn/version "1.1.1"}
                                same/ish               {:mvn/version "0.1.6"}
                                criterium/criterium    {:mvn/version "0.4.6"}
                                cheshire/cheshire      {:mvn/version "5.13.0"}}}
-           
-           :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.85.1342"}}
+
+           :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
                         :exec-fn kaocha.runner/exec-fn
                         :exec-args {:watch? true}
                         :skip-meta :slow
-                        :fail-fast? true}}}
+                        :fail-fast? true}
+           :outdated {;; Note that it is `:deps`, not `:extra-deps`
+                      :deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
+                      :main-opts ["-m" "antq.core"]}}}
            
