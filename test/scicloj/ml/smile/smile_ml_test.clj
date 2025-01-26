@@ -61,20 +61,17 @@
     (verify/basic-classification {:model-type classify-model})))
 
 
-(defn ->malli [[k def]]
-  (def k k)
-  (def def def)
-  (let [option (:options def)]
-    (def option option)
-    (m/schema? (m/schema (scicloj.metamorph.ml.malli/model-options->full-schema def)))))
 
 (deftest can-convert-options-to-malli
   (is (every? true?
        (mapv
-        ->malli
+        #(m/schema? (m/schema (scicloj.metamorph.ml.malli/model-options->full-schema %)))
         @ml/model-definitions*))))
 
-
+(deftest options-have-description-and-default
+  (is (=
+       [:optional :description :default]
+       (-> @ml/model-definitions* :smile.classification/ada-boost :options (nth 3) second keys))))
 
 
 

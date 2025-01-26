@@ -8,7 +8,7 @@
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
         dev.weavejester/medley         {:mvn/version "1.8.1"}
         scicloj/metamorph.ml           {:git/url "https://github.com/scicloj/metamorph.ml"
-                                        :git/sha "2bd3f444d4730db7c7dcf4bfba1b4542d6074bb2"}
+                                        :git/sha "08a8e99fa81c27aa1d98ab1063ffcd46412b45af"}
         ;{:mvn/version "0.8.2"}
         generateme/fastmath            {:mvn/version "3.0.0-alpha3"}
         org.clojars.generateme/fastmath-clustering {:mvn/version "1.0.0"}

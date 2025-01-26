@@ -22,12 +22,14 @@
 
 
 (defn options->malli [options]
- (->> options
-      (mapv (fn [option]
-              (vector
-               (:name option)
-               {:optional true}
-               (type->malli (:type option)))))))
+  (->> options
+       (mapv (fn [option]
+               (vector
+                (:name option)
+                {:optional true
+                 :description (:description option)
+                 :default (:default option)}
+                (type->malli (:type option)))))))
 
 
 (defn check-schema [defined-options options]
