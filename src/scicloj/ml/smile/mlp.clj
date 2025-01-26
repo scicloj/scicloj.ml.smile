@@ -2,6 +2,7 @@
   (:require
    [scicloj.metamorph.ml :as ml]
    [scicloj.ml.smile.classification :as classification]
+   [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.model :as model]
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.categorical :as ds-cat]
@@ -9,7 +10,13 @@
    [tech.v3.datatype.errors :as errors]
    [tech.v3.tensor :as dtt])
   (:import
-   (smile.base.mlp ActivationFunction Cost HiddenLayerBuilder LayerBuilder OutputFunction OutputLayerBuilder)
+   (smile.base.mlp
+    ActivationFunction
+    Cost
+    HiddenLayerBuilder
+    LayerBuilder
+    OutputFunction
+    OutputLayerBuilder)
    (smile.classification MLP)))
 
 (defn- train
@@ -65,12 +72,13 @@
   :smile.classification/mlp
   train
   predict
-  {
-   :options [{:name :layer-builders
-              :type :seq
-              :default []
-              :description "Sequence of type smile.base.mlp.LayerBuilder describing the layers of the neural network "}]
-             
+  {:options
+   (malli/options->malli
+   [{:name :layer-builders
+     :type :seq
+     :default []
+     :description "Sequence of type smile.base.mlp.LayerBuilder describing the layers of the neural network "}])
+
 
    :documentation {:javadoc "https://haifengl.github.io/api/java/smile/classification/MLP.html"
                    :user-guide "https://haifengl.github.io/classification.html#neural-network"}})

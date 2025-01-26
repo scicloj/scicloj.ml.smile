@@ -25,9 +25,8 @@
         (ml/train reviews {:model-type :smile.classification/sparse-svm
                            :sparse-column :bow-sparse
                            :p 100}) ;; (-> reviews meta :count-vectorize-vocabulary :index->vocab-map count)
-                           
+        
         freqs (frequencies (:Score (ml/predict reviews trained-model)))]
 
-    (println freqs)
     (is (pos? (get freqs -1)))
     (is (pos? (get freqs 1)))))

@@ -17,14 +17,17 @@
     :boolean 'boolean?
     :keyword 'keyword?
     :enumeration 'any?
-    :seq :sequential))
+    :key-string-symbol [:or :keyword :string :symbol]
+    :seq sequential?))
 
 
 (defn options->malli [options]
  (->> options
       (mapv (fn [option]
-              (vector (:name option)
-                      (type->malli (:type option)))))))
+              (vector
+               (:name option)
+               {:optional true}
+               (type->malli (:type option)))))))
 
 
 (defn check-schema [defined-options options]
@@ -37,6 +40,7 @@
         explanation (m/explain final-schema model-options)]
     (when (some? explanation)
       (throw (IllegalArgumentException. (str "invalid options:" (me/humanize explanation)))))))
+
 
 (defn instrument-mm [fn]
   (m/-instrument

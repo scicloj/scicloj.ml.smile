@@ -62,8 +62,7 @@
         _ (MathEx/setSeed 1234)
 
         predictions-ds
-        (train-split ds {:model-type :smile.classification/svm
-                         :randomize-dataset? false})
+        (train-split ds {:model-type :smile.classification/svm})
         predictions
         (get predictions-ds "target")
 

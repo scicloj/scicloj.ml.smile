@@ -1,6 +1,7 @@
 (ns scicloj.ml.smile.discrete-nb
   (:require
    [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.model :as model]
    [scicloj.ml.smile.nlp :as nlp]
    [scicloj.ml.smile.registration :refer [class->smile-url]]
@@ -95,14 +96,17 @@ See tech.v3.dataset/categorical->number.")
   :smile.classification/discrete-naive-bayes
   train
   predict
-  {:options [{:name :p :type :int32 :default nil}
-             {:name :k :type :int32 :default nil}
-             {:name :discrete-naive-bayes-model
-              :type :keyword
-              :default nil
-              :lookup-table nb-lookup-table}]
-              
-             
+  {:options
+   (malli/options->malli
+   [{:name :p :type :int32 :default nil}
+    {:name :k :type :int32 :default nil}
+    {:name :discrete-naive-bayes-model
+     :type :keyword
+     :default nil
+     :lookup-table nb-lookup-table}
+    {:name :sparse-column :type :keyword}])
+
+
    :documentation {:javadoc (class->smile-url DiscreteNaiveBayes)
                    :user-guide "https://haifengl.github.io/nlp.html#naive-bayes"}})
 

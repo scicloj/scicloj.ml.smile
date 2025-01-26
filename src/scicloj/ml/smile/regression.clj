@@ -309,7 +309,9 @@
 (doseq [[reg-kwd reg-def] regression-metadata]
   (let [model-opts {:thaw-fn thaw
                     :hyperparameters (:gridsearch-options reg-def)
-                    :options (:options reg-def)
+                    :options
+                    (malli/options->malli
+                     (:options reg-def))
                     :documentation {:javadoc (class->smile-url (:class reg-def))
                                     :user-guide (-> reg-def :documentation :user-guide)}}
         model-opts (assoc-some model-opts

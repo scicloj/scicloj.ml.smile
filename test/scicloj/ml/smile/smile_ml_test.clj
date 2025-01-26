@@ -9,7 +9,9 @@
             [tech.v3.dataset.column-filters :as cf]
             [scicloj.ml.smile.malli :as malli]
             [clojure.test :refer [deftest is]]
-            [scicloj.metamorph.ml.gridsearch :as ml-gs]))
+            [scicloj.metamorph.ml.malli]
+            [scicloj.metamorph.ml.gridsearch :as ml-gs]
+            [malli.core :as m]))
 
 
 ;;shut that shit up.
@@ -61,12 +63,14 @@
 
 
 (defn ->malli [[k def]]
-  (let [
-        option (:options def)]
-    (malli/options->malli option)))
+  (def k k)
+  (def def def)
+  (let [option (:options def)]
+    (def option option)
+    (m/schema? (m/schema (scicloj.metamorph.ml.malli/model-options->full-schema def)))))
 
 (deftest can-convert-options-to-malli
-  (is (sequential?
+  (is (every? true?
        (mapv
         ->malli
         @ml/model-definitions*))))
@@ -81,7 +85,7 @@
                     (ds-mod/set-inference-target "Survived"))]
 
 
-    (is (thrown? IllegalArgumentException
+    (is (thrown? Exception
                  (ml/train titanic {:model-type :smile.classification/random-forest
                                     :not-existing 123})))))
 
