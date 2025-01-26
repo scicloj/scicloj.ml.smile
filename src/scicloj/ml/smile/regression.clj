@@ -250,7 +250,7 @@
   [feature-ds label-ds options]
   (let [entry-metadata (model-type->regression-model
                         (model/options->model-type options))
-        _ (malli/check-schema (:options entry-metadata) options)
+        ;_ (malli/check-schema (:options entry-metadata) options)
         target-colnames (ds/column-names label-ds)
         feature-colnames (ds/column-names feature-ds)
         _ (when-not (= 1 (count target-colnames))

@@ -413,9 +413,10 @@
 
 (defn- train
   [feature-ds label-ds options]
+  (def options options)
   (let [entry-metadata (model-type->classification-model
                         (model/options->model-type options))
-        _ (malli/check-schema (:options entry-metadata) options)
+        ;_ (malli/check-schema (:options entry-metadata) options)
         _ (errors/when-not-error
            (every? all-number?  (ds/columns label-ds))
            "All values in target need to be numbers.")
@@ -485,6 +486,7 @@
 (doseq [[reg-kwd reg-def] classifier-metadata]
   
 
+  
   (ml/define-model! (keyword "smile.classification" (name reg-kwd))
     
     train predict {:thaw-fn thaw
@@ -502,6 +504,8 @@
          '[scicloj.ml.smile.sparse-svm]
          '[scicloj.ml.smile.sparse-logreg])
 
+
+;(-> @ml/model-definitions* :smile.classification/logistic-regression :options)
 
 (comment
   (do

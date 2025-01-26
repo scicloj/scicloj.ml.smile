@@ -6,6 +6,7 @@
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.column :as ds-col]
    [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.classification]
    [clojure.test :refer [deftest is] :as t])
   (:import [smile.math MathEx]))
 
@@ -44,7 +45,7 @@
     
     
 
-(deftest test-svn
+(deftest test-svm
   (let [src-ds (ds/->dataset "test/data/breast_cancer.csv.gz", {:header-row? false :n-initial-skip-rows 1})
         ds (->  src-ds
                 (ds/rename-columns

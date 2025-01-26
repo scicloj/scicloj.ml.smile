@@ -22,18 +22,23 @@
 
 
 (defn options->malli [options]
-  (->> options
-       (mapv (fn [option]
-               (vector
-                (:name option)
-                {:optional true
-                 :description (:description option)
-                 :default (:default option)}
-                (type->malli (:type option)))))))
+  (vec
+   (concat [:map {:closed true}]
+           (->> options
+                (mapv (fn [option]
+                        (vector
+                         (:name option)
+                         {:optional true
+                          :description (:description option)
+                          :default (:default option)}
+                         (type->malli (:type option)))))))))
 
 
 (defn check-schema [defined-options options]
-  (let [malli-schema (apply vector :map (options->malli defined-options))
+  (def options options)
+  (def defined-options defined-options)
+  (let [
+        malli-schema (apply vector :map (options->malli defined-options))
 
         model-options (dissoc options :model-type)
         final-schema (-> malli-schema
