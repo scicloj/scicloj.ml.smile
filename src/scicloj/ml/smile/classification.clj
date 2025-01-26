@@ -4,7 +4,6 @@
    [scicloj.metamorph.ml :as ml]
    [scicloj.metamorph.ml.gridsearch :as ml-gs]
    [scicloj.ml.smile.malli :as malli]
-   [malli.util :as mu]
    [scicloj.ml.smile.model :as model]
    [scicloj.ml.smile.model-examples :as examples]
    [scicloj.ml.smile.protocols :as smile-proto]
@@ -16,8 +15,7 @@
    [tech.v3.datatype.errors :as errors]
    [tech.v3.datatype.protocols :as dtype-proto]
    [tech.v3.libs.smile.data :as smile-data]
-   [tech.v3.tensor :as dtt]
-   [malli.core :as m])
+   [tech.v3.tensor :as dtt])
   (:import
    (java.util Properties)
    (smile.base.cart SplitRule)
@@ -481,30 +479,7 @@
     mapped-predictions))
 
   
-(def reg-kwd :smile.classification/logistic-regression)
-(def reg-def
-  {:class LogisticRegression
-   :documentation {:user-guide "https://haifengl.github.io/classification.html#logit"}
-   :name :logistic-regression
-   :options [{:name :lambda
-              :type :float64
-              :default 0.1
-              :description "lambda > 0 gives a regularized estimate of linear weights which often has superior generalization performance, especially when the dimensionality is high"}
-             {:name :tolerance
-              :type :float64
-              :default 1e-5
-              :description "tolerance for stopping iterations"}
-             {:name :max-iterations
-              :type :int32
-              :default 500
-              :description "maximum number of iterations"}]
-   :gridsearch-options {:lambda (ml-gs/linear 1e-3 1e2 30)
-                        :tolerance (ml-gs/linear 1e-9 1e-1 20)
-                        :max-iterations (ml-gs/linear 1e2 1e4 20 :int64)}
-   :property-name-stem "smile.logistic"
-   :constructor #(LogisticRegression/fit ^Formula %1 ^DataFrame %2 ^Properties %3)
-   :predictor double-array-predict-posterior})
-    
+   
 
 
 (doseq [[reg-kwd reg-def] classifier-metadata]

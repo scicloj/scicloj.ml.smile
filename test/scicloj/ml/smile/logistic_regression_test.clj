@@ -104,8 +104,7 @@
                {:model-type :smile.classification/logistic-regression})
         prediction (ml/predict iris-ds-traget-is-non-categorical model)]
     
-    (def prediction prediction)
-
+    
     (t/is (= [:model-data :options :train-input-hash :id :feature-columns :target-columns :target-datatypes]
              (keys model)))
     

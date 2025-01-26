@@ -5,8 +5,7 @@
    [scicloj.ml.smile.model :as model]
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]
-   [scicloj.ml.smile.malli :as malli]
-   [malli.core :as m])
+   [scicloj.ml.smile.malli :as malli])
   (:import
    (smile.classification SVM)))
 

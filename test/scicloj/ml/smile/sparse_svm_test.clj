@@ -1,5 +1,5 @@
 (ns scicloj.ml.smile.sparse-svm-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is]]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [scicloj.ml.smile.discrete-nb :as nb]

@@ -1,12 +1,12 @@
 (ns scicloj.ml.smile.svm-test
-  (:require [scicloj.ml.smile.svm :as svm]
-            [tech.v3.dataset.math :as std-math]
-            [tech.v3.dataset.column-filters :as cf]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.dataset :as ds]
-            [tech.v3.dataset.column :as ds-col]
-            [scicloj.metamorph.ml :as ml]
-            [clojure.test :refer [deftest is] :as t])
+  (:require
+   [tech.v3.dataset.math :as std-math]
+   [tech.v3.dataset.column-filters :as cf]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.column :as ds-col]
+   [scicloj.metamorph.ml :as ml]
+   [clojure.test :refer [deftest is] :as t])
   (:import [smile.math MathEx]))
 
 

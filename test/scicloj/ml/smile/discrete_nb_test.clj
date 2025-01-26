@@ -1,5 +1,5 @@
 (ns scicloj.ml.smile.discrete-nb-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is]]
             [scicloj.metamorph.ml :as ml]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
