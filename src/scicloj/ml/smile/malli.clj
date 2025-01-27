@@ -32,6 +32,7 @@
                           :description (:description option)
                           :default (:default option)
                           :lookup-table (:lookup-table option)
+                          :type (:type option)
                           }
                          (type->malli (:type option)))))))))
 

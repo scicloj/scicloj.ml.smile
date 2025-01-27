@@ -70,7 +70,7 @@
 
 (deftest options-have-description-and-default
   (is (=
-       [:optional :description :default :lookup-table]
+       [:optional :description :default :lookup-table :type]
        (-> @ml/model-definitions* :smile.classification/ada-boost :options (nth 3) second keys))))
 
 
