@@ -30,7 +30,9 @@
                          (:name option)
                          {:optional true
                           :description (:description option)
-                          :default (:default option)}
+                          :default (:default option)
+                          :lookup-table (:lookup-table option)
+                          }
                          (type->malli (:type option)))))))))
 
 
