@@ -14,7 +14,7 @@
    [tech.v3.datatype :as dtype]
    [tech.v3.datatype.errors :as errors]
    [tech.v3.datatype.protocols :as dtype-proto]
-   [tech.v3.libs.smile.data :as smile-data]
+   [scicloj.ml.smile.smile-data :as smile-data]
    [tech.v3.tensor :as dtt])
   (:import
    (java.util Properties)

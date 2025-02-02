@@ -3,7 +3,7 @@
             [clojure.string :as str]
             [tablecloth.api :as tc]
             [camel-snake-kebab.core :as csf]
-            [tech.v3.libs.smile.data :as smile-data])
+            [scicloj.ml.smile.smile-data :as smile-data])
   (:import
    [smile.io Arff]))
 

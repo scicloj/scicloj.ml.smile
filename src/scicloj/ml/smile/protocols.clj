@@ -2,7 +2,7 @@
   (:require
    [tech.v3.dataset.utils :as ds-utils]
    [tech.v3.datatype :as dtype]
-   [tech.v3.libs.smile.data :as smile-data])
+   [scicloj.ml.smile.smile-data :as smile-data])
   (:import
    (java.util List Properties)
    (smile.classification DataFrameClassifier)
