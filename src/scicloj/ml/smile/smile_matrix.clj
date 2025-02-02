@@ -302,16 +302,5 @@
 
 (comment 
   
-  (import '[smile.math.matrix Matrix])
   
-  
-  
-  (-> (Matrix. 3 4)
-      tech.v3.libs.smile.matrix/smile-matrix-as-tensor)
-  
-  (tech.v3.tensor/new-tensor [3 4])
-  
-  (tech.v3.tensor/construct-tensor
-   (tech.v3.datatype/make-container :int 12)
-   (tech.v3.tensor.dimensions/dimensions [3 4]))
 )
