@@ -14,7 +14,7 @@
    [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.dataset.utils :as ds-utils]
    [tech.v3.datatype :as dtype]
-   [tech.v3.libs.smile.data :as smile-data]
+   [scicloj.ml.smile.smile-data :as smile-data]
    [tech.v3.tensor :as dtt])
   (:import
    (java.util Properties)

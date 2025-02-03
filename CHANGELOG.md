@@ -1,6 +1,7 @@
 # ConstantChangeLog
 
 # unreleased
+- imported code for TMS<->smile dataframe conversions from tech.v3.libs.smile
 
 # 7.4.4
 - more complete hyperparameter for classification
