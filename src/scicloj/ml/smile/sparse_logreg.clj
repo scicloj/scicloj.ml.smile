@@ -2,6 +2,7 @@
   (:require
    [scicloj.metamorph.ml :as ml]
    [scicloj.ml.smile.discrete-nb :as nb]
+   [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.nlp :as nlp]
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]
@@ -51,15 +52,23 @@ See tech.v3.dataset/categorical->number.")
   :smile.classification/sparse-logistic-regression
   train
   predict
-  {:options [{:name :lambda
-               :type :float32
-               :default 0.1}
-             {:name :tolerance
-              :type :float32
-              :default 1e-5}
-             {:name :max-iterations
-              :type :int32
-              :default 500}]})
+  {:options
+   (malli/options->malli
+   [{:name :lambda
+     :type :float32
+     :default 0.1}
+    {:name :tolerance
+     :type :float32
+     :default 1e-5}
+    {:name :max-iterations
+     :type :int32
+     :default 500}
+    {:name :sparse-column
+     :type :key-string-symbol}
+    {:name :n-sparse-columns
+     :type :int32}
+    
+    ])})
               
 
 

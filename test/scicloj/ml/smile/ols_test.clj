@@ -80,5 +80,5 @@
 
 
 (deftest fail-on-wrong-params
-  (is (thrown? IllegalArgumentException (ml/train ds {:model-type :smile.regression/ordinary-least-square
+  (is (thrown? Exception (ml/train ds {:model-type :smile.regression/ordinary-least-square
                                                       :blub false}))))

@@ -2,6 +2,7 @@
 
 # unreleased
 - imported code for TMS<->smile dataframe conversions from tech.v3.libs.smile
+- options as malli
 
 # 7.4.4
 - more complete hyperparameter for classification

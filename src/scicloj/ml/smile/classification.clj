@@ -415,7 +415,7 @@
   [feature-ds label-ds options]
   (let [entry-metadata (model-type->classification-model
                         (model/options->model-type options))
-        _ (malli/check-schema (:options entry-metadata) options)
+        ;_ (malli/check-schema (:options entry-metadata) options)
         _ (errors/when-not-error
            (every? all-number?  (ds/columns label-ds))
            "All values in target need to be numbers.")
@@ -479,23 +479,32 @@
     mapped-predictions))
 
   
-    
+   
+
 
 (doseq [[reg-kwd reg-def] classifier-metadata]
+  
+
+  
   (ml/define-model! (keyword "smile.classification" (name reg-kwd))
+    
     train predict {:thaw-fn thaw
                    :hyperparameters (:gridsearch-options reg-def)
-                   :options (:options reg-def)
+                   
+                   :options (malli/options->malli (:options reg-def))
                    :documentation {:javadoc (class->smile-url (:class reg-def))
                                    :user-guide (-> reg-def :documentation :user-guide)
                                    :code-example (-> reg-def :documentation :code-example)}}))
-                                   
 
 (require '[scicloj.ml.smile.svm]
          '[scicloj.ml.smile.maxent]
          '[scicloj.ml.smile.mlp]
+         '[scicloj.ml.smile.discrete-nb]
          '[scicloj.ml.smile.sparse-svm]
          '[scicloj.ml.smile.sparse-logreg])
+
+
+;(-> @ml/model-definitions* :smile.classification/logistic-regression :options)
 
 (comment
   (do

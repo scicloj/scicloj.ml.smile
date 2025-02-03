@@ -94,20 +94,26 @@
         (-> (datasets/iris-ds)
             (ds/assoc-metadata [:species]
                                :categorical-map nil
-                               :categorical? nil))
+                               :categorical? nil)
+            (ds/column-cast :species :int)
+            )
+        
 
         model (ml/train
                iris-ds-traget-is-non-categorical
                {:model-type :smile.classification/logistic-regression})
         prediction (ml/predict iris-ds-traget-is-non-categorical model)]
-
-    (t/is (= [:model-data :options :id :feature-columns :target-columns]
+    
+    
+    (t/is (= [:model-data :options :train-input-hash :id :feature-columns :target-columns :target-datatypes]
              (keys model)))
-    (t/is :int
-          (-> prediction
-           :species
-           meta
-           :datatype))))
+    
+    ;; TODO https://github.com/scicloj/scicloj.ml.smile/issues/16
+    (t/is (= :float64
+             (-> prediction
+                 :species
+                 meta
+                 :datatype)))))
 
 (t/deftest allow-numeric-float-target
   (let [iris-ds-traget-is-non-categorical
@@ -121,13 +127,13 @@
                {:model-type :smile.classification/logistic-regression})
         prediction (ml/predict iris-ds-traget-is-non-categorical model)]
 
-    (t/is (= [:model-data :options :id :feature-columns :target-columns]
+    (t/is (= [:model-data :options :train-input-hash :id :feature-columns :target-columns :target-datatypes]
              (keys model)))
-    (t/is :float64
-          (-> prediction
-              :species
-              meta
-              :datatype))))
+    (t/is (= :float64
+             (-> prediction
+                 :species
+                 meta
+                 :datatype)))))
 
 
 (t/deftest fail-on-string-target

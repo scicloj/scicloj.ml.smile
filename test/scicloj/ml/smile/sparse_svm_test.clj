@@ -1,5 +1,5 @@
 (ns scicloj.ml.smile.sparse-svm-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is]]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [scicloj.ml.smile.discrete-nb :as nb]
@@ -25,9 +25,8 @@
         (ml/train reviews {:model-type :smile.classification/sparse-svm
                            :sparse-column :bow-sparse
                            :p 100}) ;; (-> reviews meta :count-vectorize-vocabulary :index->vocab-map count)
-                           
+        
         freqs (frequencies (:Score (ml/predict reviews trained-model)))]
 
-    (println freqs)
     (is (pos? (get freqs -1)))
     (is (pos? (get freqs 1)))))

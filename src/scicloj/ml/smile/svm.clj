@@ -4,7 +4,8 @@
    [scicloj.metamorph.ml.gridsearch :as gs]
    [scicloj.ml.smile.model :as model]
    [tech.v3.dataset :as ds]
-   [tech.v3.dataset.modelling :as ds-mod])
+   [tech.v3.dataset.modelling :as ds-mod]
+   [scicloj.ml.smile.malli :as malli])
   (:import
    (smile.classification SVM)))
 
@@ -51,21 +52,21 @@
   :smile.classification/svm
   train
   predict
-  {
-   :thaw-fn thaw
-   :options [{:name :C
-              :type :float32
-              :default 1.0
-              :description "soft margin penalty parameter"}
-             {:name :tol
-              :type :float32
-              :default 1e-4
-              :description "tolerance of convergence test"}]
+  {:thaw-fn thaw
+   :options
+   (malli/options->malli
+    [{:name :C
+      :type :float32
+      :default 1.0
+      :description "soft margin penalty parameter"}
+     {:name :tol
+      :type :float32
+      :default 1e-4
+      :description "tolerance of convergence test"}])
 
    :hyperparameters hyperparameters
-             
+
    :documentation {:javadoc "http://haifengl.github.io/api/java/smile/classification/SVM.html"
                    :user-guide "https://haifengl.github.io/classification.html#svm"}})
 
-                   
-  
+

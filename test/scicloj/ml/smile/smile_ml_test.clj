@@ -7,9 +7,10 @@
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset.utils :as ds-utils]
             [tech.v3.dataset.column-filters :as cf]
-            [scicloj.ml.smile.malli :as malli]
             [clojure.test :refer [deftest is]]
-            [scicloj.metamorph.ml.gridsearch :as ml-gs]))
+            [scicloj.metamorph.ml.malli]
+            [scicloj.metamorph.ml.gridsearch :as ml-gs]
+            [malli.core :as m]))
 
 
 ;;shut that shit up.
@@ -60,18 +61,17 @@
     (verify/basic-classification {:model-type classify-model})))
 
 
-(defn ->malli [[k def]]
-  (let [
-        option (:options def)]
-    (malli/options->malli option)))
 
 (deftest can-convert-options-to-malli
-  (is (sequential?
+  (is (every? true?
        (mapv
-        ->malli
+        #(m/schema? (m/schema (scicloj.metamorph.ml.malli/model-options->full-schema %)))
         @ml/model-definitions*))))
 
-
+(deftest options-have-description-and-default
+  (is (=
+       [:optional :description :default :lookup-table :type]
+       (-> @ml/model-definitions* :smile.classification/ada-boost :options (nth 3) second keys))))
 
 
 
@@ -81,7 +81,7 @@
                     (ds-mod/set-inference-target "Survived"))]
 
 
-    (is (thrown? IllegalArgumentException
+    (is (thrown? Exception
                  (ml/train titanic {:model-type :smile.classification/random-forest
                                     :not-existing 123})))))
 

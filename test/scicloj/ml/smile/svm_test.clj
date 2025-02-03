@@ -1,12 +1,13 @@
 (ns scicloj.ml.smile.svm-test
-  (:require [scicloj.ml.smile.svm :as svm]
-            [tech.v3.dataset.math :as std-math]
-            [tech.v3.dataset.column-filters :as cf]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.dataset :as ds]
-            [tech.v3.dataset.column :as ds-col]
-            [scicloj.metamorph.ml :as ml]
-            [clojure.test :refer [deftest is] :as t])
+  (:require
+   [tech.v3.dataset.math :as std-math]
+   [tech.v3.dataset.column-filters :as cf]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.column :as ds-col]
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.ml.smile.classification]
+   [clojure.test :refer [deftest is] :as t])
   (:import [smile.math MathEx]))
 
 
@@ -44,7 +45,7 @@
     
     
 
-(deftest test-svn
+(deftest test-svm
   (let [src-ds (ds/->dataset "test/data/breast_cancer.csv.gz", {:header-row? false :n-initial-skip-rows 1})
         ds (->  src-ds
                 (ds/rename-columns
@@ -62,8 +63,7 @@
         _ (MathEx/setSeed 1234)
 
         predictions-ds
-        (train-split ds {:model-type :smile.classification/svm
-                         :randomize-dataset? false})
+        (train-split ds {:model-type :smile.classification/svm})
         predictions
         (get predictions-ds "target")
 
@@ -71,4 +71,5 @@
         (frequencies predictions)]
 
     (is (not (nil? (cf/prediction predictions-ds))))
-    (is (= [-1 1] (keys pred-freqs)))))
+    (is (= #{-1 1}
+           (set (keys pred-freqs))))))

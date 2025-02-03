@@ -1,5 +1,5 @@
 (ns scicloj.ml.smile.sparse-logreg-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is]]
             [tech.v3.dataset :as ds]
             [tech.v3.dataset.modelling :as ds-mod]
             [tech.v3.dataset.categorical :as ds-cat]

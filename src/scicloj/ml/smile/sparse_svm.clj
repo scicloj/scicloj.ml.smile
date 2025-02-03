@@ -1,11 +1,12 @@
 (ns scicloj.ml.smile.sparse-svm
   (:require
    [scicloj.metamorph.ml :as ml]
-   [tech.v3.dataset :as ds]
+   [scicloj.metamorph.ml.gridsearch :as gs]
+   [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.registration :refer [class->smile-url]]
+   [tech.v3.dataset :as ds]
    [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.datatype :as dt]
-   [scicloj.metamorph.ml.gridsearch :as gs]
    [tech.v3.datatype.errors :as errors])
   (:import
    (smile.classification SVM)
@@ -44,15 +45,21 @@
   :smile.classification/sparse-svm
   train
   predict
-  {
-   :options [{:name :C
-              :type :float32
-              :default 1.0
-              :description "soft margin penalty parameter"}
-             {:name :tol
-              :type :float32
-              :default 1e-4
-              :description "tolerance of convergence test"}]
+  {:options
+   (malli/options->malli
+   [{:name :C
+     :type :float32
+     :default 1.0
+     :description "soft margin penalty parameter"}
+    {:name :tol
+     :type :float32
+     :default 1e-4
+     :description "tolerance of convergence test"}
+    {:name :sparse-column
+     :type :keyword} 
+    {:name :p
+     :type :int32}
+    ])
 
    :hyperparameters hyperparameters
    :documentation {:javadoc (class->smile-url SVM)

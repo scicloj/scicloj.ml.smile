@@ -17,18 +17,31 @@
     :boolean 'boolean?
     :keyword 'keyword?
     :enumeration 'any?
-    :seq :sequential))
+    :key-string-symbol [:or :keyword :string :symbol]
+    :seq sequential?))
 
 
 (defn options->malli [options]
- (->> options
-      (mapv (fn [option]
-              (vector (:name option)
-                      (type->malli (:type option)))))))
+  (vec
+   (concat [:map {:closed true}]
+           (->> options
+                (mapv (fn [option]
+                        (vector
+                         (:name option)
+                         {:optional true
+                          :description (:description option)
+                          :default (:default option)
+                          :lookup-table (:lookup-table option)
+                          :type (:type option)
+                          }
+                         (type->malli (:type option)))))))))
 
 
 (defn check-schema [defined-options options]
-  (let [malli-schema (apply vector :map (options->malli defined-options))
+  (def options options)
+  (def defined-options defined-options)
+  (let [
+        malli-schema (apply vector :map (options->malli defined-options))
 
         model-options (dissoc options :model-type)
         final-schema (-> malli-schema
@@ -37,6 +50,7 @@
         explanation (m/explain final-schema model-options)]
     (when (some? explanation)
       (throw (IllegalArgumentException. (str "invalid options:" (me/humanize explanation)))))))
+
 
 (defn instrument-mm [fn]
   (m/-instrument
