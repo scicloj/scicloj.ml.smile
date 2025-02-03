@@ -52,13 +52,13 @@
              DataTypes/DateTimeType :local-date-time)))
 
 
-(defn ^:no-doc datatype->smile
+(defn- ^:no-doc datatype->smile
   ^DataType [dtype]
   (when dtype
     (get datatype->smile-map dtype DataTypes/ObjectType)))
 
 
-(defn ^:no-doc colname->str
+(defn- ^:no-doc colname->str
   ^String [cname]
   (cond
     (string? cname) cname
@@ -68,19 +68,19 @@
     (str cname)))
 
 
-(defn ^:no-doc smile-struct-field
+(defn- ^:no-doc smile-struct-field
   ^StructField [name dtype]
   (StructField. (colname->str name)
                 (datatype->smile dtype)))
 
 
-(defn ^:no-doc column->field
+(defn- ^:no-doc column->field
   ^StructField [col]
   (smile-struct-field (ds-col/column-name col)
                       (dtype/get-datatype col)))
 
 
-(defn ^:no-doc datatype->smile-vec-type
+(defn- ^:no-doc datatype->smile-vec-type
   "Datatype has to be a compile time constant"
   [datatype]
   (case (casting/safe-flatten datatype)
@@ -95,7 +95,7 @@
     :object 'Vector))
 
 
-(defn ^:no-doc datatype->smile-vec-impl-type
+(defn- ^:no-doc datatype->smile-vec-impl-type
   "Datatype has to be a compile time constant"
   [datatype]
   (case (casting/safe-flatten datatype)
@@ -110,7 +110,7 @@
     'VectorImpl))
 
 
-(defn column->smile-column
+(defn- column->smile-column
   "Convert a dataset column to a smile vector."
   ^BaseVector [col]
   (let [col-data (packing/unpack col)
@@ -129,7 +129,7 @@
       (VectorFactory/genericVector field col-ary))))
 
 
-(defn ^:no-doc dataset->dataframe
+(defn- dataset->dataframe
   "Convert a dataset to a smile.data DataFrame"
   ^DataFrame [ds]
   (if (instance? DataFrame ds)
