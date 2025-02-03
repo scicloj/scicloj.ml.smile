@@ -1,6 +1,6 @@
 # ConstantChangeLog
 
-# unreleased
+# 7.5.0
 - imported code for TMS<->smile dataframe conversions from tech.v3.libs.smile
 - options as malli
 
