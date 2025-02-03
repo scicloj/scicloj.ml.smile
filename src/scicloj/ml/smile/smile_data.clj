@@ -68,7 +68,7 @@
     (str cname)))
 
 
-(defn- ^:no-doc smile-struct-field
+(defn ^:no-doc smile-struct-field
   ^StructField [name dtype]
   (StructField. (colname->str name)
                 (datatype->smile dtype)))
