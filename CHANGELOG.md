@@ -1,5 +1,8 @@
 # ConstantChangeLog
 
+# unreleased
+- made predicion target datatype symetric to train
+
 # 7.5.0
 - imported code for TMS<->smile dataframe conversions from tech.v3.libs.smile
 - options as malli

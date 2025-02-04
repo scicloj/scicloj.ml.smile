@@ -89,39 +89,14 @@
 
 
 
-(t/deftest allow-numeric-int-target
+
+(defn  validate-numeric-target [datatype]
   (let [iris-ds-traget-is-non-categorical
         (-> (datasets/iris-ds)
             (ds/assoc-metadata [:species]
                                :categorical-map nil
                                :categorical? nil)
-            (ds/column-cast :species :int)
-            )
-        
-
-        model (ml/train
-               iris-ds-traget-is-non-categorical
-               {:model-type :smile.classification/logistic-regression})
-        prediction (ml/predict iris-ds-traget-is-non-categorical model)]
-    
-    
-    (t/is (= [:model-data :options :train-input-hash :id :feature-columns :target-columns :target-datatypes]
-             (keys model)))
-    
-    ;; TODO https://github.com/scicloj/scicloj.ml.smile/issues/16
-    (t/is (= :float64
-             (-> prediction
-                 :species
-                 meta
-                 :datatype)))))
-
-(t/deftest allow-numeric-float-target
-  (let [iris-ds-traget-is-non-categorical
-        (-> (datasets/iris-ds)
-            (ds/assoc-metadata [:species]
-                               :categorical-map nil
-                               :categorical? nil)
-            (ds/column-cast :species :float))
+            (ds/column-cast :species datatype))
         model (ml/train
                iris-ds-traget-is-non-categorical
                {:model-type :smile.classification/logistic-regression})
@@ -129,11 +104,30 @@
 
     (t/is (= [:model-data :options :train-input-hash :id :feature-columns :target-columns :target-datatypes]
              (keys model)))
-    (t/is (= :float64
+    (t/is (= datatype
              (-> prediction
                  :species
                  meta
                  :datatype)))))
+
+
+
+(t/deftest allow-numeric-target
+  
+
+  ;(validate-numeric-target :int)
+
+  (validate-numeric-target :int8)
+  (validate-numeric-target :int16)
+  (validate-numeric-target :int32)
+  (validate-numeric-target :int64)
+
+  (validate-numeric-target :float32)
+  (validate-numeric-target :float64)
+
+
+
+  )
 
 
 (t/deftest fail-on-string-target
@@ -147,6 +141,8 @@
                        (ml/train
                         iris-ds-traget-is-string
                         {:model-type :smile.classification/logistic-regression})))))
+
+
 
 
 

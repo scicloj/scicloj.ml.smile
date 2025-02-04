@@ -117,5 +117,5 @@
           (ds/->dataset {:col-1 [:a :a :b :b :a :a :b :b]})
           (ds/categorical->number [:col-1] [:a :b]))
          model)]
-    (t/is (= (repeat 8 0.0)
+    (t/is (= (repeat 8 0)
              (-> prediction :label)))))
