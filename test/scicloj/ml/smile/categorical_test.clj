@@ -82,7 +82,7 @@
                            :label     [:x :y :x :y :x :y :x :y]})
 
             (ds/categorical->number [:col-1] [:a :b])
-            (ds/categorical->number [:label] [:x :y])
+            (ds/categorical->number [:label] [:x :y]  :int32)
             (ds-mod/set-inference-target :label)
             (ml/train {:model-type :smile.classification/decision-tree}))
 
@@ -94,7 +94,7 @@
           (ds/categorical->number [:col-1] [:a :b]))
          model)]
 
-    (t/is (= (repeat 8 0.0)
+    (t/is (= (repeat 8 0)
              (-> prediction :label)))))
 
 

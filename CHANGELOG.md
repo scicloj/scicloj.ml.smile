@@ -2,6 +2,7 @@
 
 # unreleased
 - made predicion target datatype symetric to train
+- fixes #450 unexpected "distinct" of float columns after categorical->number using :float64
 
 # 7.5.0
 - imported code for TMS<->smile dataframe conversions from tech.v3.libs.smile

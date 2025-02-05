@@ -1,16 +1,18 @@
 (ns scicloj.ml.smile.smile-ml-test
-  (:require [scicloj.metamorph.ml.verify :as verify]
-            [scicloj.metamorph.ml :as ml]
-            [scicloj.ml.smile.regression]
-            [scicloj.ml.smile.classification]
-            [tech.v3.dataset :as ds]
-            [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.dataset.utils :as ds-utils]
-            [tech.v3.dataset.column-filters :as cf]
-            [clojure.test :refer [deftest is]]
-            [scicloj.metamorph.ml.malli]
-            [scicloj.metamorph.ml.gridsearch :as ml-gs]
-            [malli.core :as m]))
+  (:require
+   [clojure.test :refer [deftest is]]
+   [malli.core :as m]
+   [scicloj.metamorph.ml :as ml]
+   [scicloj.metamorph.ml.gridsearch :as ml-gs]
+   [scicloj.metamorph.ml.malli]
+   [scicloj.metamorph.ml.verify :as verify]
+   [scicloj.ml.smile.classification]
+   [scicloj.ml.smile.regression]
+   [tech.v3.dataset :as ds]
+   [tech.v3.dataset.categorical :as ds-cat]
+   [tech.v3.dataset.column-filters :as cf]
+   [tech.v3.dataset.modelling :as ds-mod]
+   [tech.v3.dataset.utils :as ds-utils]))
 
 
 ;;shut that shit up.
@@ -95,3 +97,23 @@
     (is map?
         (ml/train titanic {:model-type :smile.classification/random-forest
                            :trees 10}))))
+
+(deftest test-labels []
+  (let [trained-model
+        (->
+         (ds/->dataset {:x1 [1 2 4 5 6 5 6 7]
+                        :x2 [5 6 6 7 8 2 4 6]
+                        :y [:a :b :b :a :a :a :b :b]})
+         (ds/categorical->number [:y] [] :float64)
+         (ds-mod/set-inference-target :y)
+         (ml/train {:model-type :smile.classification/knn}))]
+    (is (=
+         [{:a 0.3333333333333333, :b 0.6666666666666666, :y :b}
+          {:a 0.3333333333333333, :b 0.6666666666666666, :y :b}]
+         (->
+          (ml/predict (ds/->dataset {:x1 [1 2 4 5 6 5 6 7]
+                                     :x2  [5 6 6 7 8 2 4 6]}) trained-model)
+          (ds-cat/reverse-map-categorical-xforms)
+          (ds/head 2)
+          (ds/rows))))))
+

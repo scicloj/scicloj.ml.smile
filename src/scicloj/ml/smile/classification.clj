@@ -439,12 +439,17 @@
         properties (smile-proto/options->properties entry-metadata dataset options)
         ctor (:constructor entry-metadata)
         model (ctor formula data properties)]
-    {:n-labels (-> label-ds (get target-colname) distinct count)
+    {:n-labels (-> label-ds (get target-colname) 
+                   vec  ;; see https://github.com/techascent/tech.ml.dataset/issues/450
+                   distinct 
+                   count)
      :smile-df-used data
      :smile-props-used properties
      :smile-formula-used formula
      :model-as-bytes
      (model/model->byte-array model)}))
+
+
 
 
 (defn- thaw
