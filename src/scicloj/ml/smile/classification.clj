@@ -15,7 +15,8 @@
    [tech.v3.datatype.errors :as errors]
    [tech.v3.datatype.protocols :as dtype-proto]
    [scicloj.ml.smile.smile-data :as smile-data]
-   [tech.v3.tensor :as dtt])
+   [tech.v3.tensor :as dtt]
+   [tech.v3.dataset.categorical :as ds-cat])
   (:import
    (java.util Properties)
    (smile.base.cart SplitRule)
@@ -456,6 +457,20 @@
   [model-data]
   (model/byte-array->model (:model-as-bytes model-data)))
 
+(defn- align-cat-map [pred-ds target-categorical-maps target-datatypes]
+  ;(def ds ds)
+  ;(def target-categorical-maps target-categorical-maps)
+  ;(def target-datatypes target-datatypes)
+  
+  (if (nil? target-categorical-maps)
+    (ds/assoc-metadata pred-ds (-> target-datatypes keys)
+                       :categorical-map nil)
+
+    (->
+     (ds-cat/reverse-map-categorical-xforms pred-ds)
+     (ds-cat/transform-categorical-map
+      (-> target-categorical-maps vals first)))))
+
 
 (defn- predict
   [feature-ds thawed-model {:keys [target-columns
@@ -464,7 +479,7 @@
                                    options
                                    model-data
                                    ]}]
-  ;; (errors/when-not-error target-categorical-maps "target-categorical-maps not found. Target column need to be categorical.")
+  
   (let [n-labels (model-data :n-labels)
         entry-metadata (model-type->classification-model
                         (model/options->model-type options))
@@ -481,12 +496,13 @@
                                            target-categorical-maps))
         mapped-predictions
         (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colname (get target-datatypes target-colname))
+            (align-cat-map target-categorical-maps target-datatypes)
             (ds/update-column target-colname
                               #(vary-meta % assoc :column-type :prediction)))]
     mapped-predictions))
 
   
-   
+
 
 
 (doseq [[reg-kwd reg-def] classifier-metadata]

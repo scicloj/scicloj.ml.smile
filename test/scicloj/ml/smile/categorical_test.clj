@@ -119,3 +119,46 @@
          model)]
     (t/is (= (repeat 8 0)
              (-> prediction :label)))))
+
+
+(t/deftest cat-map-symetry-no-cat-map  
+  (t/is ( nil?  
+         (->>
+          (ml/train
+           (->  (ds/->dataset {:x [1 0] :y [1 0]})
+                (ds-mod/set-inference-target [:y]))
+           {:model-type :smile.classification/ada-boost})
+          (ml/predict (ds/->dataset {:x [1 0] :y [1 0]}))
+          :y
+          meta
+          :categorical-map))))
+
+
+(t/deftest cat-map-symetry 
+
+  (t/is (= {:a 0, :b 1, :c 2, :d 3}
+           (->>
+            (ml/train
+             (->  (ds/->dataset {:x [0 1 2 3] :y [:a :c :d :b]})
+                  (ds/categorical->number [:y] [:a :b :c :d])
+                  (ds-mod/set-inference-target [:y])
+                  )
+             {:model-type :smile.classification/ada-boost})
+            (ml/predict (ds/->dataset {:x [1 0] :y [1 0]}))
+            :y
+            meta
+            :categorical-map
+            :lookup-table))))
+
+
+
+
+(map meta
+(->  (ds/->dataset {:x [1 0] :y [1 0]})
+     (ds-mod/set-inference-target [:y])
+     (ds/assoc-metadata [:y] 
+                        :categorical-map nil
+                        :categorical? true
+                        )
+     ds/columns
+     ))
