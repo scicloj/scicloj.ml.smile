@@ -1,23 +1,18 @@
 (ns scicloj.ml.smile.mlp
   (:require
-   [scicloj.metamorph.ml :as ml]
-   [scicloj.ml.smile.classification :as classification]
+   [scicloj.metamorph.ml :as ml] ;[scicloj.ml.smile.classification :as classification]
    [scicloj.ml.smile.malli :as malli]
    [scicloj.ml.smile.model :as model]
    [tech.v3.dataset :as ds]
-   [tech.v3.dataset.categorical :as ds-cat]
    [tech.v3.dataset.modelling :as ds-mod]
    [tech.v3.datatype.errors :as errors]
+   [tech.v3.datatype.protocols :as dtype-proto]
    [tech.v3.tensor :as dtt])
   (:import
    (smile.base.mlp
-    ActivationFunction
-    Cost
-    HiddenLayerBuilder
-    LayerBuilder
-    OutputFunction
-    OutputLayerBuilder)
-   (smile.classification MLP)))
+    LayerBuilder)
+   (smile.classification Classifier MLP)
+   [tech.v3.datatype ObjectReader]))
 
 (defn- train
   "Training function of MLP model. "
@@ -25,6 +20,9 @@
   (let [mlp (MLP. (ds/column-count feature-ds)
                   (into-array LayerBuilder (:layer-builders options)))
         ;;
+        target-column-names  (ds/column-names target-ds)
+        _ (errors/when-not-error (= 1 (count target-column-names)) "Only one target column is supported.")
+        target-colname (first target-column-names)
 
         train-data (into-array
                     (map
@@ -32,8 +30,29 @@
                      (ds/value-reader feature-ds)))
         y (int-array (seq (get target-ds (first (ds-mod/inference-target-column-names target-ds)))))]
     (.update mlp train-data y)
-    mlp))
 
+    {:predictor mlp
+     :n-labels (-> target-ds (get target-colname)
+                   vec  ;; see https://github.com/techascent/tech.ml.dataset/issues/450
+                   distinct
+                   count)}))
+
+
+
+(defn double-array-predict-posterior
+  [^Classifier model ds options n-labels]
+  (let [value-reader (ds/value-reader ds)
+        n-rows (ds/row-count ds)]
+    (reify
+      dtype-proto/PShape
+      (shape [rdr] [n-rows n-labels])
+      ObjectReader
+      (lsize [rdr] n-rows)
+      (readObject [rdr idx]
+        (let [posterior (double-array n-labels)]
+          (.predict model (double-array (value-reader idx)) posterior)
+          (errors/when-not-error (not (some #(Double/isNaN %) posterior)) (str "Model prediction returned NaN. Options: " options))
+          posterior)))))
 
 
 (defn- predict
@@ -49,7 +68,7 @@
                      count)
         _ (errors/when-not-error (pos? n-labels) "n-labels equals 0. Something is wrong with the :lookup-table")
 
-        predictions (classification/double-array-predict-posterior
+        predictions (double-array-predict-posterior
                      thawed-model
                      ;; (:model-data thawed-model)
                      feature-ds {} n-labels)
@@ -72,7 +91,12 @@
   :smile.classification/mlp
   train
   predict
-  {:options
+  {:thaw-fn (fn
+              [model-data]
+              (:predictor model-data)
+              )
+
+   :options
    (malli/options->malli
    [{:name :layer-builders
      :type :seq
@@ -86,30 +110,3 @@
                    
 
 
-(comment
-  (do
-    (require '[tech.v3.dataset.column-filters :as cf])
-    (require '[tech.v3.dataset.modelling :as ds-mod])
-    (require '[scicloj.metamorph.ml.loss :as loss])
-
-    (def hidden-layer-builder
-     (HiddenLayerBuilder. 1 (ActivationFunction/linear)))
-
-   (def output-layer-builder
-     (OutputLayerBuilder. 3  OutputFunction/LINEAR  Cost/MEAN_SQUARED_ERROR))
-
-   (def src-ds (ds/->dataset "test/data/iris.csv"))
-   (def ds (->  src-ds
-                (ds/categorical->number cf/categorical)
-                (ds-mod/set-inference-target "species")))
-   (def feature-ds (cf/feature ds))
-   (def split-data (ds-mod/train-test-split ds))
-   (def train-ds (:train-ds split-data))
-   (def test-ds (:test-ds split-data))
-   (def model (ml/train train-ds {:model-type :smile.classification/mlp
-                                  :layer-builders [hidden-layer-builder output-layer-builder]}))
-   (def prediction
-     (-> (ml/predict test-ds model)
-         (ds-cat/reverse-map-categorical-xforms))))
-
-  :ok)
