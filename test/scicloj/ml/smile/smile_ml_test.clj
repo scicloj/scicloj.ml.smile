@@ -63,7 +63,6 @@
     (verify/basic-classification {:model-type classify-model})))
 
 
-
 (deftest can-convert-options-to-malli
   (is (every? true?
        (mapv

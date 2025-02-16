@@ -10,7 +10,7 @@
         org.scicloj/metamorph.ml       
         ;{:mvn/version "1.0"}
                                         {:git/url "https://github.com/scicloj/metamorph.ml"
-                                         :git/sha "40de8e4ed2fec720c8aaf05a4ebf1f5f773368e0"}
+                                         :git/sha "417283dc80063e0f68382f5d9d5327d0c03d9180"}
         
         generateme/fastmath            {:mvn/version "3.0.0-alpha3"}
         org.clojars.generateme/fastmath-clustering {:mvn/version "1.0.0"}

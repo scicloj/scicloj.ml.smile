@@ -3,14 +3,9 @@
             [clojure.test :refer [deftest is]]
             [tech.v3.dataset.column-filters :as cf]
             [tech.v3.dataset.modelling :as ds-mod]
-            [tech.v3.dataset.metamorph :as ds-mm]
-
             [tech.v3.dataset :as ds]
-            [scicloj.metamorph.ml.loss :as loss]
             [scicloj.metamorph.ml.classification]
-            [scicloj.ml.smile.classification]
-            [scicloj.ml.smile.metamorph :as smile-mm]
-            [scicloj.metamorph.core :as morph]))
+            [scicloj.ml.smile.classification]))
             
 (comment
   (def train-ds

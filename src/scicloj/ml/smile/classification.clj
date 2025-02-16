@@ -67,6 +67,13 @@
 
 (defn double-array-predict-posterior
   [^Classifier model ds options n-labels]
+  ;(def model model)
+  ;(def ds ds)
+  ;(def options options)
+  ;(def n-labels n-labels)
+
+  
+  
   (let [value-reader (ds/value-reader ds)
         n-rows (ds/row-count ds)]
     (reify
