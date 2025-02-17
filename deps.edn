@@ -7,10 +7,11 @@
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
         dev.weavejester/medley         {:mvn/version "1.8.1"}
-        org.scicloj/metamorph.ml       
-        ;{:mvn/version "1.0"}
-                                        {:git/url "https://github.com/scicloj/metamorph.ml"
-                                         :git/sha "417283dc80063e0f68382f5d9d5327d0c03d9180"}
+        org.scicloj/metamorph.ml {:mvn/version "1.2beta1.6"}
+       ;;  org.scicloj/metamorph.ml       
+        
+       ;;                                  {:git/url "https://github.com/scicloj/metamorph.ml"
+       ;;                                   :git/sha "417283dc80063e0f68382f5d9d5327d0c03d9180"}
         
         generateme/fastmath            {:mvn/version "3.0.0-alpha3"}
         org.clojars.generateme/fastmath-clustering {:mvn/version "1.0.0"}

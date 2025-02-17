@@ -59,6 +59,7 @@
   "Predict function for MLP model"
   [feature-ds thawed-model {:keys [target-columns
                                    target-categorical-maps
+                                   target-datatypes
                                    options]}]
   (errors/when-not-error target-categorical-maps "target-categorical-maps not found. Target column need to be categorical.")
   (let [
@@ -80,7 +81,8 @@
                                            n-labels
                                            target-categorical-maps))
         mapped-predictions
-        (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colname)
+        (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colname
+                                                            (get target-datatypes target-colname))
             (ds/update-column target-colname
                               #(vary-meta % assoc :column-type :prediction)))]
 

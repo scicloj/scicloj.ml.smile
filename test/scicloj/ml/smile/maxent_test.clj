@@ -57,7 +57,7 @@
         prediction (ml/predict (ds/head binom-reviews) trained-model)]
 
 
-    (is (= [0.0 1.0] (-> prediction :Score frequencies keys)))
+    (is (= [0 1] (-> prediction :Score frequencies keys)))
     (is (= 1001 (-> trained-model
                     :model-data
                     .coefficients
