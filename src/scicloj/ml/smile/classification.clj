@@ -534,20 +534,3 @@
          '[scicloj.ml.smile.sparse-logreg])
 
 
-;(-> @ml/model-definitions* :smile.classification/logistic-regression :options)
-
-(comment
-  (do
-    (require '[tech.v3.dataset.column-filters :as cf])
-    (def src-ds (ds/->dataset "test/data/iris.csv"))
-    (def ds (->  src-ds
-                 (ds/categorical->number cf/categorical)
-                 (ds-mod/set-inference-target "species")))
-    (def feature-ds (cf/feature ds))
-    (def split-data (ds-mod/train-test-split ds))
-    (def train-ds (:train-ds split-data))
-    (def test-ds (:test-ds split-data))
-    (def model (ml/train train-ds {:model-type :smile.classification/random-forest}))
-    (def prediction (ml/predict test-ds model)))
-
-  :ok)
