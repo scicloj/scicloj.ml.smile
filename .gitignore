@@ -16,3 +16,5 @@ example/results.nippy
 /.clj-kondo/
 /.lsp/
 /.clerk/
+pom.properties
+pom.xml

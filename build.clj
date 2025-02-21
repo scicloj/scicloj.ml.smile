@@ -64,3 +64,16 @@
       (assoc :lib lib :version version)
       (bb/deploy)))
 
+
+(defn generate-pom[_]  
+  
+  (b/write-pom {:target "."
+                :lib lib
+                :version version
+                :basis basis
+                :src-pom "template/pom.xml"
+                :scm {:connection "scm:git:https://github.com/scicloj/scicloj.ml.smile.git"
+                      :url "https://github.com/scicloj/scicloj.ml.smile"}
+                :src-dirs ["src"]})
+  
+  )
