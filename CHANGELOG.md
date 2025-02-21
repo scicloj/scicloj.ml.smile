@@ -1,6 +1,9 @@
 # ConstantChangeLog
 
-# unreleased
+# 7.5.2 
+- fixed release build
+
+# 7.5.1
 - made predicion target datatype symetric to train
 - fixes #450 unexpected "distinct" of float columns after categorical->number using :float64
 
