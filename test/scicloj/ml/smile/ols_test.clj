@@ -64,7 +64,7 @@
         (->
          ds
          (ds/drop-columns [:species])
-         (ds-mod/set-inference-target :sepal_length)
+         (ds-mod/set-inference-target :sepal-length)
          (ml/train {:model-type :smile.regression/ordinary-least-square}))]
 
 

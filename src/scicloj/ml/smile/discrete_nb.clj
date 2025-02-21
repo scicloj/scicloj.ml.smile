@@ -84,7 +84,8 @@ See tech.v3.dataset/categorical->number.")
          (-> model :target-categorical-maps))
 
         mapped-predictions
-        (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colum)
+        (-> (ds-mod/probability-distributions->label-column finalised-predictions target-colum
+                                                            (get-in  model [:target-datatypes target-colum]))
             (ds/update-column target-colum
                               #(vary-meta % assoc :column-type :prediction)))]
         

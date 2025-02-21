@@ -12,7 +12,11 @@
   "customizations" : {
     "vscode" : {
       "settings" : { },
-      "extensions" : [ "vscjava.vscode-java-pack",  "betterthantomorrow.calva" ]
+      "extensions" : [
+        "vscjava.vscode-java-pack",
+        "betterthantomorrow.calva",
+        "eamodio.gitlens"
+      ]
     }
   },
   "features" : {

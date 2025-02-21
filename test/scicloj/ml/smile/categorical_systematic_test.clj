@@ -46,7 +46,7 @@
              :smile.classification/sparse-logistic-regression})))
 
 (def combinations
-  (for [data-type [:int :double :float]
+  (for [data-type [:int :float64 :float32]
         model-type models]
     [model-type data-type]))
 
