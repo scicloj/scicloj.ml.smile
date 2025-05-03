@@ -8,7 +8,7 @@
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
         dev.weavejester/medley         {:mvn/version "1.8.1"}
         org.scicloj/metamorph.ml       {:mvn/version "1.2"}
-                
+        
         generateme/fastmath            {:mvn/version "3.0.0-alpha3"}
         org.clojars.generateme/fastmath-clustering {:mvn/version "1.0.0"}
         metosin/malli                  {:mvn/version "0.17.0"}}
@@ -16,7 +16,9 @@
                           {:git/tag "v0.9.2" :git/sha "9c9f078"}}
                    :ns-default build}
 
-           :run-tests {:main-opts ["-m" "kaocha.runner"]}
+           :run-tests {:main-opts ["-m" "kaocha.runner"]
+                       :extra-deps {lambdaisland/kaocha {:mvn/version "1.60.945"}
+                                    org.clojure/test.check {:mvn/version "1.1.0"}}}
            :test {:extra-paths ["test"]
                   :extra-deps {lambdaisland/kaocha    {:mvn/version "1.91.1392"}
                                org.clojure/test.check {:mvn/version "1.1.1"}
@@ -31,5 +33,9 @@
                         :fail-fast? true}
            :outdated {;; Note that it is `:deps`, not `:extra-deps`
                       :deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
-                      :main-opts ["-m" "antq.core"]}}}
+                      :main-opts ["-m" "antq.core"]}
            
+           
+           :dev {:extra-deps {org.scicloj/clay {:mvn/version "2-beta42"}}}}}
+           
+                  

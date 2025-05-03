@@ -17,4 +17,6 @@ example/results.nippy
 /.lsp/
 /.clerk/
 pom.properties
-pom.xml
+.lsp
+.clerk
+docs
