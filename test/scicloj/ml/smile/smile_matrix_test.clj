@@ -2,7 +2,7 @@
   (:require
    [clojure.test :refer [is deftest]]
    [scicloj.ml.smile.smile-matrix]
-   [tech.v3.libs.smile.matrix])
+   [scicloj.ml.smile.smile-matrix])
   (:import
    [smile.math.matrix Matrix]))
 
@@ -13,8 +13,8 @@
    [ m (Matrix/rand 3 4 0.1 1)]
     (is (= m
            (-> m
-               tech.v3.libs.smile.matrix/smile-matrix-as-tensor
-               tech.v3.libs.smile.matrix/tensor->smile-matrix)))))
+               scicloj.ml.smile.smile-matrix/smile-matrix-as-tensor
+               scicloj.ml.smile.smile-matrix/tensor->smile-matrix)))))
 
 
 (comment

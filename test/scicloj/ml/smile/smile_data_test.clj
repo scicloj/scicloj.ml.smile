@@ -1,7 +1,7 @@
 (ns scicloj.ml.smile.smile-data-test
   (:require [tech.v3.dataset :as ds]
             [tech.v3.datatype.functional :as dfn]
-            [tech.v3.libs.smile.data :as smile-data]
+            [scicloj.ml.smile.smile-data :as smile-data]
             [scicloj.metamorph.ml.toydata :as data]
             [clojure.test :refer [deftest is]])
   (:import [smile.data DataFrame]))
