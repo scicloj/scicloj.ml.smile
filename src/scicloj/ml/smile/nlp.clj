@@ -13,7 +13,7 @@
    (smile.nlp.tokenizer BreakIteratorSentenceSplitter SimpleTokenizer)
    (smile.util SparseArray)))
 
-(defn resolve-stopwords [stopwords-option]
+(defn- resolve-stopwords [stopwords-option]
   (if (keyword? stopwords-option)
     (iterator-seq (.iterator (EnglishStopWords/valueOf (str/upper-case (name stopwords-option)))))
     stopwords-option))

@@ -240,7 +240,7 @@
   [model-type]
   (get regression-metadata :elastic-net))
 
-(defn do-predict [predictor model feature-ds target-cname]
+(defn- do-predict [predictor model feature-ds target-cname]
   (-> (predictor model feature-ds)
       (dtype/clone)
       (dtt/->tensor)

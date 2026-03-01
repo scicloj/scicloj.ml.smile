@@ -20,7 +20,7 @@
    :umap {:class UMAP
           :documentation {:user-guide "https://haifengl.github.io/manifold.html#umap"}}})
 
-(defn manifold [data manifold-method manifold-method-args]
+(defn- manifold [data manifold-method manifold-method-args]
   (let [fun (resolve (symbol (str "smile.manifold/" (name manifold-method))))
         data-rows (tc/rows data :as-double-arrays)]
     (apply fun data-rows manifold-method-args)))
@@ -35,7 +35,7 @@
 
 
 
-(defn make-options [reg-kwd reg-def]
+(defn- make-options [reg-kwd reg-def]
   (let [fun (resolve (symbol (str "smile.manifold/" (name reg-kwd))))]
     {:unsupervised? true
      :documentation {:javadoc (class->smile-url (:class reg-def))

@@ -45,7 +45,7 @@ See tech.v3.dataset/categorical->number.")
 (defn- predict
   "Predict function for sparse logistic regression model."
   [feature-ds thawed-model model]
-  (nb/predict feature-ds thawed-model model))
+  (#'nb/predict feature-ds thawed-model model))
 
 
 (ml/define-model!

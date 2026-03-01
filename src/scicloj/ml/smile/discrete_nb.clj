@@ -21,7 +21,7 @@
   (nlp/bow->something-sparse ds bow-col indices-col nlp/freqs->SparseArray options))
 
 
-(def nb-lookup-table
+(def ^:private nb-lookup-table
   {
    :polyaurn DiscreteNaiveBayes$Model/POLYAURN
    :wcnb DiscreteNaiveBayes$Model/WCNB
@@ -30,7 +30,7 @@
    :bernoulli DiscreteNaiveBayes$Model/BERNOULLI
    :multinomial DiscreteNaiveBayes$Model/MULTINOMIAL})
 
-(defn train
+(defn- train
   "Training function of discrete naive bayes model.
    The column of name `(options :sparse-colum)` of `feature-ds` needs to contain the text as SparseArrays
    over the vocabulary."
@@ -58,7 +58,7 @@ See tech.v3.dataset/categorical->number.")
              train-score-array)
     nb))
 
-(defn predict
+(defn- predict
   "Predict function for discrete naive bayes"
   [feature-ds thawed-model model]
   (let [

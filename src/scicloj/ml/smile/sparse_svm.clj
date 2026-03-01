@@ -12,7 +12,7 @@
    (smile.classification SVM)
    (smile.util SparseArray)))
 
-(defn train
+(defn- train
   "Training function of sparse SVM model.
    The column of name `(options :sparse-column)` of `feature-ds` needs to contain the text as SparseArrays
    over the vocabulary."

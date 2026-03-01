@@ -4,7 +4,9 @@
              [tablecloth.pipeline :as tc-mm]
              [scicloj.ml.smile.clustering :refer [cluster]]
              [scicloj.metamorph.core :as mm]
-             [scicloj.metamorph.ml :as morphml]))
+             [scicloj.metamorph.ml :as morphml]
+             [scicloj.metamorph.ml.rdatasets :as datasets]
+             [camel-snake-kebab.core :as csk]))
 
 
 
@@ -19,7 +21,7 @@
    (tc/split->seq data :holdout)))
 
 
-(t/deftest cluster-test-1
+(deftest cluster-test-1
   (let [pipeline (mm/pipeline
                   {:metamorph/id :cluster} (cluster :k-means [3] :cluster-row))
         fittex-ctx
@@ -27,9 +29,9 @@
          {:metamorph/mode :fit
           :metamorph/data (:train split)})]
 
-    (t/is (= 3
+    (is (= 3
              (-> fittex-ctx :cluster :clustering count)))
-    (t/is (= 3 (-> fittex-ctx :metamorph/data :cluster-row count)))))
+    (is (= 3 (-> fittex-ctx :metamorph/data :cluster-row count)))))
 
 
 (def iris
@@ -38,8 +40,7 @@
     "https://raw.githubusercontent.com/scicloj/metamorph.ml/main/test/data/iris.csv" {:key-fn keyword})))
 
 (deftest cluster-test-2
-  (let [
-        pipe-fn
+  (let [pipe-fn
         (mm/pipeline
          (tc-mm/drop-columns [:species])
          {:metamorph/id :cluster} (cluster :k-means [3] :cluster))
@@ -61,7 +62,7 @@
                                   :clustering-method-args [5]}))
           [:cluster :model-data :type]))))
 
-(defn valid-cluster-model-test-2[model-type args]
+(defn valid-cluster-model-test-2 [model-type args]
   (is (= (keyword (name model-type))
          (get-in
           (mm/fit iris
@@ -73,7 +74,7 @@
 
 (deftest cluster-model-test-2
   (valid-cluster-model-test-2 :fastmath.cluster/clarans [5])
-  (valid-cluster-model-test-2  :fastmath.cluster/dbscan [5 1] )
+  (valid-cluster-model-test-2  :fastmath.cluster/dbscan [5 1])
   (valid-cluster-model-test-2  :fastmath.cluster/denclue [5 2])
   (valid-cluster-model-test-2  :fastmath.cluster/deterministic-annealing [5])
   (valid-cluster-model-test-2  :fastmath.cluster/g-means [5])
@@ -81,7 +82,21 @@
   (valid-cluster-model-test-2  :fastmath.cluster/lloyd [5])
   (valid-cluster-model-test-2  :fastmath.cluster/mec [5 1])
   (valid-cluster-model-test-2  :fastmath.cluster/spectral [5 1])
-  (valid-cluster-model-test-2  :fastmath.cluster/x-means [5])
+  (valid-cluster-model-test-2  :fastmath.cluster/x-means [5]))
 
-  )
+(deftest hierarchical-clustering
+  (let [iris-ds
+        (->
+         (datasets/datasets-iris)
+         (tc/drop-columns [:rownames :species]))]
+
+    (is (= [:hac :dendrogram]
+           (keys 
+            (scicloj.ml.smile.clustering/hierarchical-clustering
+             iris-ds
+             :complete
+             200
+             200))))))
+
+
 

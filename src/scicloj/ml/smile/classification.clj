@@ -65,7 +65,7 @@
     
 
 
-(defn double-array-predict-posterior
+(defn- double-array-predict-posterior
   [^Classifier model ds options n-labels]
   ;(def model model)
   ;(def ds ds)
@@ -88,14 +88,14 @@
           posterior)))))
 
 
-(defn construct-knn [^Formula formula ^DataFrame data-frame ^Properties props]
+(defn- construct-knn [^Formula formula ^DataFrame data-frame ^Properties props]
   (KNN/fit (.toArray (.matrix  formula data-frame false))
            (.toIntArray  (.y formula data-frame))
            (Integer/parseInt (.getProperty props "smile.knn.k" "3"))))
            
 
 
-(def split-rule-lookup-table
+(def ^:private split-rule-lookup-table
   {:gini SplitRule/GINI
    :entropy SplitRule/ENTROPY
    :classification-error  SplitRule/CLASSIFICATION_ERROR})

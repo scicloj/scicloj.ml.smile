@@ -23,7 +23,7 @@
 
 
 
-(defn standard-metric-maps [model]
+(defn- standard-metric-maps [model]
   (let [
         ols (ml/thaw-model model)
         y (-> model :model-data :label-ds ds/columns first)

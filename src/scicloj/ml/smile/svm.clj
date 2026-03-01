@@ -9,7 +9,7 @@
   (:import
    (smile.classification SVM)))
 
-(defn train
+(defn- train
   "Training function of SVM model. "
   [feature-ds target-ds options]
   (let [train-data
@@ -25,7 +25,7 @@
     {:model-as-bytes (model/model->byte-array trained-model)}))
      
 
-(defn predict
+(defn- predict
  "Predict function for SVM model"
   [feature-ds thawed-model model]
   (let [to-predict-data

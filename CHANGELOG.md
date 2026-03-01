@@ -1,5 +1,8 @@
 # ConstantChangeLog
 
+# unreleased
+- added dendrogram
+
 # 7.5.2 
 - fixed release build
 

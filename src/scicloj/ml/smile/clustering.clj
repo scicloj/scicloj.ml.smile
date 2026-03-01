@@ -6,11 +6,21 @@
    [scicloj.ml.smile.registration :refer [class->smile-url]]
    [tablecloth.api :as tc])
   (:import
-   (smile.clustering CLARANS DBSCAN DENCLUE DeterministicAnnealing GMeans KMeans MEC SpectralClustering XMeans)))
+   (smile.clustering HierarchicalClustering)
+   (smile.plot.swing Dendrogram)
+   (smile.clustering CLARANS DBSCAN DENCLUE DeterministicAnnealing GMeans KMeans MEC SpectralClustering XMeans)
+   [smile.clustering.linkage
+    WPGMCLinkage
+    WPGMALinkage
+    WardLinkage
+    UPGMCLinkage
+    UPGMALinkage
+    SingleLinkage
+    CompleteLinkage]
+   ))
 
 (def model-keywords
-  {
-   :spectral {:class SpectralClustering
+  {:spectral {:class SpectralClustering
               :documentation {:user-guide "https://haifengl.github.io/clustering.html#spectral-clustering"}}
    :dbscan {:class DBSCAN
             :documentation {:user-guide "https://haifengl.github.io/clustering.html#dbscan"}}
@@ -32,9 +42,8 @@
              :documentation {:user-guide "https://haifengl.github.io/clustering.html#denclue"}}})
 
 
-(defn fit-cluster [data clustering-method clustering-method-args]
-  (let [
-        fun (resolve (symbol  "fastmath-clustering.core" (name clustering-method)))
+(defn- fit-cluster [data clustering-method clustering-method-args]
+  (let [fun (resolve (symbol  "fastmath-clustering.core" (name clustering-method)))
         data-rows (tc/rows data)]
     (apply fun data-rows clustering-method-args)))
 
@@ -86,7 +95,7 @@ The cluster id of each row gets written to the column in `target-column`
              :fit (let [fit-result (fit-cluster data clustering-method clustering-method-args)]
                     {:clusterresult  fit-result
                      :clusters (:clustering fit-result)})
-                    
+
              :transform {:clusterresult  (ctx id)
                          :clusters (map (partial clustering/predict (ctx id))
                                         data-rows)})]
@@ -97,21 +106,21 @@ The cluster id of each row gets written to the column in `target-column`
                                tc/add-column target-column (clusterresult-and-clusters :clusters)))))))
 
 
-(defn train-fn [feature-ds label-ds options]
+(defn- train-fn [feature-ds label-ds options]
   (fit-cluster feature-ds
-                          (options :clustering-method)
-                          (options :clustering-method-args)))
+               (options :clustering-method)
+               (options :clustering-method-args)))
 
-(defn train-fn-method [clustering-method feature-ds label-ds options]
+(defn- train-fn-method [clustering-method feature-ds label-ds options]
   (fit-cluster feature-ds
-                          clustering-method
-                          (options :clustering-method-args)))
+               clustering-method
+               (options :clustering-method-args)))
 
 
-(ml/define-model! 
-  :fastmath/cluster 
+(ml/define-model!
+  :fastmath/cluster
   train-fn
-  (fn [_] (throw (Exception. "prediction not supported"))) 
+  (fn [_] (throw (Exception. "prediction not supported")))
   {:unsupervised? true})
 
 (run!
@@ -119,15 +128,62 @@ The cluster id of each row gets written to the column in `target-column`
    (ml/define-model!
      (keyword (str "fastmath.cluster/" (name  kwf)))
      (partial train-fn-method kwf)
-     (fn [_] (throw (Exception. "prediction not supported"))) 
+     (fn [_] (throw (Exception. "prediction not supported")))
      {:documentation
       {:javadoc (class->smile-url (:class reg-def))
        :user-guide (-> reg-def :documentation :user-guide)
        :code-example nil} ;; (-> reg-def :documentation :code-example)
-       
+
       :unsupervised? true}))
  model-keywords)
 
+
+(def ^:private linking-map
+  {:wpgmc WPGMCLinkage/of
+   :wpgma WPGMALinkage/of
+   :ward WardLinkage/of
+   :upgmc UPGMCLinkage/of
+   :upgma UPGMALinkage/of
+   :single SingleLinkage/of
+   :complete CompleteLinkage/of})
+
+
+
+(defn hierarchical-clustering 
+  "Performs agglomerative hierarchical clustering on the given `dataset`.
+   
+   `linkage-fn-kw` specifies the agglomeration method and supports
+   * :wpgmc 
+   * :wpgma 
+   * :upgmc 
+   * :upgma 
+   * :ward
+   * :single
+   * :complete 
+
+   
+   It returns a map with two keys:
+
+   * :hac The fitted HierarchicalClustering instance
+   * :dendrogram The Dendrogram (as BufferedImage) of the clustering where
+     `height-px` and `width-px` specify the size of it in pixel
+   
+   See here: https://haifengl.github.io/clustering.html#hierarchical
+   "
+  [dataset linkage-fn-kw height-px width-px]
+  (let [
+        hac
+        (-> dataset
+            (tc/rows :as-double-arrays)
+            ((get linking-map linkage-fn-kw))
+            (HierarchicalClustering/fit))
+        tree (.getTree hac)
+        height (.getHeight hac)
+        plot (Dendrogram. tree height)
+        canvas (.. plot canvas)]
+    {:hac hac
+     :dendrogram
+     (.toBufferedImage canvas height-px width-px)}))
 
 
 (malli/instrument-ns 'scicloj.ml.smile.clustering)

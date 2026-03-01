@@ -2,7 +2,7 @@
   "remoteUser" : "vscode",
   
   "forwardPorts" : [ "12345", "7777" ],
-  "name" : "dummy",
+  "name" : "scicloj.ml.smile",
   "build" : {
     "dockerfile" : "Dockerfile"
   },
@@ -19,15 +19,14 @@
       ]
     }
   },
+  "mounts": [
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+    ],
   "features" : {
-    "ghcr.io/devcontainers-contrib/features/clojure-asdf:2" : {"version": "1.11.3.1456" },
-    "ghcr.io/devcontainers-contrib/features/bash-command:1" : {
-      "command" : "apt-get update && apt-get install -y rlwrap"
-    },
-    "ghcr.io/rocker-org/devcontainer-features/r-apt:0" : { },
-     "ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
-       "packages": "tidymodels"
-     }
+    "ghcr.io/devcontainers-extra/features/clojure-asdf:2" : {"version": "1.11.3.1456" },
+    "ghcr.io/devcontainers-extra/features/bash-command:1" : {
+      "command" : "apt-get update && apt-get install -y rlwrap libxi6 libxtst6 libxrender1 libfreetype6-dev fontconfig x11-apps"
+    }
 
 
   },

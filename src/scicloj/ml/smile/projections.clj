@@ -16,7 +16,7 @@
     Projection
     RandomProjection)))
 
-(defn smile-mercer
+(defn- smile-mercer
   "Create Smile Mercer Kernel object
 
   Used to pass to Smile constructors/functions."
@@ -117,7 +117,7 @@
        (map (partial zipmap target-columns))
        (tc/dataset)))
 
-(defn process-reduction-fit
+(defn- process-reduction-fit
   [ds algorithm target-dims cnames opts]
   (let [target-columns (map  #(str  (name algorithm) "-" %) (range target-dims))
         rows (rows->array ds cnames)
@@ -131,7 +131,7 @@
      :target-columns target-columns}))
 
 
-(defn process-reduction-transform
+(defn- process-reduction-transform
   [ds model cnames target-columns]
   (let [rows (rows->array ds cnames)
         ds-res (array->ds (.project model #^"[[D" rows) target-columns)]

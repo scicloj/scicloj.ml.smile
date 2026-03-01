@@ -32,16 +32,12 @@
                           :description (:description option)
                           :default (:default option)
                           :lookup-table (:lookup-table option)
-                          :type (:type option)
-                          }
+                          :type (:type option)}
                          (type->malli (:type option)))))))))
 
 
 (defn check-schema [defined-options options]
-  (def options options)
-  (def defined-options defined-options)
-  (let [
-        malli-schema (apply vector :map (options->malli defined-options))
+  (let [malli-schema (apply vector :map (options->malli defined-options))
 
         model-options (dissoc options :model-type)
         final-schema (-> malli-schema
@@ -54,17 +50,16 @@
 
 (defn instrument-mm [fn]
   (m/-instrument
-     {:report (pretty/thrower) :scope #{:input}
-      :schema [:=> [:cat [:map
-                          [:metamorph/id any?]
-                          [:metamorph/data [:fn dataset?]]
-                          [:metamorph/mode [:enum :fit :transform]]]]
+   {:report (pretty/thrower) :scope #{:input}
+    :schema [:=> [:cat [:map
+                        [:metamorph/id any?]
+                        [:metamorph/data [:fn dataset?]]
+                        [:metamorph/mode [:enum :fit :transform]]]]
 
-               map?]}
-     fn))
+             map?]}
+   fn))
 
 (defn instrument-ns [ns]
   (mi/collect! {:ns ns})
   (mi/instrument! {:report (pretty/thrower) :scope #{:input}}))
 
-;; (mi/unstrument!)
