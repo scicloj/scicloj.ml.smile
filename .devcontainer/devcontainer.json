@@ -15,7 +15,8 @@
       "extensions" : [
         "vscjava.vscode-java-pack",
         "betterthantomorrow.calva",
-        "eamodio.gitlens"
+        "eamodio.gitlens",
+        "zhaouv.vscode-markdown-everywhere"
       ]
     }
   },
