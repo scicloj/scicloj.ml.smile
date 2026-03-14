@@ -3,6 +3,7 @@
    [clojure.test :refer [deftest is]]
    [scicloj.metamorph.ml :as ml]
    [scicloj.metamorph.ml.loss :as loss]
+   [scicloj.ml.smile.classification]
    [tech.v3.dataset :as ds]
    [tech.v3.dataset.categorical :as ds-cat]
    [tech.v3.dataset.column-filters :as cf]
@@ -38,5 +39,5 @@
 
      (is (< 0.2
             (loss/classification-accuracy
-             (-> test-ds ds-cat/reverse-map-categorical-xforms (get  "species"))
+             (-> test-ds ds-cat/reverse-map-categorical-xforms (get "species"))
              (get prediction "species"))))))
