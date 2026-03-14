@@ -1,7 +1,8 @@
 # ConstantChangeLog
 
 # unreleased
-- added dendrogram
+- added hierarchical-clustering
+- bumped versions
 
 # 7.5.2 
 - fixed release build

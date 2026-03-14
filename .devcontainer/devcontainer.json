@@ -21,10 +21,10 @@
     }
   },
   "mounts": [
-        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
     ],
   "features" : {
-    "ghcr.io/devcontainers-extra/features/clojure-asdf:2" : {"version": "1.11.3.1456" },
+    "ghcr.io/devcontainers-extra/features/clojure-asdf:2" : {"version": "1.12.4.1618" },
     "ghcr.io/devcontainers-extra/features/bash-command:1" : {
       "command" : "apt-get update && apt-get install -y rlwrap libxi6 libxtst6 libxrender1 libfreetype6-dev fontconfig x11-apps"
     }

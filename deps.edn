@@ -2,30 +2,30 @@
  :deps/prep-lib {:alias :build
                  :fn compile
                  :ensure "target/classes"}
- :deps {org.clojure/clojure           {:mvn/version "1.12.0"}
-        scicloj/tablecloth             {:mvn/version "7.059"}
+ :deps {org.clojure/clojure           {:mvn/version "1.12.4"}
+        scicloj/tablecloth             {:mvn/version "7.067"}
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
         com.github.haifengl/smile-plot  {:mvn/version "2.6.0"}
         org.clojars.haifengl/smile     {:mvn/version "2.6.0"}
-        dev.weavejester/medley         {:mvn/version "1.8.1"}
-        org.scicloj/metamorph.ml       {:mvn/version "1.2"}
+        dev.weavejester/medley         {:mvn/version "1.9.0"}
+        org.scicloj/metamorph.ml       {:mvn/version "1.3.0"}
         
-        generateme/fastmath            {:mvn/version "3.0.0-alpha3"}
+        generateme/fastmath            {:mvn/version "3.0.0-alpha4"}
         org.clojars.generateme/fastmath-clustering {:mvn/version "1.0.0"}
-        metosin/malli                  {:mvn/version "0.17.0"}}
+        metosin/malli                  {:mvn/version "0.20.1"}}
  :aliases {:build {:deps {io.github.seancorfield/build-clj
                           {:git/tag "v0.9.2" :git/sha "9c9f078"}}
                    :ns-default build}
 
            :run-tests {:main-opts ["-m" "kaocha.runner"]
                        :extra-deps {lambdaisland/kaocha {:mvn/version "1.60.945"}
-                                    org.clojure/test.check {:mvn/version "1.1.0"}}}
+                                    org.clojure/test.check {:mvn/version "1.1.3"}}}
            :test {:extra-paths ["test"]
                   :extra-deps {lambdaisland/kaocha    {:mvn/version "1.91.1392"}
-                               org.clojure/test.check {:mvn/version "1.1.1"}
-                               same/ish               {:mvn/version "0.1.6"}
+                               org.clojure/test.check {:mvn/version "1.1.3"}
+                               same/ish               {:mvn/version "0.1.7"}
                                criterium/criterium    {:mvn/version "0.4.6"}
-                               cheshire/cheshire      {:mvn/version "5.13.0"}}}
+                               cheshire/cheshire      {:mvn/version "6.1.0"}}}
 
            :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
                         :exec-fn kaocha.runner/exec-fn
@@ -37,6 +37,6 @@
                       :main-opts ["-m" "antq.core"]}
            
            
-           :dev {:extra-deps {org.scicloj/clay {:mvn/version "2-beta42"}}}}}
+           :dev {:extra-deps {org.scicloj/clay {:mvn/version "2.0.13"}}}}}
            
                   
