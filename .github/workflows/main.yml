@@ -35,8 +35,8 @@ jobs:
         with:
           cli: 1.12.4.1618   
 
-      - name: List dependencies
-        run: clojure -Sthreads 1 -X:deps list
+      #- name: List dependencies
+      #  run: clojure -Sthreads 1 -X:deps list
 
 
       - name: Run CI
