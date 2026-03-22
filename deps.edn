@@ -3,8 +3,8 @@
                  :fn compile
                  :ensure "target/classes"}
  :deps {org.clojure/clojure           {:mvn/version "1.12.4"}
-        scicloj/tablecloth             {:git/url "https://github.com/behrica/tablecloth" 
-                                        :git/sha "1f446e044ea52d64fa4fd451227a369fe57236dd"}
+        scicloj/tablecloth             {:git/url "https://github.com/scicloj/tablecloth" 
+                                        :git/sha "236fd0023b151692f98931169c88469a86f95bfc"}
         
         com.github.haifengl/smile-nlp  {:mvn/version "2.6.0"}
         com.github.haifengl/smile-plot  {:mvn/version "2.6.0"}
