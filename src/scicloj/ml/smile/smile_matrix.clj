@@ -16,7 +16,9 @@
             [tech.v3.datatype.errors :as errors]
             [tech.v3.datatype.pprint :as dtype-pp]
             [tech.v3.datatype.protocols :as dtype-proto]
-            [tech.v3.datatype :as dt])
+            [tech.v3.datatype :as dt]
+            [ham-fisted.defprotocol :as hfdef-proto]
+            )
   (:import [smile.math.matrix Matrix]
            [smile.math.blas BLAS]
            [java.nio DoubleBuffer]))
@@ -48,7 +50,7 @@
                                               (.ncols dense-mat)]
                                              [ld 1])))))
 
-(extend-type Matrix
+(hfdef-proto/extend-type Matrix
   dtype-proto/PElemwiseDatatype
   (elemwise-datatype [mat] :float64)
   dtype-proto/PECount
