@@ -11,7 +11,9 @@
             [tech.v3.dataset.column :as ds-col]
             [tech.v3.dataset.base :as ds-base]
             [tech.v3.dataset.string-table :as str-table]
-            [clojure.set :as set])
+            [clojure.set :as set]
+            [ham-fisted.defprotocol :as hfdef-proto]
+            )
   (:import [smile.data DataFrame DataFrameImpl DataFrameFactory]
            [smile.data.type StructField DataType DataTypes]
            [smile.data.vector BaseVector
@@ -19,7 +21,9 @@
             IntVectorImpl LongVectorImpl FloatVectorImpl DoubleVectorImpl
             StringVectorImpl VectorImpl
             VectorFactory]
-           [java.io Writer]))
+           [java.io Writer])
+  
+  )
 
 
 (set! *warn-on-reflection* true)
@@ -151,7 +155,7 @@
     :float64 `(DoubleVectorImpl. ~name (typecast/as-double-array ~data))))
 
 
-(extend-type BaseVector
+(hfdef-proto/extend-type BaseVector
   dtype-proto/PElemwiseDatatype
   (elemwise-datatype [v]
     (if-let [retval (get smile->datatype-map (.type v))]
@@ -163,7 +167,7 @@
 
 (defmacro ^:private extend-primitive-vec
   [datatype]
-  `(extend-type ~(datatype->smile-vec-impl-type datatype)
+  `(hfdef-proto/extend-type ~(datatype->smile-vec-impl-type datatype)
      dtype-proto/PElemwiseDatatype
      (elemwise-datatype [v#] ~datatype)
      dtype-proto/PToArrayBuffer
@@ -186,7 +190,7 @@
 (extend-primitive-vec :float64)
 
 
-(extend-type VectorImpl
+(hfdef-proto/extend-type VectorImpl
   dtype-proto/PToArrayBuffer
   (convertible-to-array-buffer? [v] true)
   (->array-buffer [v]

@@ -1,5 +1,8 @@
 # ConstantChangeLog
 
+# unreleased
+- made compatible with TMD 8.012
+
 # 7.6.0
 - added hierarchical-clustering
 - bumped versions
