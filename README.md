@@ -1,8 +1,7 @@
 [![Clojars Project](https://img.shields.io/clojars/v/org.scicloj/scicloj.ml.smile.svg)](https://clojars.org/org.scicloj/scicloj.ml.smile)
 [![CI](https://github.com/scicloj/scicloj.ml.smile/actions/workflows/main.yml/badge.svg)](https://github.com/scicloj/scicloj.ml.smile/actions/workflows/main.yml)
-[![cljdoc badge](https://cljdoc.org/badge/scicloj/scicloj.ml.smile)](https://cljdoc.org/d/scicloj/scicloj.ml.smile)
+[![cljdoc badge](https://cljdoc.org/badge/org.scicloj/scicloj.ml.smile)](https://cljdoc.org/d/org.scicloj/scicloj.ml.smile)
 
-![ml logo](https://github.com/scicloj/graphic-design/blob/live/icons/scicloj.ml.svg)
 
 # scicloj.ml.smile
 
