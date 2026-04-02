@@ -1,5 +1,8 @@
 # ConstantChangeLog
 
+# 7.6.2
+ - use metamorph.ml 1.3.2
+ 
 # 7.6.1
 - made compatible with TMD 8.016
 - upgraded to metamorph.ml 1.3.1 (and TC/TMD 8.0.16)
