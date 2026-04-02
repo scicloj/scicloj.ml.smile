@@ -1,5 +1,9 @@
 # ConstantChangeLog
 
+# 7.6.1
+- made compatible with TMD 8.016
+- upgraded to metamorph.ml 1.3.1 (and TC/TMD 8.0.16)
+
 # 7.6.0
 - added hierarchical-clustering
 - bumped versions
