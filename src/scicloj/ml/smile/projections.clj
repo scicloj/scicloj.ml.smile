@@ -142,7 +142,7 @@
 
 
 (defn reduce-dimensions
-  "Metamorph transformer, which reduces the dimensions of a given dataset.
+  "Metamorph transformer, which adds projection columns to a given dataset.
 
   `algorithm` can be any of:
     * :pca-cov
